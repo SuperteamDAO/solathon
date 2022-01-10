@@ -9,11 +9,18 @@ class PrivateKey(PublicKey):
 
 
 class Keypair:
-    def __init__(self, value: Optional[NaclPrivateKey] = None):
+    def __init__(self, value: Optional[NaclPrivateKey | PublicKey] = None):
         if value is None:
             self.key_pair = NaclPrivateKey.generate()
-        else:
+        elif isinstance(value, NaclPrivateKey):
             self.key_pair = value
+        elif isinstance(value, PublicKey):
+            self.key_pair = NaclPrivateKey(bytes(value))
+        else:
+            raise ValueError(
+                "Keypair must be initialised with either "
+                "nacl.public.PrivateKey or solathon.PublicKey object"
+            )
         verify_key = VerifyKey(bytes(self.key_pair))
         self._public_key = PublicKey(verify_key)
         self._private_key = PrivateKey(
