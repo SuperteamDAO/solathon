@@ -1,8 +1,8 @@
-from typing import Union
-
-from solathon.publickey import PublicKey
+from typing import Optional
+from .publickey import PublicKey
 from .core.http import HTTPClient
 from .core.types import RPCResponse
+from .transaction import Transaction
 
 ENDPOINTS = (
     "https://api.mainnet-beta.solana.com",
@@ -21,15 +21,14 @@ class Client:
             )
         self.http = HTTPClient(endpoint)
 
-    def get_account_info(self, public_key: Union[PublicKey, str]
-                         ) -> RPCResponse:
+    def get_account_info(self, public_key: PublicKey | str) -> RPCResponse:
         data = self.http.build_data(
             method="getAccountInfo", params=[public_key]
         )
         res = self.http.send(data)
         return res
 
-    def get_balance(self, public_key: Union[PublicKey, str]) -> RPCResponse:
+    def get_balance(self, public_key: PublicKey | str) -> RPCResponse:
         data = self.http.build_data(
             method="getBalance", params=[public_key]
         )
@@ -46,6 +45,34 @@ class Client:
     def get_transaction(self, signature: str) -> RPCResponse:
         data = self.http.build_data(
             method="getTransaction", params=[signature]
+        )
+        res = self.http.send(data)
+        return res
+
+    # Will switch to getFeeForMessage (latest)
+    def get_recent_blockhash(self) -> RPCResponse:
+        data = self.http.build_data(
+            method="getRecentBlockhash", params=[None]
+        )
+        res = self.http.send(data)
+        return res
+
+    def send_transaction(
+        self,
+        transaction: Transaction,
+        recent_blockhash: Optional[str] = None,
+    ) -> RPCResponse:
+
+        if recent_blockhash is None:
+            blockhash_resp = self.get_recent_blockhash()
+            recent_blockhash = blockhash_resp["result"]["value"]["blockhash"]
+
+        transaction.recent_blockhash = recent_blockhash
+        transaction.sign()
+
+        data = self.http.build_data(
+            method="sendTransaction",
+            params=[transaction.serialize(), {"encoding": "base64"}]
         )
         res = self.http.send(data)
         return res
