@@ -7,27 +7,26 @@ from .publickey import PublicKey
 class PrivateKey(PublicKey):
     LENGTH = 64
 
-
 class Keypair:
+
     def __init__(self, value: Optional[NaclPrivateKey | PublicKey] = None):
         if value is None:
             self.key_pair = NaclPrivateKey.generate()
         elif isinstance(value, NaclPrivateKey):
             self.key_pair = value
-        elif isinstance(value, PublicKey):
-            self.key_pair = NaclPrivateKey(bytes(value))
         else:
             raise ValueError(
                 "Keypair must be initialised with either "
                 "nacl.public.PrivateKey or solathon.PublicKey object"
             )
-        verify_key = VerifyKey(bytes(self.key_pair))
+        verify_key = SigningKey(bytes(self.key_pair)).verify_key
         self._public_key = PublicKey(verify_key)
         self._private_key = PrivateKey(
             bytes(self.key_pair) + bytes(self._public_key)
         )
 
-    def sign(self, message: Union[bytes, str]) -> SignedMessage:
+
+    def sign(self, message: bytes | str) -> SignedMessage:
         if isinstance(message, str):
             signing_key = SigningKey(bytes(self.key_pair))
             return signing_key.sign(bytes(message, encoding="utf-8"))
@@ -47,3 +46,8 @@ class Keypair:
     @property
     def private_key(self) -> PrivateKey:
         return self._private_key
+
+    @classmethod
+    def from_private_key(cls, private_key: bytes):
+        seed = private_key[:32]
+        return cls(NaclPrivateKey(seed))
