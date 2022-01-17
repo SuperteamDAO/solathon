@@ -1,32 +1,36 @@
-from typing import Optional, Union
-from nacl.public import PrivateKey as NaclPrivateKey
-from nacl.signing import SigningKey, SignedMessage, VerifyKey
+from __future__ import annotations
+
+from typing import Optional
+import base58
 from .publickey import PublicKey
+from nacl.signing import SigningKey, SignedMessage
+from nacl.public import PrivateKey as NaclPrivateKey
 
 
 class PrivateKey(PublicKey):
     LENGTH = 64
 
+
 class Keypair:
 
-    def __init__(self, value: Optional[NaclPrivateKey | PublicKey] = None):
+    def __init__(self, value: Optional[NaclPrivateKey] = None) -> None:
         if value is None:
             self.key_pair = NaclPrivateKey.generate()
+            print(self.key_pair)
         elif isinstance(value, NaclPrivateKey):
             self.key_pair = value
         else:
             raise ValueError(
-                "Keypair must be initialised with either "
-                "nacl.public.PrivateKey or solathon.PublicKey object"
+                "Keypair initialization value must be a nacl.public.PrivateKey object. "
+                "To initialize with private key string, use 'from_private_key' method"
             )
         verify_key = SigningKey(bytes(self.key_pair)).verify_key
-        self._public_key = PublicKey(verify_key)
-        self._private_key = PrivateKey(
-            bytes(self.key_pair) + bytes(self._public_key)
+        self.public_key = PublicKey(verify_key)
+        self.private_key = PrivateKey(
+            bytes(self.key_pair) + bytes(self.public_key)
         )
 
-
-    def sign(self, message: bytes | str) -> SignedMessage:
+    def sign(self, message: str | bytes) -> SignedMessage:
         if isinstance(message, str):
             signing_key = SigningKey(bytes(self.key_pair))
             return signing_key.sign(bytes(message, encoding="utf-8"))
@@ -39,15 +43,8 @@ class Keypair:
             "Message argument must be either string or bytes"
         )
 
-    @property
-    def public_key(self) -> PublicKey:
-        return self._public_key
-
-    @property
-    def private_key(self) -> PrivateKey:
-        return self._private_key
-
     @classmethod
-    def from_private_key(cls, private_key: bytes):
+    def from_private_key(cls, private_key: bytes) -> Keypair:
+        private_key = base58.b58decode(private_key)
         seed = private_key[:32]
         return cls(NaclPrivateKey(seed))
