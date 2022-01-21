@@ -31,6 +31,7 @@ construct = "^2.10.67"
 
 [tool.poetry.dev-dependencies]
 jedi = "^0.18.1"
+neovim = "^0.3.1"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

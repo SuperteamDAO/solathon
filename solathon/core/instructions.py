@@ -5,16 +5,21 @@ Currently thanks to https://github.com/michaelhly/solana-py
 from enum import IntEnum
 from dataclasses import dataclass
 from typing import NamedTuple, List
-from construct import Switch, Bytes
-from construct import Int32ul, Int64ul, Pass 
 from construct import Struct as cStruct
-from construct import Bytes, Int32ul, Int64ul, PaddedString, Padding 
+from construct import (
+                Bytes, 
+                Int32ul, 
+                Int64ul, 
+                PaddedString, 
+                Padding, 
+                Pass,
+                Switch
+        )
 from ..publickey import PublicKey
 
+
 SYS_PROGRAM_ID: PublicKey = PublicKey("11111111111111111111111111111111")
-
 PUBLIC_KEY_LAYOUT = Bytes(32)
-
 RUST_STRING_LAYOUT = cStruct(
     "length" / Int32ul,
     Padding(4),

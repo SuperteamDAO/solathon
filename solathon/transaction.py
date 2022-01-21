@@ -283,7 +283,7 @@ class Transaction:
                     raise RuntimeError("signature has invalid length", sig)
                 self.signatures[idx].signature = sig
 
-    def sign(self, *signers: Keypair) -> None:
+    def sign(self) -> None:
         self.sign_partial(self.sender)
 
     def add_signature(self, pubkey: PublicKey, signature: bytes) -> None:
