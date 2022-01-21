@@ -48,3 +48,4 @@ class Keypair:
         private_key = base58.b58decode(private_key)
         seed = private_key[:32]
         return cls(NaclPrivateKey(seed))
+

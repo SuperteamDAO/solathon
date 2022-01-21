@@ -9,7 +9,11 @@ from nacl.exceptions import BadSignatureError
 from nacl.signing import VerifyKey
 from .keypair import Keypair
 from .publickey import PublicKey
-from .core.instructions import transfer, TransactionInstruction, AccountMeta
+from .core.instructions import (
+            transfer, 
+            TransactionInstruction, 
+            AccountMeta
+        )
 
 def encode_length(value: int) -> bytes:
     elems, rem_len = [], value
@@ -54,7 +58,6 @@ class MessageArgs(NamedTuple):
 
 class Message:
     def __init__(self, args: MessageArgs) -> None:
-        """Init message object."""
         self.header = args.header
         self.account_keys = [PublicKey(key) for key in args.account_keys]
         self.recent_blockhash = args.recent_blockhash
@@ -348,3 +351,4 @@ class Transaction:
                 f"transaction too large: {len(wire_transaction)} > {PACKET_DATA_SIZE}")
 
         return bytes(wire_transaction)
+

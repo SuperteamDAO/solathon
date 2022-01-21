@@ -57,11 +57,27 @@ class Client:
         res = self.http.send(data)
         return res
 
-    def send_transaction(
-        self,
-        transaction: Transaction,
-        recent_blockhash: Optional[str] = None,
-    ) -> RPCResponse:
+    def get_token_accounts_by_owner(self, public_key: str | PublicKey,
+                                    **kwargs) -> RPCResponse:
+        if "mint_id" not in kwargs and "program_id" not in kwargs:
+            raise ValueError("You must pass either mint_id or program_id keyword argument")
+
+        mint_id = kwargs.get("mint_id")
+        program_id = kwargs.get("program_id")
+        encoding = kwargs.get("encoding", "jsonParsed") # Who doesn't like JSON?
+
+        data = self.http.build_data(
+                method="getTokenAccountsByOwner", 
+                params=[
+                    str(public_key),
+                    {"mint": mint_id} if mint_id else {"programId": program_id},
+                    {"encoding": encoding}
+                ]
+        )
+        res = self.http.send(data)
+        return res
+
+    def send_transaction(self, transaction: Transaction, recent_blockhash: Optional[str] = None,) -> RPCResponse:
 
         if recent_blockhash is None:
             blockhash_resp = self.get_recent_blockhash()
@@ -76,3 +92,4 @@ class Client:
         )
         res = self.http.send(data)
         return res
+

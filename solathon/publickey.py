@@ -35,3 +35,4 @@ class PublicKey:
 
     def to_base58(self) -> bytes:
         return base58.b58encode(bytes(self))
+
