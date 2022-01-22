@@ -6,6 +6,12 @@ export const sidebarContent = [
         ],
     },
     {
+        title: "Client",
+        pages: [
+            {"name": "Client", "route": "/client" ,"tags": ["client", "sync", "connect"]},
+        ],
+    },
+    {
         title: "Models",
         pages: [
             {"name": "PublicKey", "route": "/publickey", "tags": ["publicKey", "pubkey", "address"]},
