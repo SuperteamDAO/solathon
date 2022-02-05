@@ -1,0 +1,17 @@
+@import "abstracts/mixins.scss";
+@import "abstracts/variables.scss";
+
+.index {
+    position: absolute;
+    margin-top: 20px;
+    > h1 {
+        @include extra_bold_font;
+        color: white;
+        font-size: 2.5rem;
+    }
+    > p {
+        @include medium_font;
+        color: $grey;
+        font-size: 1.3rem;
+    }
+}

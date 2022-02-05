@@ -1,12 +1,10 @@
-import React from 'react'
 import Link from 'next/link'
 import { useRouter } from "next/router";
 import { sidebarContent } from "./sidebarContent";
-import styles from "../styles/modules/Sidebar.module.css"
+import styles from "../scss/components/Sidebar.module.scss"
 
 export const Sidebar = () => {
   return (
-
     <div className={styles.navbar}>
       <SidebarContent />
     </div>

@@ -1,12 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+@import "abstracts/mixins.scss";
 
 html,
 body {
   padding: 0;
   margin: 0;
   background: #18181B; 
-  font-family: 'Poppins', sans-serif;
-  font-weight: 400;
+  @include medium_font;
 }
 
 a, li {
@@ -19,4 +18,8 @@ a, li {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+.pages {
+  margin-left: 250px;
 }

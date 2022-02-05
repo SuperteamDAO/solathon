@@ -2,6 +2,7 @@
 
 .navbar {
   display: flex;
+  position: fixed;
   width: 200px;
   height: 100vh;
   align-items: center;
@@ -25,30 +26,30 @@
 
 .links {
   margin-top: 10px;
+  & > a {
+    width: 100%;
+    display: inline-block
+  }
 }
-.linkName a{
-  width: 100%;
-  display: inline-block;
-}
+
 
 .linkName, .linkNameActive {
   color: #AEAEAE;
   font-size: 1.05rem;
   width: 100%;
-  padding: 8px 0px;
+  padding: 10px 0px;
   display: inline-block;
   transition: .2s ease-out;
   cursor: pointer;
   border-radius: 0px 10px 10px 0px;
+  &:hover {
+    background: #21232E;
+    color: #7196DF;
+  }
 }
 
 .linkNameActive {
   color: #7196DF;
   background: #21232E;
-
 }
 
-.linkName:hover {
-  background: #21232E;
-  color: #7196DF;
-}

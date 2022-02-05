@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+@mixin light_font {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+  }
+
+@mixin medium_font {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+}
+
+@mixin bold_font {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+}
+
+@mixin extra_bold_font {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
