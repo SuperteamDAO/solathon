@@ -1,5 +1,10 @@
 @import "abstracts/mixins.scss";
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 html,
 body {
   padding: 0;
@@ -21,5 +26,5 @@ a, li {
 }
 
 .pages {
-  margin-left: 250px;
+  margin-left: 280px;
 }
