@@ -1,13 +1,5 @@
-import '../scss/globals.scss'
-import { Sidebar } from '../components/Sidebar'
+import '../styles/globals.scss'
 
-function MyApp({ Component, pageProps }) {
-  return (
-    <>
-      <Sidebar />
-      <div className="pages"><Component {...pageProps} /></div>
-    </>
-  )
+export default function Solathon({ Component, pageProps }) {
+  return <Component {...pageProps} />
 }
-
-export default MyApp
