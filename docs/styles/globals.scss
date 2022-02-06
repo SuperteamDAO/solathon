@@ -104,10 +104,10 @@ code {
 }
 .dark code {
     --tw-bg-opacity: 1;
-    background-color: rgba(45, 55, 72, var(--tw-bg-opacity));
-    color: rgba(226, 232, 240, var(--tw-text-opacity));
-    
+    background-color: #1C1E25;
+    color: $codeText;
 }
+
 pre {
     margin-top: 1.5rem;
     margin-bottom: 1rem;
@@ -115,14 +115,12 @@ pre {
     border-radius: 0.5rem;
     --tw-bg-opacity: 1;
     background-color: rgba(237, 242, 247, var(--tw-bg-opacity));
-    padding: 1rem;
-    min-width: 230px;
-    
+    padding: 1rem;   
 }
+
 .dark pre {
     --tw-bg-opacity: 1;
     background-color: #1C1E25;
-    min-width: 230px;
 }
 pre code {
     display: inline-block;
@@ -130,10 +128,10 @@ pre code {
     border-radius: 0;
     background-color: transparent;
     padding: 0;
-    font-size: 0.875rem;
+    font-size: 1rem;
     line-height: 1.25rem;
+    min-width: 210px;
     --tw-text-opacity: 1;
-    color: white;
 }
 a code {
     color: currentColor;
