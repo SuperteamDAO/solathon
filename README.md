@@ -36,15 +36,15 @@ client = Client("https://api.devnet.solana.com")
 ```
 ## Basic usage example
 ```python
-# Basic example on generating a random public key and fetching it's balance
+# Basic example of fetching a public key's balance
 from solathon import Client, PublicKey
 
 client = Client("https://api.devnet.solana.com")
-public_key = PublicKey(1) # Creating a random public key
+public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
 
 balance = client.get_balance(public_key)
 print(balance)
 ```
 
 # 🗃️ Contribution
-Just drop a pull request lol
+Drop a pull request for anything which seems wrong or can be improved, could be a small typo or an entirely new feature!
