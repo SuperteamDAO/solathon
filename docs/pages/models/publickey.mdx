@@ -1,4 +1,25 @@
-<details open>
-  <summary>Attributes</summary>
-  <br />- getUserGuild - getItems - getItems
-</details>
+# PublicKey
+
+**Class representing a public key object. Preferred to use this over plain public key string**
+
+import { Code } from '/components/Code';
+
+<Code>
+  ```python 
+  class PublicKey(value: bytearray | bytes | int | str | List[int])
+  ```
+</Code>
+
+import Callout from 'nextra-theme-docs/callout'
+
+> The class requires one value argument which can be string, bytes, bytearray or int array form of the public key.
+
+#### Methods
+- [to_base58](#to_base58)
+
+#### Attributes
+*None*
+
+## Attributes
+#### .to_base58
+<p>Converts the public key in base 58 form</p>

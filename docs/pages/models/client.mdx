@@ -1,0 +1,62 @@
+# Client
+
+**The base client object used to interact with the blockchain. This is where it all begins.**
+
+import { Code } from '/components/Code';
+
+<Code>
+  ```python 
+  class Client(endpoint: str, local: bool=False)
+  ```
+</Code>
+
+import Callout from 'nextra-theme-docs/callout'
+
+> To initialise a client, one of the three [RPC cluster endpoint URLs](https://docs.solana.com/cluster/rpc-endpoints) must be passed. When running a local cluster, the local argument must be passed as true for the local endpoint to work.
+
+#### Methods
+- [get_account_info](#get_account_info)
+- [get_balance](#get_balance)
+- [get_block](#get_block)
+- [get_transaction](#get_transaction)
+
+#### Attributes
+- [endpoint](#endpoint)
+
+## Methods
+#### .get_account_info
+Returns the account's information through the provided public key argument.
+
+<Code>
+```python 
+def get_account_info(public_key: PublicKey | str)
+```
+</Code>
+
+#### .get_balance
+Returns the account's balance in [lamports](https://docs.solana.com/introduction#what-are-sols) through the provided public key argument.
+
+<Code>
+```python 
+def get_balance(public_key: PublicKey | str)
+```
+</Code>
+#### .get_block
+Returns identity and transaction information about a confirmed block in the ledger by the slot provided
+
+<Code>
+```python 
+def get_slot(slot: int)
+```
+</Code>
+#### .get_transaction
+Returns a transaction's details by the confirmed transaction signature string (in base 58)
+<Code>
+```python 
+def get_transaction(signature: str)
+```
+</Code>
+
+## Attributes
+#### .endpoint
+Returns the endpoint which the client is currentlly using.

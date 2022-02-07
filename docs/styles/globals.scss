@@ -28,8 +28,8 @@ h1 {
 }
 h2 {
     margin-top: 2.5rem;
-    font-size: 2.25rem;
-    line-height: 2.5rem;
+    font-size: 2.15rem;
+    line-height: 2.25rem;
     font-weight: 600;
     letter-spacing: -0.015em;
     border-bottom-width: 1px;
@@ -69,12 +69,10 @@ h6 {
 a {
     --tw-text-opacity: 1;
     color: rgba(66, 153, 225, var(--tw-text-opacity));
-    text-decoration: underline;
-    text-underline-position: under;
 }
 p {
     line-height: 1.75rem;
-    font-size: 1.25rem;
+    font-size: 1.15rem;
 }
 .table-container:not(:first-child),
 blockquote:not(:first-child),
@@ -101,6 +99,7 @@ code {
 .dark code,
 code {
     --tw-text-opacity: 1;
+    color: rgb(46, 119, 255);
 }
 .dark code {
     --tw-bg-opacity: 1;
@@ -115,6 +114,7 @@ pre {
     --tw-bg-opacity: 1;
     background-color: rgba(237, 242, 247, var(--tw-bg-opacity));
     padding: 1rem;   
+    padding-right: 4rem;
 }
 
 .dark pre {
@@ -129,7 +129,6 @@ pre code {
     padding: 0;
     font-size: 1rem;
     line-height: 1.25rem;
-    min-width: 210px;
     --tw-text-opacity: 1;
 }
 a code {
