@@ -25,13 +25,22 @@ pip install solathon
 ```
 </Code>
 
+### Feature rich
+Solathon covers most of the Solana JSON RPC. Other than that, it provides web3 authorization, blockchain storage and utility functions.
+
+### High performance
+Being light weight and optimized for the best performence; Solathon comes with batteries included without being too heavy.
+
+### Easy to use
+Everything has been simplified down to be as easy and quick as possible to use, using object-oriented approach it makes everything easy to understand and work with.
 
 <Code>
 ```python 
-from solathon import Client, PublicKey
+# Simple example to fetch a wallet's balance;
+from solathon import Client, PublicKey;
 client = Client("https://api.devnet.solana.com")
 public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
-balance = Client.get_balance(public_key)
+balance = Client.get_balance(public_key);
 print(balance)
 ```
 </Code>
