@@ -36,5 +36,5 @@ class HTTPClient:
             "jsonrpc": "2.0",
             "id": self.request_id,
             "method": method,
-            "params": params,
+            "params": None if params[0] == None else params,
         }

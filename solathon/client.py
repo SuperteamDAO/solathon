@@ -20,6 +20,7 @@ class Client:
                 " Use the argument local to use a local development endpoint."
             )
         self.http = HTTPClient(endpoint)
+        self.endpoint = endpoint
 
     def get_account_info(self, public_key: PublicKey | str) -> RPCResponse:
         data = self.http.build_data(
@@ -38,6 +39,34 @@ class Client:
     def get_block(self, slot: int) -> RPCResponse:
         data = self.http.build_data(
             method="getBlock", params=[slot]
+        )
+        res = self.http.send(data)
+        return res
+
+    def get_block_height(self) -> RPCResponse:
+        data = self.http.build_data(
+            method="getBlockHeight", params=[None]
+        )
+        res = self.http.send(data)
+        return res
+
+    def get_block_production(self) -> RPCResponse:
+        data = self.http.build_data(
+            method="getBlockProduction", params=[None]
+        )
+        res = self.http.send(data)
+        return res
+
+    def get_supply(self) -> RPCResponse:
+        data = self.http.build_data(
+            method="getSupply", params=[None]
+        )
+        res = self.http.send(data)
+        return res
+
+    def get_identity(self) -> RPCResponse:
+        data = self.http.build_data(
+            method="getIdentity", params=[None]
         )
         res = self.http.send(data)
         return res
