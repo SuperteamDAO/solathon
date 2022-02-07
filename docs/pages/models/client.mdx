@@ -1,8 +1,7 @@
-# Client
-
-**The base client object used to interact with the blockchain. This is where it all begins.**
-
 import { Code } from '/components/Code';
+
+# Client
+**The base client object used to interact with the blockchain. This is where it all begins.**
 
 <Code>
   ```python 
@@ -10,18 +9,26 @@ import { Code } from '/components/Code';
   ```
 </Code>
 
-import Callout from 'nextra-theme-docs/callout'
-
 > To initialise a client, one of the three [RPC cluster endpoint URLs](https://docs.solana.com/cluster/rpc-endpoints) must be passed. When running a local cluster, the local argument must be passed as true for the local endpoint to work.
 
 #### Methods
 - [get_account_info](#get_account_info)
 - [get_balance](#get_balance)
 - [get_block](#get_block)
+- [get_block_height](#get_block_height)
+- [get_block_production](#get_block_production)
+- [get_supply](#get_supply)
+- [get_identity](#get_identity)
+- [get_block](#get_block)
 - [get_transaction](#get_transaction)
+- [get_recent_blockhash](#get_recent_blockhash)
+- [get_token_accounts_by_owner](#get_token_accounts_by_owner)
+- [send_transaction](#send_transaction)
 
 #### Attributes
 - [endpoint](#endpoint)
+- [http](#http)
+
 
 ## Methods
 #### .get_account_info
@@ -41,22 +48,91 @@ Returns the account's balance in [lamports](https://docs.solana.com/introduction
 def get_balance(public_key: PublicKey | str)
 ```
 </Code>
+
+#### .get_block_height
+Returns the current block height of the node
+
+<Code>
+```python 
+def get_block_height()
+```
+</Code>
+
+#### .get_block_production
+Returns recent block production information from the current or previous epoch.
+
+<Code>
+```python 
+def get_block_production()
+```
+</Code>
+
+#### .get_supply
+Returns information about the current supply.
+
+<Code>
+```python 
+def get_supply()
+```
+</Code>
+
+#### .get_identity
+Returns the identity public key for the current node
+
+<Code>
+```python 
+def get_identity()
+```
+</Code>
+
 #### .get_block
 Returns identity and transaction information about a confirmed block in the ledger by the slot provided
 
 <Code>
 ```python 
-def get_slot(slot: int)
+def get_block(slot: int)
 ```
 </Code>
+
 #### .get_transaction
 Returns a transaction's details by the confirmed transaction signature string (in base 58)
+
 <Code>
 ```python 
 def get_transaction(signature: str)
 ```
 </Code>
 
+#### .get_recent_blockhash
+Returns a recent block hash from the ledger, and a fee schedule that can be used to compute the cost of submitting a transaction using it.
+
+<Code>
+```python 
+def get_recent_blockhash()
+```
+</Code>
+
+#### .get_token_accounts_by_owner
+Returns all SPL Token accounts using the public key provided.
+
+<Code>
+```python 
+def get_token_accounts_by_owner(public_key: PublicKey | str)
+```
+</Code>
+
+#### .send_transaction
+Submits a signed transaction to the cluster for processing
+
+<Code>
+```python 
+def send_transaction(transaction: Transaction, recent_blockhash: Optional[str] = None)
+```
+</Code>
+
+
 ## Attributes
 #### .endpoint
 Returns the endpoint which the client is currentlly using.
+#### .http
+Returns the http object being used to interact with the JSON RPC.
