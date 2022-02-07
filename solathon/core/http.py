@@ -38,5 +38,3 @@ class HTTPClient:
             "method": method,
             "params": params,
         }
-
-

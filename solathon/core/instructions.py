@@ -7,14 +7,14 @@ from dataclasses import dataclass
 from typing import NamedTuple, List
 from construct import Struct as cStruct
 from construct import (
-                Bytes, 
-                Int32ul, 
-                Int64ul, 
-                PaddedString, 
-                Padding, 
-                Pass,
-                Switch
-        )
+    Bytes,
+    Int32ul,
+    Int64ul,
+    PaddedString,
+    Padding,
+    Pass,
+    Switch
+)
 from ..publickey import PublicKey
 
 
@@ -69,11 +69,13 @@ _AUTHORIZE_NONCE_ACCOUNT_LAYOUT = cStruct("authorized" / PUBLIC_KEY_LAYOUT)
 _ALLOCATE_LAYOUT = cStruct("space" / Int64ul)
 
 _ALLOCATE_WITH_SEED_LAYOUT = cStruct(
-    "base" / PUBLIC_KEY_LAYOUT, "seed" / RUST_STRING_LAYOUT, "space" / Int64ul, "program_id" / PUBLIC_KEY_LAYOUT
+    "base" / PUBLIC_KEY_LAYOUT, "seed" / RUST_STRING_LAYOUT, "space" /
+    Int64ul, "program_id" / PUBLIC_KEY_LAYOUT
 )
 
 _ASSIGN_WITH_SEED_LAYOUT = cStruct(
-    "base" / PUBLIC_KEY_LAYOUT, "seed" / RUST_STRING_LAYOUT, "program_id" / PUBLIC_KEY_LAYOUT
+    "base" / PUBLIC_KEY_LAYOUT, "seed" /
+    RUST_STRING_LAYOUT, "program_id" / PUBLIC_KEY_LAYOUT
 )
 
 _TRANSFER_WITH_SEED_LAYOUT = cStruct(
@@ -110,6 +112,7 @@ class TransferParams(NamedTuple):
     to_pubkey: PublicKey
     lamports: int
 
+
 @dataclass
 class AccountMeta:
     pubkey: PublicKey
@@ -123,10 +126,10 @@ class TransactionInstruction(NamedTuple):
     data: bytes = bytes(0)
 
 
-
 def transfer(sender, receiver, lamports) -> TransactionInstruction:
     data = SYSTEM_INSTRUCTIONS_LAYOUT.build(
-        dict(instruction_type=InstructionType.TRANSFER, args=dict(lamports=lamports))
+        dict(instruction_type=InstructionType.TRANSFER,
+             args=dict(lamports=lamports))
     )
     return TransactionInstruction(
         keys=[
@@ -136,4 +139,3 @@ def transfer(sender, receiver, lamports) -> TransactionInstruction:
         program_id=SYS_PROGRAM_ID,
         data=data,
     )
-

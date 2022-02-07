@@ -21,8 +21,9 @@ class Keypair:
             self.key_pair = value
         else:
             raise ValueError(
-                "Keypair initialization value must be a nacl.public.PrivateKey object. "
-                "To initialize with private key string, use 'from_private_key' method"
+                "Keypair initialization value must be a "
+                "nacl.public.PrivateKey object. To initialize with "
+                "private key string, use 'from_private_key' method"
             )
         verify_key = SigningKey(bytes(self.key_pair)).verify_key
         self.public_key = PublicKey(verify_key)
@@ -48,4 +49,3 @@ class Keypair:
         private_key = base58.b58decode(private_key)
         seed = private_key[:32]
         return cls(NaclPrivateKey(seed))
-

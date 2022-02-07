@@ -1,24 +1,24 @@
-from typing import List, Union
 import base58
 
 
 class PublicKey:
     LENGTH = 32
 
-    def __init__(self, value: Union[bytearray, bytes, int, str, List[int]]):
+    def __init__(self, value: bytearray | bytes | int | str | list[int]):
         if isinstance(value, str):
             try:
                 self.public_key = base58.b58decode(value)
             except ValueError:
-                raise ValueError("Invalid public key")
+                raise ValueError("Invalid public key.")
             if len(self.public_key) != self.LENGTH:
-                raise ValueError("Invalid public key")
+                raise ValueError("Invalid public key, the length is wrong.")
         elif isinstance(value, int):
             self.public_key = bytes([value])
         else:
             self.public_key = bytes(value)
+
         if len(self.public_key) > self.LENGTH:
-            raise ValueError("Invalid public key")
+            raise ValueError("Invalid public key, the length is wrong.")
 
     def __bytes__(self) -> bytes:
         return (
@@ -35,4 +35,3 @@ class PublicKey:
 
     def to_base58(self) -> bytes:
         return base58.b58encode(bytes(self))
-

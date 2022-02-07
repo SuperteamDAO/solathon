@@ -11,4 +11,3 @@ class RPCResponse(TypedDict):
     id: int
     result: Any
     error: RPCError
-
