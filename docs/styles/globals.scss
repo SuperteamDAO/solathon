@@ -514,7 +514,7 @@ a code {
 }
 .dark .sidebar li.active > a {
     --tw-bg-opacity: 1;
-    background-color: rgba(45, 55, 72, var(--tw-bg-opacity));
+    background-color: $hoverBg;
     --tw-text-opacity: 1;
     color: rgba(255, 255, 255, var(--tw-text-opacity));
 }
@@ -554,7 +554,7 @@ a code {
 }
 .dark .sidebar a:hover,
 .dark .sidebar button:hover {
-    background-color: #21232E;
+    background-color: $hoverBg;
     color: white;
 }
 

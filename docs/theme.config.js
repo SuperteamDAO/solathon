@@ -1,6 +1,6 @@
 export default {
   github: 'https://github.com/gitbolt/solathon',
-  docsRepositoryBase: 'https://github.com/GitBolt/solathon/tree/master/docs',
+  docsRepositoryBase: 'https://github.com/GitBolt/solathon/tree/master/docs/pages',
   titleSuffix: ' | Solathon',
   logo: (
     <></>
