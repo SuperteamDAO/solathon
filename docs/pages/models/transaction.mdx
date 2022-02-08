@@ -1,0 +1,124 @@
+import { Code } from '/components/Code';
+import Callout from 'nextra-theme-docs/callout'
+
+# Transaction
+**Class representing a transaction model. This object is passed in [send_transaction](/models/client#send_transaction) method**
+
+<Code>
+  ```python 
+    class Transaction(sender: Keypair, receiver: PublicKey | str, 
+                    lamports: int, recent_blockhash: Optional[str] = None)
+  ```
+</Code>
+
+> The class requires a sender which should be a [keypair](/models/keypair) object, a receiver which can be either keypair or public key (public key can be string but preferrd to use [PublicKey](/models/publickey) object) and the amount in lamports, blockhash is optional.
+
+
+#### Methods
+- [compile_transaction](#compile_transaction)
+- [serialize_message](#serialize_message)
+- [sign](#sign)
+- [add_signature](#add_signature)
+- [add_signer](#add_signer)
+- [verify_signatures](#verify_signatures)
+- [serialize](#serialize)
+
+#### Attributes
+- [sender](#sender)
+- [receiver](#receiver)
+- [instructions](#instructions)
+- [signatures](#signatures)
+- [recent_blockhash](#recent_blockhash)
+
+
+## Methods
+#### .compile_transaction
+Compiles all the transaction data.
+
+<Code>
+```python 
+def compile_transaction()
+```
+</Code>
+
+#### .serialize_message
+This method runs the [#compile_transaction] method and serializes the message returned from it.
+
+<Code>
+```python 
+def serialize_message()
+```
+</Code>
+
+#### .sign
+Signs the transaction by the sender.
+
+<Code>
+```python 
+def sign()
+```
+</Code>
+
+#### .add_signature
+Adds an externally created signature to the transaction object. Public key and signature (in bytes) are required arguments.
+
+<Code>
+```python 
+def add_signature(pubkey: PublicKey | str, signature: bytes)
+```
+</Code>
+<Callout emoji="⚠️" type="warning">
+    <p style={{color: "white", fontSize:"1rem"}}>This method is not stable right now.</p>
+</Callout>
+
+#### .add_signer
+Add a signer to the transaction object. The signer should be a [keypair](/models/keypair) object.
+
+<Code>
+```python 
+def add_signer(keypair: Keypair)
+```
+</Code>
+<Callout emoji="⚠️" type="warning">
+    <p style={{color: "white", fontSize:"1rem"}}>This method is not stable right now.</p>
+</Callout>
+
+#### .verify_signatures
+Verify if the signatures are correct in a complete signed transaction object.
+
+<Code>
+```python 
+def verify_signatures()
+```
+</Code>
+
+#### .serialize
+This method serializes the message to bytes.
+
+<Code>
+```python 
+def serialize()
+```
+</Code>
+
+- [sender](#sender)
+- [receiver](#receiver)
+- [instructions](#instructions)
+- [signatures](#signatures)
+- [recent_blockhash](#recent_blockhash)
+
+## Attributes
+#### .sender
+Returns the keypair for the sender.
+
+#### .receiver
+Returns the public key object of the receiver.
+
+#### .instructions
+Returns transaction instructions.
+
+#### .signatures
+Returns all the signatures of the transaction object.
+
+#### .recent_blockhash
+Returns the recent blockhash of the transaction object.

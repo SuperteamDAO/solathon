@@ -1,4 +1,5 @@
 {
   "client": "Client",
-  "publickey": "PublicKey"
+  "publickey": "PublicKey",
+  "transaction": "Transaction"
 }
