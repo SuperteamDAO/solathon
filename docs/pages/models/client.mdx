@@ -1,4 +1,5 @@
 import { Code } from '/components/Code';
+import Callout from 'nextra-theme-docs/callout'
 
 # Client
 **The base client object used to interact with the blockchain. This is where it all begins.**
@@ -113,13 +114,31 @@ def get_recent_blockhash()
 </Code>
 
 #### .get_token_accounts_by_owner
-Returns all SPL Token accounts using the public key provided.
+Returns all SPL Token accounts of the public key provided. Either mint_id or program_id keyword argument is required, encoding is optional.
 
 <Code>
 ```python 
-def get_token_accounts_by_owner(public_key: PublicKey | str)
+def get_token_accounts_by_owner(public_key: PublicKey | str, **kwargs)
 ```
 </Code>
+
+Example:
+
+<Code>
+```python 
+from solathon import Client, PublicKey;
+client = Client("https://api.mainnet-beta.solana.com");
+public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
+# 
+program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+tokens = client.get_token_accounts_by_owner(public_key, program_id);
+print(tokens)
+```
+</Code>
+
+<Callout emoji="⚠️" type="warning">
+    <p style={{color: "white", fontSize:"1rem"}}>This method returns token on mainnet only.</p>
+</Callout>
 
 #### .send_transaction
 Submits a signed [transaction object](/models/transaction) to the cluster for processing, recent blockhash is optional.
@@ -130,6 +149,28 @@ def send_transaction(transaction: Transaction,
                     recent_blockhash: Optional[str] = None)
 ```
 </Code>
+
+Example:
+
+<Code>
+```python 
+from solathon import Client, Transaction, PublicKey, Keypair;
+client = Client("https://api.devnet.solana.com");
+# Keep your private key secret! This is a dummy wallet for examples.
+sender = Keypair.from_private_key((
+    "5M8Vv4affuVJsKrTq3XofuxZLZEt5qrX3Xa5yyfVtNy6"
+    "yvWoc8BTARJeXSRJNN7pGd1H6UarDxtKC5a2k21YM6WW"
+));
+# Directly public key string can be used but PublicKey object is recommended
+receiver = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44a");
+# This is the amount in lamports
+amount = 1000;
+transaction = Transaction(sender, receiver, amount)
+result = client.send_transaction(transaction);
+print(result)
+```
+</Code>
+
 
 
 ## Attributes
