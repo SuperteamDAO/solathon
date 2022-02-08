@@ -122,11 +122,12 @@ def get_token_accounts_by_owner(public_key: PublicKey | str)
 </Code>
 
 #### .send_transaction
-Submits a signed transaction to the cluster for processing
+Submits a signed transaction to the cluster for processing, recent blockhash is optional.
 
 <Code>
 ```python 
-def send_transaction(transaction: Transaction, recent_blockhash: Optional[str] = None)
+def send_transaction(transaction: Transaction, 
+                    recent_blockhash: Optional[str] = None)
 ```
 </Code>
 

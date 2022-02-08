@@ -9,6 +9,23 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
+a, button, img, div, pre, code {
+    -webkit-tap-highlight-color: transparent;
+    scrollbar-color: $gray $secondaryBg;
+    scrollbar-width: thin;
+}
+// scrollbar
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    background-color: $stroke;
+}
+::-webkit-scrollbar-thumb {
+    background: $gray; 
+    border-radius: 5px;
+}
+
 .dark body {
     --tw-bg-opacity: 1;
     background-color: $bg;
