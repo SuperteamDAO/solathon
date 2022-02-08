@@ -1,0 +1,54 @@
+import { Code } from '/components/Code';
+
+# Keypair
+**Keypair is the combination of a public key and private key, any authorized action requires this.**
+
+<Code>
+  ```python 
+  class Keypair(value: Optional[NaclPrivateKey] = None)
+  ```
+</Code>
+
+> The value is required to initialise the object with an existing [nacl.Public.PrivateKey](https://pynacl.readthedocs.io/en/latest/public/#nacl.public.PrivateKey) object. To initialize with a private key as a string or bytes, use [from_private_key](#from_private_key) class method. Without the value a new keypair is generated.
+
+#### Methods
+- [sign](#sign)
+- [from_private_key](#from_private_key)
+
+#### Attributes
+- [public_key](#public_key)
+- [private_key](#private_key)
+- [keypair](#keypair)
+
+
+## Methods
+
+#### .sign
+Signs a message which can be either a string or bytes.
+
+<Code>
+```python 
+def sign(message: str | bytes)
+```
+</Code>
+
+#### .from_private_key
+Initializes the keypair object using a private key, which can be either a string or bytes.
+
+<Code>
+```python 
+def from_private_key(private_key: str | bytes)
+```
+</Code>
+
+
+## Attributes
+
+#### .public_key
+Returns the keypair object's public key.
+
+#### .private_key
+Returns the keypair object's private key.
+
+#### .keypair
+Returns the keypair value itself in bytes.

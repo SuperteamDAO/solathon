@@ -1,4 +1,5 @@
 import { Code } from '/components/Code';
+import Callout from 'nextra-theme-docs/callout'
 
 # PublicKey
 **Class representing a public key model. Preferred to use this over plain public key string**
@@ -19,9 +20,18 @@ import { Code } from '/components/Code';
 
 
 ## Methods
+
 #### .to_base58
 Converts the public key into base 58 form
 
+<Code>
+```python 
+def to_base58()
+```
+</Code>
+
 
 ## Attributes
-*PublicKey class has no attributes*
+<Callout>
+    <p style={{color: "white", fontSize:"1rem"}}>PublicKey class has no attributes.</p>
+</Callout>

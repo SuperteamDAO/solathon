@@ -129,8 +129,7 @@ Example:
 from solathon import Client, PublicKey;
 client = Client("https://api.mainnet-beta.solana.com");
 public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
-# 
-program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" # Token program ID;
 tokens = client.get_token_accounts_by_owner(public_key, program_id);
 print(tokens)
 ```
@@ -156,11 +155,8 @@ Example:
 ```python 
 from solathon import Client, Transaction, PublicKey, Keypair;
 client = Client("https://api.devnet.solana.com");
-# Keep your private key secret! This is a dummy wallet for examples.
-sender = Keypair.from_private_key((
-    "5M8Vv4affuVJsKrTq3XofuxZLZEt5qrX3Xa5yyfVtNy6"
-    "yvWoc8BTARJeXSRJNN7pGd1H6UarDxtKC5a2k21YM6WW"
-));
+# initialising a new keypair, make sure to drop some devnet tokens for the transaction to not fail
+sender = Keypair()
 # Directly public key string can be used but PublicKey object is recommended
 receiver = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44a");
 # This is the amount in lamports
