@@ -7,8 +7,11 @@ import Tick from '../public/icons/Tick.svg'
 export const Code = ({ children }) => {
   const [icon, setIcon] = useState(Copy)
 
+  console.log(useRouter().isPreview)
+  console.log(useRouter().isReady)
+
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(children.props.children.props.children)
+    navigator.clipboard.writeText(useRouter().isPreview ? {} : children.props.children.props.children)
     setIcon(Tick)
     setTimeout(() => setIcon(Copy), 3000)
   }
