@@ -10,10 +10,11 @@ from nacl.signing import VerifyKey
 from .keypair import Keypair
 from .publickey import PublicKey
 from .core.instructions import (
-            transfer, 
-            TransactionInstruction, 
-            AccountMeta
-        )
+    transfer,
+    TransactionInstruction,
+    AccountMeta
+)
+
 
 def encode_length(value: int) -> bytes:
     elems, rem_len = [], value
@@ -77,11 +78,15 @@ class Message:
         )
         return b"".join(
             MessageFormat(
-                num_required_signatures=to_uint8_bytes(self.header.num_required_signatures),
-                num_readonly_signed_accounts=to_uint8_bytes(self.header.num_readonly_signed_accounts),
-                num_readonly_unsigned_accounts=to_uint8_bytes(self.header.num_readonly_unsigned_accounts),
+                num_required_signatures=to_uint8_bytes(
+                    self.header.num_required_signatures),
+                num_readonly_signed_accounts=to_uint8_bytes(
+                    self.header.num_readonly_signed_accounts),
+                num_readonly_unsigned_accounts=to_uint8_bytes(
+                    self.header.num_readonly_unsigned_accounts),
                 pubkeys_length=encode_length(len(self.account_keys)),
-                pubkeys=b"".join([bytes(pubkey) for pubkey in self.account_keys]),
+                pubkeys=b"".join([bytes(pubkey)
+                                 for pubkey in self.account_keys]),
                 recent_blockhash=b58decode(self.recent_blockhash),
             )
         )
@@ -113,7 +118,8 @@ class Message:
         )
 
     def is_account_writable(self, index: int) -> bool:
-        writable = index < (self.header.num_required_signatures - self.header.num_readonly_signed_accounts)
+        writable = index < (self.header.num_required_signatures -
+                            self.header.num_readonly_signed_accounts)
         return writable or self.header.num_required_signatures <= index < (
             len(self.account_keys) - self.header.num_readonly_unsigned_accounts
         )
@@ -127,9 +133,8 @@ class Message:
         message_buffer.extend(instruction_count)
         for instr in self.instructions:
             message_buffer.extend(Message.__encode_instruction(instr))
-        
-        return bytes(message_buffer)
 
+        return bytes(message_buffer)
 
 
 @dataclass
@@ -148,17 +153,14 @@ class Transaction:
         recent_blockhash: Optional[str] = None,
     ) -> None:
         self.sender = sender
-        self.instructions: List[TransactionInstruction] = [transfer(sender.public_key, receiver, lamports)]
-        self.signatures: List[SigPubkeyPair] =[]
-            
+        self.receiver = receiver
+        self.instructions: List[TransactionInstruction] = [
+            transfer(sender.public_key, receiver, lamports)]
+        self.signatures: List[SigPubkeyPair] = []
+
         self.recent_blockhash, self.nonce_info = recent_blockhash, None
 
-
-    def signature(self) -> Optional[bytes]:
-        return None if not self.signatures else self.signatures[0].signature
-
-
-    def compile_message(self) -> Message:
+    def compile_transaction(self) -> Message:
 
         if self.nonce_info and self.instructions[0] != self.nonce_info.nonce_instruction:
             self.recent_blockhash = self.nonce_info.nonce
@@ -217,7 +219,8 @@ class Transaction:
             uniq_metas = [AccountMeta(fee_payer, True, True)] + uniq_metas
         else:
             uniq_metas = (
-                [uniq_metas[fee_payer_idx]] + uniq_metas[:fee_payer_idx] + uniq_metas[fee_payer_idx + 1:]
+                [uniq_metas[fee_payer_idx]] + uniq_metas[:fee_payer_idx] +
+                uniq_metas[fee_payer_idx + 1:]
             )
 
         signed_keys: List[str] = []
@@ -248,7 +251,6 @@ class Transaction:
             for instr in self.instructions
         ]
 
-
         return Message(
             MessageArgs(
                 header=MessageHeader(
@@ -263,28 +265,25 @@ class Transaction:
         )
 
     def serialize_message(self) -> bytes:
-        return self.compile_message().serialize()
+        return self.compile_transaction().serialize()
 
-    def sign_partial(self, *partial_signers: PublicKey | Keypair) -> None:
-
+    def sign(self) -> None:
         def partial_signer_pubkey(account_or_pubkey: PublicKey | Keypair):
             return account_or_pubkey.public_key if isinstance(account_or_pubkey, Keypair) else account_or_pubkey
 
         signatures: List[SigPubkeyPair] = [
-            SigPubkeyPair(pubkey=partial_signer_pubkey(partial_signer)) for partial_signer in partial_signers
+            # self.sender is the only signer for now, which is why it's the only object in list
+            SigPubkeyPair(pubkey=partial_signer_pubkey(partial_signer)) for partial_signer in [self.sender]
         ]
         self.signatures = signatures
         sign_data = self.serialize_message()
 
-        for idx, partial_signer in enumerate(partial_signers):
+        for idx, partial_signer in enumerate([self.sender]):
             if isinstance(partial_signer, Keypair):
                 sig = partial_signer.sign(sign_data).signature
                 if len(sig) != SIG_LENGTH:
                     raise RuntimeError("signature has invalid length", sig)
                 self.signatures[idx].signature = sig
-
-    def sign(self) -> None:
-        self.sign_partial(self.sender)
 
     def add_signature(self, pubkey: PublicKey, signature: bytes) -> None:
         if len(signature) != SIG_LENGTH:
@@ -314,7 +313,6 @@ class Transaction:
                 return False
         return True
 
-
     def serialize(self) -> bytes:
         if not self.signatures:
             raise AttributeError("transaction has not been signed")
@@ -324,7 +322,6 @@ class Transaction:
             raise AttributeError("transaction has not been signed correctly")
 
         return self.__serialize(sign_data)
-
 
     def __serialize(self, signed_data: bytes) -> bytes:
         if len(self.signatures) >= SIG_LENGTH * 4:
@@ -351,4 +348,3 @@ class Transaction:
                 f"transaction too large: {len(wire_transaction)} > {PACKET_DATA_SIZE}")
 
         return bytes(wire_transaction)
-
