@@ -16,7 +16,6 @@ class Keypair:
     def __init__(self, value: Optional[NaclPrivateKey] = None) -> None:
         if value is None:
             self.key_pair = NaclPrivateKey.generate()
-            print(self.key_pair)
         elif isinstance(value, NaclPrivateKey):
             self.key_pair = value
         else:
@@ -45,7 +44,7 @@ class Keypair:
         )
 
     @classmethod
-    def from_private_key(cls, private_key: bytes) -> Keypair:
+    def from_private_key(cls, private_key: str | bytes) -> Keypair:
         private_key = base58.b58decode(private_key)
         seed = private_key[:32]
         return cls(NaclPrivateKey(seed))
