@@ -3,7 +3,7 @@ import { useState } from 'react'
 import Copy from '../public/icons/Copy.svg'
 import Tick from '../public/icons/Tick.svg'
 
-export const Code = ({ children }) => {
+export const Code = ({ children } = {props:{children:{props:{children:"Hi"}}}}) => {
   const [icon, setIcon] = useState(Copy)
 
   const copyToClipboard = () => {
@@ -11,6 +11,7 @@ export const Code = ({ children }) => {
     setIcon(Tick)
     setTimeout(() => setIcon(Copy), 3000)
   }
+console.log(children.props.children.props.children.replaceAll(";", "\r"))
 
   return (
     <section className="flex items-center relative max-w-fit ">
