@@ -57,6 +57,91 @@ class Client:
         res = self.http.send(data)
         return res
 
+    def get_block_commitment(self, block: int) -> RPCResponse:
+        data = self.http.build_data(
+            method="getBlockCommitment", params=[block]
+        )
+        res = self.http.send(data)
+        return res
+
+    def get_blocks(self, start_slot: int, end_slot: Optional[int] = None
+                   ) -> RPCResponse:
+        params = [start_slot]
+        if end_slot:
+            params.append(end_slot)
+
+        data = self.http.build_data(
+            method="getBlocks", params=params
+        )
+        res = self.http.send(data)
+        return res
+
+    def get_blocks_with_limit(self, start_slot: int, limit: int
+                              ) -> RPCResponse:
+
+        data = self.http.build_data(
+            method="getBlocksWithLimit", params=[start_slot, limit]
+        )
+        res = self.http.send(data)
+        return res
+
+    def get_block_time(self, block: int) -> RPCResponse:
+
+        data = self.http.build_data(
+            method="getBlockTime", params=[block]
+        )
+        res = self.http.send(data)
+        return res
+
+    def get_cluster_nodes(self) -> RPCResponse:
+
+        data = self.http.build_data(
+            method="getClusterNodes", params=[None]
+        )
+        res = self.http.send(data)
+        return res
+
+    def get_epoch_info(self) -> RPCResponse:
+
+        data = self.http.build_data(
+            method="getEpochInfo", params=[None]
+        )
+        res = self.http.send(data)
+        return res
+
+    def get_epoch_schedule(self) -> RPCResponse:
+
+        data = self.http.build_data(
+            method="getEpochSchedule", params=[None]
+        )
+        res = self.http.send(data)
+        return res
+
+    def get_fee_for_message(self, message: str) -> RPCResponse:
+
+        data = self.http.build_data(
+            method="getFeeForMessage", params=[message]
+        )
+        res = self.http.send(data)
+        return res
+
+    # Going to be deprecated
+    def get_fees(self) -> RPCResponse:
+
+        data = self.http.build_data(
+            method="getFees", params=[None]
+        )
+        res = self.http.send(data)
+        return res
+
+    def get_first_available_block(self) -> RPCResponse:
+
+        data = self.http.build_data(
+            method="getFirstAvailableBlock", params=[None]
+        )
+        res = self.http.send(data)
+        return res
+
     def get_supply(self) -> RPCResponse:
         data = self.http.build_data(
             method="getSupply", params=[None]
