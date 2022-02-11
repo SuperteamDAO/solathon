@@ -13,6 +13,7 @@ import Callout from 'nextra-theme-docs/callout'
 > To initialise a client, one of the three [RPC cluster endpoint URLs](https://docs.solana.com/cluster/rpc-endpoints) must be passed. When running a local cluster, the local argument must be passed as true for the local endpoint to work.
 
 #### Methods
+- [refresh_http](#refresh_http)
 - [get_account_info](#get_account_info)
 - [get_balance](#get_balance)
 - [get_block](#get_block)
@@ -42,6 +43,15 @@ import Callout from 'nextra-theme-docs/callout'
 
 
 ## Methods
+#### .refresh_http
+Refreshes the HTTP client interacting with the JSON RPC.
+
+<Code>
+```python 
+def refresh_http()
+```
+</Code>
+
 #### .get_account_info
 Returns the account's information through the provided public key argument.
 
