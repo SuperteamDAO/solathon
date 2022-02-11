@@ -20,9 +20,11 @@ class HTTPClient:
             ),
         }
         self.request_id = 0
+        self.client = httpx.Client()
 
     def send(self, data: str) -> Dict[str, Any]:
-        res = httpx.post(url=self.endpoint, headers=self.headers, json=data)
+        res = self.client.post(
+            url=self.endpoint, headers=self.headers, json=data)
         return res.json()
 
     def build_data(self, method: str, params: Tuple[Any]) -> Dict[str, Any]:
@@ -38,3 +40,11 @@ class HTTPClient:
             "method": method,
             "params": None if params[0] is None else params,
         }
+
+    def refresh(self) -> None:
+        self.close()
+        self.request_id = 0
+        self.client = httpx.Client()
+
+    def close(self) -> None:
+        self.client.close()
