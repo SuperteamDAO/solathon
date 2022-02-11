@@ -240,11 +240,15 @@ Example:
 
 <Code>
 ```python 
-from solathon import Client, PublicKey;
-client = Client("https://api.mainnet-beta.solana.com");
+from solathon import Client, PublicKey
+ㅤ
+client = Client("https://api.mainnet-beta.solana.com")
+ㅤ
 public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
-program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" # Token program ID;
-tokens = client.get_token_accounts_by_owner(public_key, program_id);
+program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" # Token program ID
+ㅤ
+tokens = client.get_token_accounts_by_owner(public_key, program_id)
+ㅤ
 print(tokens)
 ```
 </Code>
@@ -267,17 +271,24 @@ Example:
 
 <Code>
 ```python 
-from solathon import Client, Transaction, PublicKey, Keypair;
-client = Client("https://api.devnet.solana.com");
-# initialising a new keypair, make sure to drop some devnet tokens for the transaction to not fail
+from solathon import Client, Transaction, PublicKey, Keypair
+import time
+ㅤ
+client = Client("https://api.devnet.solana.com")
+ㅤ
 sender = Keypair()
-# Directly public key string can be used but PublicKey object is recommended
-receiver = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44a");
-# This is the amount in lamports
-amount = 1000;
+receiver = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44a")
+amount = 10000  # This is the amount in lamports
+ㅤ
+# Requesting airdrop to get some devnet tokens for the transaction to succeed
+res = client.request_airdrop(sender.public_key, amount + amount)
+print("Airdrop response: ", res)
+time.sleep(15) # 15 second delay to make sure we get enough time to receive airdrop tokens
+ㅤ
 transaction = Transaction(sender, receiver, amount)
-result = client.send_transaction(transaction);
-print(result)
+result = client.send_transaction(transaction)
+ㅤ
+print("Transaction response: ", result)
 ```
 </Code>
 
