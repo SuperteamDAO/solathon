@@ -22,6 +22,9 @@ class Client:
         self.http = HTTPClient(endpoint)
         self.endpoint = endpoint
 
+    def refresh_http(self) -> None:
+        self.http.refresh()
+
     def get_account_info(self, public_key: PublicKey | str) -> RPCResponse:
         data = self.http.build_data(
             method="getAccountInfo", params=[public_key]
@@ -189,6 +192,16 @@ class Client:
                 {"mint": mint_id} if mint_id else {"programId": program_id},
                 {"encoding": encoding}
             ]
+        )
+        res = self.http.send(data)
+        return res
+
+    def request_airdrop(self, public_key: PublicKey | str, lamports: int
+                        ) -> RPCResponse:
+
+        data = self.http.build_data(
+            method="requestAirdrop",
+            params=[public_key, lamports]
         )
         res = self.http.send(data)
         return res
