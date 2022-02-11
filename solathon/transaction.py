@@ -1,9 +1,5 @@
-"""
-Currently thanks to https://github.com/michaelhly/solana-py
-"""
-
 from dataclasses import dataclass
-from typing import Dict, List, NamedTuple, NewType, Optional
+from typing import NamedTuple, NewType, Optional
 from base58 import b58decode, b58encode
 from nacl.exceptions import BadSignatureError
 from nacl.signing import VerifyKey
@@ -35,11 +31,10 @@ def to_uint8_bytes(val: int) -> bytes:
 
 TransactionSignature = NewType("TransactionSignature", str)
 PACKET_DATA_SIZE = 1280 - 40 - 8
-SIG_LENGTH = 64
 
 
 class CompiledInstruction(NamedTuple):
-    accounts: bytes | List[int]
+    accounts: bytes | list[int]
     program_id_index: int
     data: bytes
 
@@ -52,9 +47,9 @@ class MessageHeader(NamedTuple):
 
 class MessageArgs(NamedTuple):
     header: MessageHeader
-    account_keys: List[str]
+    account_keys: list[str]
     recent_blockhash: str
-    instructions: List[CompiledInstruction]
+    instructions: list[CompiledInstruction]
 
 
 class Message:
@@ -138,41 +133,51 @@ class Message:
 
 
 @dataclass
-class SigPubkeyPair:
-    pubkey: PublicKey
+class PublicKeySignature:
+    public_key: PublicKey
     signature: Optional[bytes] = None
 
 
 class Transaction:
-
     def __init__(
         self,
         sender,
         receiver,
         lamports,
         recent_blockhash: Optional[str] = None,
-    ) -> None:
+        fee_payer: Optional[PublicKey] = None,
+    ):
         self.sender = sender
         self.receiver = receiver
-        self.instructions: List[TransactionInstruction] = [
-            transfer(sender.public_key, receiver, lamports)]
-        self.signatures: List[SigPubkeyPair] = []
-
+        self.lamports = lamports
+        self.instructions: list[TransactionInstruction] = [
+            transfer(sender.public_key, receiver, lamports)
+        ]
+        self.signatures: list[PublicKeySignature] = []
         self.recent_blockhash, self.nonce_info = recent_blockhash, None
+        self.fee_payer: PublicKey = fee_payer
 
     def compile_transaction(self) -> Message:
 
-        if self.nonce_info and self.instructions[0] != self.nonce_info.nonce_instruction:
-            self.recent_blockhash = self.nonce_info.nonce
-            self.instructions = [
-                self.nonce_info.nonce_instruction] + self.instructions
+        if len(self.instructions) < 1:
+            raise AttributeError("No instructions for transaction provided.")
 
         if not self.recent_blockhash:
-            raise AttributeError("transaction recentBlockhash required")
-        if len(self.instructions) < 1:
-            raise AttributeError("no instructions provided")
+            raise AttributeError("Recent blockhash not provided.")
 
-        fee_payer = self.signatures[0].pubkey
+        if (self.nonce_info and self.instructions[0] !=
+                self.nonce_info.nonce_instruction
+            ):
+            self.recent_blockhash = self.nonce_info.nonce
+            self.instructions = [
+                self.nonce_info.nonce_instruction
+            ] - self.instructions
+
+        if not self.fee_payer and len(self.signatures) > 0:
+            self.fee_payer = self.signatures[0].public_key
+
+        if not self.fee_payer:
+            raise AttributeError("Transaction fee payer required.")
 
         account_metas, program_ids = [], set()
         for instr in self.instructions:
@@ -191,59 +196,58 @@ class Transaction:
 
         # Cull duplicate accounts
         fee_payer_idx = 1
-        seen: Dict[str, int] = {}
-        uniq_metas: List[AccountMeta] = []
+        seen: dict[str, int] = {}
+        uniq_metas: list[AccountMeta] = []
         for sig in self.signatures:
-
-            pubkey = str(sig.pubkey)
+            pubkey = str(sig.public_key)
             if pubkey in seen:
                 uniq_metas[seen[pubkey]].is_signer = True
             else:
-                uniq_metas.append(AccountMeta(sig.pubkey, True, True))
+                uniq_metas.append(AccountMeta(sig.public_key, True, True))
                 seen[pubkey] = len(uniq_metas) - 1
-                if sig.pubkey == fee_payer:
+                if sig.public_key == self.fee_payer:
                     fee_payer_idx = min(fee_payer_idx, seen[pubkey])
 
         for a_m in account_metas:
-            pubkey = str(a_m.pubkey)
+            pubkey = str(a_m.public_key)
             if pubkey in seen:
                 idx = seen[pubkey]
                 uniq_metas[idx].is_writable = uniq_metas[idx].is_writable or a_m.is_writable
             else:
                 uniq_metas.append(a_m)
                 seen[pubkey] = len(uniq_metas) - 1
-                if a_m.pubkey == fee_payer:
+                if a_m.public_key == self.fee_payer:
                     fee_payer_idx = min(fee_payer_idx, seen[pubkey])
 
         if fee_payer_idx == 1:
-            uniq_metas = [AccountMeta(fee_payer, True, True)] + uniq_metas
+            uniq_metas = [AccountMeta(self.fee_payer, True, True)] + uniq_metas
         else:
             uniq_metas = (
                 [uniq_metas[fee_payer_idx]] + uniq_metas[:fee_payer_idx] +
                 uniq_metas[fee_payer_idx + 1:]
             )
 
-        signed_keys: List[str] = []
-        unsigned_keys: List[str] = []
+        signed_keys: list[str] = []
+        unsigned_keys: list[str] = []
         num_required_signatures = num_readonly_signed_accounts = num_readonly_unsigned_accounts = 0
         for a_m in uniq_metas:
             if a_m.is_signer:
-                signed_keys.append(str(a_m.pubkey))
+                signed_keys.append(str(a_m.public_key))
                 num_required_signatures += 1
                 num_readonly_signed_accounts += int(not a_m.is_writable)
             else:
                 num_readonly_unsigned_accounts += int(not a_m.is_writable)
-                unsigned_keys.append(str(a_m.pubkey))
+                unsigned_keys.append(str(a_m.public_key))
         if not self.signatures:
-            self.signatures = [SigPubkeyPair(pubkey=PublicKey(
+            self.signatures = [PublicKeySignature(public_key=PublicKey(
                 key), signature=None) for key in signed_keys]
 
-        account_keys: List[str] = signed_keys + unsigned_keys
-        account_indices: Dict[str, int] = {
+        account_keys: list[str] = signed_keys + unsigned_keys
+        account_indices: dict[str, int] = {
             str(key): i for i, key in enumerate(account_keys)}
-        compiled_instructions: List[CompiledInstruction] = [
+        compiled_instructions: list[CompiledInstruction] = [
             CompiledInstruction(
-                accounts=[account_indices[str(a_m.pubkey)]
+                accounts=[account_indices[str(a_m.public_key)]
                           for a_m in instr.keys],
                 program_id_index=account_indices[str(instr.program_id)],
                 data=b58encode(instr.data),
@@ -267,47 +271,41 @@ class Transaction:
     def serialize_message(self) -> bytes:
         return self.compile_transaction().serialize()
 
-    def sign(self) -> None:
-        def partial_signer_pubkey(account_or_pubkey: PublicKey | Keypair):
-            return account_or_pubkey.public_key if isinstance(account_or_pubkey, Keypair) else account_or_pubkey
+    def sign(self, signers: Optional[list[PublicKey | Keypair]] = []) -> None:
+        signers.insert(0, self.sender)  # Inserting sender to first index
 
-        signatures: List[SigPubkeyPair] = [
-            # self.sender is the only signer for now, which is why it's the only object in list
-            SigPubkeyPair(pubkey=partial_signer_pubkey(partial_signer)) for partial_signer in [self.sender]
+        def to_public_key(signer: PublicKey | Keypair) -> Keypair | PublicKey:
+            if isinstance(signer, Keypair):
+                return signer.public_key
+            elif isinstance(signer, PublicKey):
+                return signer
+            else:
+                raise TypeError(("The argument must be either "
+                                "PublicKey or Keypair object."))
+
+        signatures: list[PublicKeySignature] = [
+            PublicKeySignature(
+                public_key=to_public_key(signer)) for signer in signers
         ]
-        self.signatures = signatures
+        self.signatures.extend(signatures)
         sign_data = self.serialize_message()
+        for idx, signer in enumerate(signers):
+            if isinstance(signer, Keypair):
+                signature = signer.sign(sign_data).signature
+                if len(signature) != 64:
+                    raise RuntimeError(
+                        "Signature has invalid length, it should be 64 bytes long.")
+                self.signatures[idx].signature = signature
 
-        for idx, partial_signer in enumerate([self.sender]):
-            if isinstance(partial_signer, Keypair):
-                sig = partial_signer.sign(sign_data).signature
-                if len(sig) != SIG_LENGTH:
-                    raise RuntimeError("signature has invalid length", sig)
-                self.signatures[idx].signature = sig
-
-    def add_signature(self, pubkey: PublicKey, signature: bytes) -> None:
-        if len(signature) != SIG_LENGTH:
-            raise ValueError("signature has invalid length", signature)
-        idx = next((i for i, sig_pair in enumerate(self.signatures)
-                   if sig_pair.pubkey == pubkey), None)
-        if idx is None:
-            raise ValueError("unknown signer: ", str(pubkey))
-        self.signatures[idx].signature = signature
-
-    def add_signer(self, signer: Keypair) -> None:
-        signed_msg = signer.sign(self.serialize_message())
-        self.add_signature(signer.public_key, signed_msg.signature)
-
-    def verify_signatures(self) -> bool:
-        return self.__verify_signatures(self.serialize_message())
-
-    def __verify_signatures(self, signed_data: bytes) -> bool:
+    def verify_signatures(self, signed_data: Optional[bytes] = None) -> bool:
+        if signed_data is None:
+            signed_data: bytes = self.serialize_message()
         for sig_pair in self.signatures:
             if not sig_pair.signature:
                 return False
             try:
 
-                VerifyKey(bytes(sig_pair.pubkey)).verify(
+                VerifyKey(bytes(sig_pair.public_key)).verify(
                     signed_data, sig_pair.signature)
             except BadSignatureError:
                 return False
@@ -318,13 +316,10 @@ class Transaction:
             raise AttributeError("transaction has not been signed")
 
         sign_data = self.serialize_message()
-        if not self.__verify_signatures(sign_data):
+        if not self.verify_signatures(sign_data):
             raise AttributeError("transaction has not been signed correctly")
 
-        return self.__serialize(sign_data)
-
-    def __serialize(self, signed_data: bytes) -> bytes:
-        if len(self.signatures) >= SIG_LENGTH * 4:
+        if len(self.signatures) >= 64 * 4:
             raise AttributeError("too many singatures to encode")
         wire_transaction = bytearray()
         # Encode signature count
@@ -332,16 +327,16 @@ class Transaction:
         wire_transaction.extend(signature_count)
         # Encode signatures
         for sig_pair in self.signatures:
-            if sig_pair.signature and len(sig_pair.signature) != SIG_LENGTH:
+            if sig_pair.signature and len(sig_pair.signature) != 64:
                 raise RuntimeError(
                     "signature has invalid length", sig_pair.signature)
 
             if not sig_pair.signature:
-                wire_transaction.extend(bytearray(SIG_LENGTH))
+                wire_transaction.extend(bytearray(64))
             else:
                 wire_transaction.extend(sig_pair.signature)
         # Encode signed data
-        wire_transaction.extend(signed_data)
+        wire_transaction.extend(sign_data)
 
         if len(wire_transaction) > PACKET_DATA_SIZE:
             raise RuntimeError(
