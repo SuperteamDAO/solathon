@@ -272,6 +272,8 @@ class Transaction:
         return self.compile_transaction().serialize()
 
     def sign(self, signers: Optional[list[PublicKey | Keypair]] = []) -> None:
+        if signers is None:
+            signers = []
         signers.insert(0, self.sender)  # Inserting sender to first index
 
         def to_public_key(signer: PublicKey | Keypair) -> Keypair | PublicKey:
