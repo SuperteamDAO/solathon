@@ -22,7 +22,7 @@ class HTTPClient:
         self.request_id = 0
         self.client = httpx.Client()
 
-    def send(self, data: str) -> Dict[str, Any]:
+    def send(self, data: Dict[str, Any]) -> Dict[str, Any]:
         res = self.client.post(
             url=self.endpoint, headers=self.headers, json=data)
         return res.json()
