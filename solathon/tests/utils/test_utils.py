@@ -2,7 +2,7 @@ import pytest
 from solathon import utils
 
 
-test_data = [
+sol_to_lamport_test_data = [
     (0, 0),
     (0.0, 0),
     (1.0, 1000000000),
@@ -13,7 +13,7 @@ test_data = [
 ]
 
 
-@pytest.mark.parametrize("arg, expected", test_data)
+@pytest.mark.parametrize("arg, expected", sol_to_lamport_test_data)
 def test_sol_to_lamport(arg, expected):
     actual = utils.sol_to_lamport(arg)
     assert actual == expected
@@ -25,7 +25,7 @@ def test_sol_to_lamport_none_passed_in():
         utils.sol_to_lamport(None)
 
 
-@pytest.mark.parametrize("arg, expected", [(-arg, -expected) for arg, expected in test_data])
+@pytest.mark.parametrize("arg, expected", [(-arg, -expected) for arg, expected in sol_to_lamport_test_data])
 def test_sol_to_lamport_negative_input(arg, expected):
     actual = utils.sol_to_lamport(arg)
     assert actual == expected
