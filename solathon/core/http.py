@@ -1,7 +1,7 @@
 import sys
 import base64
-from typing import Tuple, Any, Dict
 import httpx
+from typing import Any
 from .. import __version__
 from ..publickey import PublicKey
 
@@ -22,12 +22,13 @@ class HTTPClient:
         self.request_id = 0
         self.client = httpx.Client()
 
-    def send(self, data: str) -> Dict[str, Any]:
-        res = self.client.post(
-            url=self.endpoint, headers=self.headers, json=data)
+    def send(self, data: dict[str, Any]) -> dict[str, Any]:
+        with self.client as client:
+            res = client.post(
+                url=self.endpoint, headers=self.headers, json=data)
         return res.json()
 
-    def build_data(self, method: str, params: Tuple[Any]) -> Dict[str, Any]:
+    def build_data(self, method: str, params: tuple[Any]) -> tuple[str, Any]:
         self.request_id += 1
         params = [str(i) if isinstance(i, PublicKey) else i for i in params]
 
@@ -42,9 +43,6 @@ class HTTPClient:
         }
 
     def refresh(self) -> None:
-        self.close()
+        self.client.close()
         self.request_id = 0
         self.client = httpx.Client()
-
-    def close(self) -> None:
-        self.client.close()
