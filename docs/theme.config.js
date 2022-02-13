@@ -18,6 +18,7 @@ export default {
       <meta name="twitter:site:domain" content="solathon.vercel.app" />
       <meta name="twitter:url" content="https://solathon.vercel.app" />
       <meta name="og:title" content="Solathon - High performance, easy to use and feature-rich Solana SDK for Python." />
+      <meta name="og:image" content="https://solathon.vercel.app/og.png" />
       <meta name="apple-mobile-web-app-title" content="Solathon" />
       <link
         rel="apple-touch-icon"
