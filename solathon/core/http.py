@@ -43,6 +43,6 @@ class HTTPClient:
         }
 
     def refresh(self) -> None:
-        self.close()
+        self.client.close()
         self.request_id = 0
         self.client = httpx.Client()
