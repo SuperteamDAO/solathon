@@ -25,7 +25,11 @@ def sol_to_lamport(sol: float) -> int:
     return int(sol * LAMPORT_PER_SOL)
 
 
-def verify_signature(public_key: PublicKey | str, signature: list, message: bytes | str) -> bool:
+def verify_signature(
+                    public_key: PublicKey | str, 
+                    signature: list, 
+                    message: bytes | str
+                    ) -> None:
     if isinstance(public_key, str):
         public_key = PublicKey(public_key)
 
