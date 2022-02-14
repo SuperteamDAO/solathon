@@ -4,12 +4,12 @@ from nacl.signing import VerifyKey
 from solathon.core.types import RPCResponse
 
 
-LAMPORT_PER_SOL = 1000000000
-SOL_PER_LAMPORT = 1 / LAMPORT_PER_SOL
-SOL_FLOATING_PRECISION = 9
+LAMPORT_PER_SOL: int = 1000000000
+SOL_PER_LAMPORT: float = 1 / LAMPORT_PER_SOL
+SOL_FLOATING_PRECISION: int = 9
 
 
-def truncate_float(number, length):
+def truncate_float(number: int, length: int) -> float:
     number = number * pow(10, length)
     number = int(number)
     number = float(number)
@@ -26,10 +26,10 @@ def sol_to_lamport(sol: float) -> int:
 
 
 def verify_signature(
-                    public_key: PublicKey | str, 
-                    signature: list, 
-                    message: bytes | str
-                    ) -> None:
+    public_key: PublicKey | str,
+    signature: list,
+    message: bytes | str
+    ) -> None:
     if isinstance(public_key, str):
         public_key = PublicKey(public_key)
 
