@@ -23,8 +23,7 @@ class HTTPClient:
         self.client = httpx.Client()
 
     def send(self, data: dict[str, Any]) -> dict[str, Any]:
-        with self.client as client:
-            res = client.post(
+        res = self.client.post(
                 url=self.endpoint, headers=self.headers, json=data)
         return res.json()
 
@@ -65,8 +64,7 @@ class AsyncHTTPClient:
         self.client = httpx.AsyncClient()
 
     async def send(self, data: dict[str, Any]) -> dict[str, Any]:
-        async with self.client as client:
-            res = await client.post(
+        res = await self.client.post(
                 url=self.endpoint, headers=self.headers, json=data)
         return res.json()
 
