@@ -1,5 +1,4 @@
 import { Code } from '/components/Code';
-import Callout from 'nextra-theme-docs/callout'
 
 # PublicKey
 **Class representing a public key model. Preferred to use this over plain public key string**
@@ -13,25 +12,35 @@ import Callout from 'nextra-theme-docs/callout'
 > The class requires one value argument which can be string, bytes, bytearray or int array form of the public key.
 
 #### Methods
-- [to_base58](#to_base58)
+- [base58_encode](#base58_encode)
+- [base58_decode](#base58_decode)
 
 #### Attributes
-*None*
+- [byte_value](#byte_value )
 
 
 ## Methods
 
-#### .to_base58
+#### .base58_encode
 Converts the public key into base 58 form
 
 <Code>
 ```python 
-def to_base58()
+def base58_encode()
+```
+</Code>
+
+#### .base58_decode
+Decodes a base58 encoded public key
+
+<Code>
+```python 
+def base58_decode()
 ```
 </Code>
 
 
 ## Attributes
-<Callout>
-    <p style={{fontSize:"1rem"}}>PublicKey class has no attributes.</p>
-</Callout>
+
+#### .byte_value
+Returns the byte value of the public key. Recommended to use ```bytes()``` function and passing to public key to get the byte value.

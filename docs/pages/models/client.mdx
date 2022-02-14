@@ -29,12 +29,36 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_fee_for_message](#get_fee_for_message)
 - [get_fees](#get_fees)
 - [get_first_available_block](#get_first_available_block)
-- [get_supply](#get_supply)
+
+<!-- - [get_genesis_hash](#get_genesis_hash)
+- [get_health](#get_health)
+- [get_highest_snapshot_slot](#get_highest_snapshot_slot)
 - [get_identity](#get_identity)
+- [get_inflation_governer](#get_inflation_governer)
+- [get_inflation_rate](#get_inflation_rate)
+- [get_inflation_reward](#get_inflation_reward)
+- [get_largest_accounts](#get_largest_accounts)
+- [get_latest_blockhash](#get_latest_blockhash)
+- [get_leader_schedule](#get_leader_schedule)
+- [get_max_retransmit_slot](#get_max_retransmit_slot)
+- [get_max_shred_insert_slot](#get_max_shred_insert_slot)
+- [get_minimum_balance_for_rent_exemption](#get_minimum_balance_for_rent_exemption)
+- [get_multiple_accounts](#get_multiple_accounts)
+- [get_program_accounts](#get_program_accounts)
+- [get_recent_performance_samples](#get_recent_performance_samples)
+- [get_signatures_for_address](#get_signatures_for_address)
+- [get_signature_statuses](#get_signature_statuses)
+- [get_slot](#get_slot)
+- [get_slot_leader](#get_slot_leader)
+- [get_stake_activation](#get_stake_activation) -->
+
+
+- [get_supply](#get_supply)
 - [get_block](#get_block)
 - [get_transaction](#get_transaction)
 - [get_recent_blockhash](#get_recent_blockhash)
 - [get_token_accounts_by_owner](#get_token_accounts_by_owner)
+- [request_airdrop](#request_airdrop)
 - [send_transaction](#send_transaction)
 
 #### Attributes
@@ -70,8 +94,17 @@ def get_balance(public_key: PublicKey | str)
 ```
 </Code>
 
+#### .get_block
+Returns identity and transaction information about a confirmed block in the ledger by the slot provided.
+
+<Code>
+```python 
+def get_block(slot: int)
+```
+</Code>
+
 #### .get_block_height
-Returns the current block height of the node
+Returns the current block height of the node.
 
 <Code>
 ```python 
@@ -125,7 +158,7 @@ def get_block_time(block: int)
 </Code>
 
 #### .get_cluster_nodes
-Returns information about all the nodes participating in the cluster
+Returns information about all the nodes participating in the cluster.
 
 <Code>
 ```python 
@@ -143,7 +176,7 @@ def get_epoch_info()
 </Code>
 
 #### .get_epoch_schedule
-Returns epoch schedule information from this cluster's genesis config
+Returns epoch schedule information from this cluster's genesis config.
 
 <Code>
 ```python 
@@ -152,7 +185,7 @@ def get_epoch_schedule()
 </Code>
 
 #### .get_fee_for_message
-Retuns the fee which network will charge for a particular message
+Retuns the fee which network will charge for a particular message.
 
 <Code>
 ```python 
@@ -165,7 +198,7 @@ def get_fee_for_message(message: str)
 </Callout>
 
 #### .get_fees
-Returns a recent block hash from the ledger, a fee schedule that can be used to compute the cost of submitting a transaction using it, and the last slot in which the blockhash will be valid
+Returns a recent block hash from the ledger, a fee schedule that can be used to compute the cost of submitting a transaction using it, and the last slot in which the blockhash will be valid.
 
 <Code>
 ```python 
@@ -174,7 +207,7 @@ def get_fees()
 </Code>
 
 #### .get_first_available_block
-Returns the slot of the lowest confirmed block that has not been purged from the ledger
+Returns the slot of the lowest confirmed block that has not been purged from the ledger.
 
 <Code>
 ```python 
@@ -200,14 +233,6 @@ def get_identity()
 ```
 </Code>
 
-#### .get_block
-Returns identity and transaction information about a confirmed block in the ledger by the slot provided
-
-<Code>
-```python 
-def get_block(slot: int)
-```
-</Code>
 
 #### .get_transaction
 Returns a transaction's details by the confirmed transaction signature string (in base 58)
