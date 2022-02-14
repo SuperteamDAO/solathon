@@ -21,7 +21,7 @@ def lamport_to_sol(lamports: int) -> float:
     return truncate_float(lamports * SOL_PER_LAMPORT, SOL_FLOATING_PRECISION)
 
 
-def sol_to_lamport(sol: float) -> int:
+def sol_to_lamport(sol: float | int) -> int:
     return int(sol * LAMPORT_PER_SOL)
 
 
