@@ -1,4 +1,5 @@
 import sys
+import asyncio
 import base64
 import httpx
 from typing import Any
@@ -51,6 +52,7 @@ class AsyncHTTPClient:
     """Asynchronous HTTP Client to interact with Solana JSON RPC"""
 
     def __init__(self, endpoint: str):
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         self.endpoint = endpoint
         version = sys.version_info
         self.headers = {
@@ -62,6 +64,7 @@ class AsyncHTTPClient:
         }
         self.request_id = 0
         self.client = httpx.AsyncClient()
+        
 
     async def send(self, data: dict[str, Any]) -> dict[str, Any]:
         res = await self.client.post(
@@ -82,7 +85,8 @@ class AsyncHTTPClient:
             "params": None if params[0] is None else params,
         }
 
-    def refresh(self) -> None:
-        self.client.close()
+
+    async def refresh(self) -> None:
+        await self.client.aclose()
         self.request_id = 0
         self.client = httpx.AsyncClient()
