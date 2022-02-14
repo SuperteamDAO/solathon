@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
 import base58
 from .publickey import PublicKey
 from nacl.signing import SigningKey, SignedMessage
@@ -13,7 +12,7 @@ class PrivateKey(PublicKey):
 
 class Keypair:
 
-    def __init__(self, value: Optional[NaclPrivateKey] = None) -> None:
+    def __init__(self, value: NaclPrivateKey | None = None) -> None:
         if value is None:
             self.key_pair = NaclPrivateKey.generate()
         elif isinstance(value, NaclPrivateKey):

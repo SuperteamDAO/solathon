@@ -28,16 +28,18 @@ def sol_to_lamport(sol: float | int) -> int:
 def verify_signature(
     public_key: PublicKey | str,
     signature: list,
-    message: bytes | str
+    message: bytes | str | None = None
     ) -> None:
+
+    if not message:
+        message = public_key.base58_encode()
+
     if isinstance(public_key, str):
         public_key = PublicKey(public_key)
 
     if isinstance(message, str):
         message = bytes(message, encoding="utf8")
 
-    if not message:
-        message = public_key.base58_encode()
 
     bytes_pk = bytes(public_key)
     vk = VerifyKey(bytes_pk)

@@ -1,4 +1,3 @@
-from typing import Optional
 from .publickey import PublicKey
 from .core.http import AsyncHTTPClient
 from .core.types import RPCResponse
@@ -67,7 +66,7 @@ class AsyncClient:
         res = await self.http.send(data)
         return res
 
-    async def get_blocks(self, start_slot: int, end_slot: Optional[int] = None
+    async def get_blocks(self, start_slot: int, end_slot: int | None = None
                    ) -> RPCResponse:
         params = [start_slot]
         if end_slot:
@@ -207,7 +206,7 @@ class AsyncClient:
         return res
 
     async def send_transaction(self, transaction: Transaction,
-                         recent_blockhash: Optional[str] = None
+                         recent_blockhash: str | None = None
                          ) -> RPCResponse:
 
         if recent_blockhash is None:
