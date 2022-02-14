@@ -29,30 +29,6 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_fee_for_message](#get_fee_for_message)
 - [get_fees](#get_fees)
 - [get_first_available_block](#get_first_available_block)
-
-<!-- - [get_genesis_hash](#get_genesis_hash)
-- [get_health](#get_health)
-- [get_highest_snapshot_slot](#get_highest_snapshot_slot)
-- [get_identity](#get_identity)
-- [get_inflation_governer](#get_inflation_governer)
-- [get_inflation_rate](#get_inflation_rate)
-- [get_inflation_reward](#get_inflation_reward)
-- [get_largest_accounts](#get_largest_accounts)
-- [get_latest_blockhash](#get_latest_blockhash)
-- [get_leader_schedule](#get_leader_schedule)
-- [get_max_retransmit_slot](#get_max_retransmit_slot)
-- [get_max_shred_insert_slot](#get_max_shred_insert_slot)
-- [get_minimum_balance_for_rent_exemption](#get_minimum_balance_for_rent_exemption)
-- [get_multiple_accounts](#get_multiple_accounts)
-- [get_program_accounts](#get_program_accounts)
-- [get_recent_performance_samples](#get_recent_performance_samples)
-- [get_signatures_for_address](#get_signatures_for_address)
-- [get_signature_statuses](#get_signature_statuses)
-- [get_slot](#get_slot)
-- [get_slot_leader](#get_slot_leader)
-- [get_stake_activation](#get_stake_activation) -->
-
-
 - [get_supply](#get_supply)
 - [get_block](#get_block)
 - [get_transaction](#get_transaction)
@@ -135,7 +111,7 @@ Returns a list of confirmed blocks between two slots, end_slot is optional
 
 <Code>
 ```python 
-def get_blocks(start_slot: int, end_slot: Optional[int] = None)
+def get_blocks(start_slot: int, end_slot: int | None = None)
 ```
 </Code>
 
@@ -287,8 +263,10 @@ Submits a signed [transaction object](/models/transaction) to the cluster for pr
 
 <Code>
 ```python 
-def send_transaction(transaction: Transaction, 
-                    recent_blockhash: Optional[str] = None)
+def send_transaction(
+                    transaction: Transaction, 
+                    recent_blockhash: str | None = None
+                    )
 ```
 </Code>
 
