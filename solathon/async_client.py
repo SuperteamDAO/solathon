@@ -22,7 +22,7 @@ class AsyncClient:
         self.http = AsyncHTTPClient(endpoint)
         self.endpoint = endpoint
 
-    async def refresh_http(self) -> None:
+    def refresh_http(self) -> None:
         self.http.refresh()
 
     async def get_account_info(self, public_key: PublicKey | str) -> RPCResponse:
