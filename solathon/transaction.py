@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import NamedTuple, NewType, Optional
 from base58 import b58decode, b58encode

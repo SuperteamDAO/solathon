@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional
 from .publickey import PublicKey
 from .core.http import HTTPClient

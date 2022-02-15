@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .publickey import PublicKey
 from .core.http import AsyncHTTPClient
 from .core.types import RPCResponse
@@ -21,8 +23,8 @@ class AsyncClient:
         self.http = AsyncHTTPClient(endpoint)
         self.endpoint = endpoint
 
-    def refresh_http(self) -> None:
-        self.http.refresh()
+    async def refresh_http(self) -> None:
+        await self.http.refresh()
 
     async def get_account_info(self, public_key: PublicKey | str) -> RPCResponse:
         data = self.http.build_data(
