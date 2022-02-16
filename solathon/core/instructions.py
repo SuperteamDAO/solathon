@@ -131,8 +131,8 @@ def assign(
 
 
 def transfer(
-        from_public_key: Keypair,
-        to_public_key: PublicKey,
+        from_public_key: PublicKey | str,
+        to_public_key: PublicKey | str,
         lamports: int
 ) -> Instruction:
     account_metas: list[AccountMeta] = [
@@ -153,7 +153,7 @@ def transfer(
             args=dict(lamports=lamports)
         )
     )
-    return InstructionType(
+    return Instruction(
         keys=account_metas,
         program_id=SYSTEM_PROGRAM_ID,
         data=data,
