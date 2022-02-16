@@ -1,3 +1,5 @@
+# Developer reference: https://github.com/solana-labs/solana/blob/master/sdk/program/src/system_instruction.rs
+
 from typing import NamedTuple
 from dataclasses import dataclass
 from ..keypair import Keypair
