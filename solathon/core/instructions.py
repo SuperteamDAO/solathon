@@ -1,113 +1,12 @@
-from enum import IntEnum
-from dataclasses import dataclass
 from typing import NamedTuple
-from construct import Struct as cStruct
-from construct import (
-    Bytes,
-    Int32ul,
-    Int64ul,
-    PaddedString,
-    Padding,
-    Pass,
-    Switch
-)
+from dataclasses import dataclass
+from ..keypair import Keypair
 from ..publickey import PublicKey
-
-
-SYSTEM_PROGRAM_ID: PublicKey = PublicKey("11111111111111111111111111111111")
-PUBLIC_KEY_LAYOUT = Bytes(32)
-
-RUST_STRING_LAYOUT = cStruct(
-    "length" / Int32ul,
-    Padding(4),
-    "chars" / PaddedString(lambda this: this.length, "utf-8"),
+from ..core.layouts import (
+    InstructionType,
+    SYSTEM_INSTRUCTIONS_LAYOUT,
+    SYSTEM_PROGRAM_ID
 )
-
-
-class InstructionType(IntEnum):
-    CREATE_ACCOUNT = 0
-    ASSIGN = 1
-    TRANSFER = 2
-    CREATE_ACCOUNT_WITH_SEED = 3
-    ADVANCE_NONCE_ACCOUNT = 4
-    WITHDRAW_NONCE_ACCOUNT = 5
-    INITIALIZE_NONCE_ACCOUNT = 6
-    AUTHORIZE_NONCE_ACCOUNT = 7
-    ALLOCATE = 8
-    ALLOCATE_WITH_SEED = 9
-    ASSIGN_WITH_SEED = 10
-    TRANSFER_WITH_SEED = 11
-
-
-_CREATE_ACCOUNT_LAYOUT = cStruct(
-    "lamports" / Int64ul,
-    "space" / Int64ul,
-    "program_id" / PUBLIC_KEY_LAYOUT,
-)
-
-_ASSIGN_LAYOUT = cStruct("program_id" / PUBLIC_KEY_LAYOUT)
-
-_TRANFER_LAYOUT = cStruct("lamports" / Int64ul)
-
-_CREATE_ACCOUNT_WTIH_SEED_LAYOUT = cStruct(
-    "base" / PUBLIC_KEY_LAYOUT,
-    "seed" / RUST_STRING_LAYOUT,
-    "lamports" / Int64ul,
-    "space" / Int64ul,
-    "program_id" / PUBLIC_KEY_LAYOUT,
-)
-
-_WITHDRAW_NONCE_ACCOUNT_LAYOUT = cStruct("lamports" / Int64ul)
-
-_INITIALIZE_NONCE_ACCOUNT_LAYOUT = cStruct("authorized" / PUBLIC_KEY_LAYOUT)
-
-_AUTHORIZE_NONCE_ACCOUNT_LAYOUT = cStruct("authorized" / PUBLIC_KEY_LAYOUT)
-
-_ALLOCATE_LAYOUT = cStruct("space" / Int64ul)
-
-_ALLOCATE_WITH_SEED_LAYOUT = cStruct(
-    "base" / PUBLIC_KEY_LAYOUT, "seed" / RUST_STRING_LAYOUT, "space" /
-    Int64ul, "program_id" / PUBLIC_KEY_LAYOUT
-)
-
-_ASSIGN_WITH_SEED_LAYOUT = cStruct(
-    "base" / PUBLIC_KEY_LAYOUT, "seed" /
-    RUST_STRING_LAYOUT, "program_id" / PUBLIC_KEY_LAYOUT
-)
-
-_TRANSFER_WITH_SEED_LAYOUT = cStruct(
-    "lamports" / Int64ul,
-    "from_seed" / RUST_STRING_LAYOUT,
-    "from_ower" / PUBLIC_KEY_LAYOUT,
-)
-
-SYSTEM_INSTRUCTIONS_LAYOUT = cStruct(
-    "instruction_type" / Int32ul,
-    "args"
-    / Switch(
-        lambda this: this.instruction_type,
-        {
-            InstructionType.CREATE_ACCOUNT: _CREATE_ACCOUNT_LAYOUT,
-            InstructionType.ASSIGN: _ASSIGN_LAYOUT,
-            InstructionType.TRANSFER: _TRANFER_LAYOUT,
-            InstructionType.CREATE_ACCOUNT_WITH_SEED: _CREATE_ACCOUNT_WTIH_SEED_LAYOUT,
-            InstructionType.ADVANCE_NONCE_ACCOUNT: Pass,  # No args
-            InstructionType.WITHDRAW_NONCE_ACCOUNT: _WITHDRAW_NONCE_ACCOUNT_LAYOUT,
-            InstructionType.INITIALIZE_NONCE_ACCOUNT: _INITIALIZE_NONCE_ACCOUNT_LAYOUT,
-            InstructionType.AUTHORIZE_NONCE_ACCOUNT: _AUTHORIZE_NONCE_ACCOUNT_LAYOUT,
-            InstructionType.ALLOCATE: _ALLOCATE_LAYOUT,
-            InstructionType.ALLOCATE_WITH_SEED: _ALLOCATE_WITH_SEED_LAYOUT,
-            InstructionType.ASSIGN_WITH_SEED: _ASSIGN_WITH_SEED_LAYOUT,
-            InstructionType.TRANSFER_WITH_SEED: _TRANSFER_WITH_SEED_LAYOUT,
-        },
-    ),
-)
-
-
-class TransferParams(NamedTuple):
-    from_pubkey: PublicKey
-    to_pubkey: PublicKey
-    lamports: int
 
 
 @dataclass
@@ -117,22 +16,192 @@ class AccountMeta:
     is_writable: bool
 
 
-class TransactionInstruction(NamedTuple):
+class Instruction(NamedTuple):
     keys: list[AccountMeta]
     program_id: PublicKey
     data: bytes = bytes(0)
 
 
-def transfer(sender, receiver, lamports) -> TransactionInstruction:
-    data = SYSTEM_INSTRUCTIONS_LAYOUT.build(
-        dict(instruction_type=InstructionType.TRANSFER,
-             args=dict(lamports=lamports))
+def create_account(
+        from_public_key: PublicKey,
+        new_account_public_key: PublicKey,
+        lamports: int,
+        space: int,
+        program_id: PublicKey
+) -> Instruction:
+    account_metas: list[AccountMeta] = [
+        AccountMeta(
+            public_key=from_public_key,
+            is_signer=True,
+            is_writable=True
+        ),
+        AccountMeta(
+            public_key=new_account_public_key,
+            is_signer=True,
+            is_writable=True
+        ),
+    ],
+    data: bytes = SYSTEM_INSTRUCTIONS_LAYOUT.build(
+        dict(
+            instruction_type=InstructionType.CREATE_ACCOUNT,
+            args=dict(
+                lamports=lamports, space=space,
+                program_id=bytes(program_id)
+            ),
+        )
     )
-    return TransactionInstruction(
+    return Instruction(
+        keys=account_metas,
+        program_id=SYSTEM_PROGRAM_ID,
+        data=data,
+    )
+
+
+def create_account_with_seed(
+        from_public_key: PublicKey,
+        new_account_public_key: PublicKey,
+        base_public_key: PublicKey,
+        seed: str,
+        lamports: int,
+        space: int,
+        program_id: PublicKey
+) -> Instruction:
+    account_metas: list[AccountMeta] = [
+        AccountMeta(
+            public_key=from_public_key,
+            is_signer=True,
+            is_writable=True
+        ),
+        AccountMeta(
+            public_key=new_account_public_key,
+            is_signer=False,
+            is_writable=True
+        ),
+    ]
+    data: bytes = SYSTEM_INSTRUCTIONS_LAYOUT.build(
+        dict(
+            instruction_type=InstructionType.CREATE_ACCOUNT_WITH_SEED,
+            args=dict(
+                base=bytes(base_public_key),
+                seed=seed,
+                lamports=lamports,
+                space=space,
+                program_id=bytes(program_id),
+            ),
+        )
+    )
+
+    if base_public_key != from_public_key:
+        account_metas.append(AccountMeta(
+            public_key=base_public_key,
+            is_signer=True,
+            is_writable=False
+        ))
+    return Instruction(
+        keys=account_metas, program_id=SYSTEM_PROGRAM_ID, data=data
+    )
+
+
+def assign(
+        account_public_key: PublicKey,
+        program_id: PublicKey
+) -> Instruction:
+
+    data = SYSTEM_INSTRUCTIONS_LAYOUT.build(
+        dict(instruction_type=InstructionType.ASSIGN,
+             args=dict(program_id=bytes(program_id)
+                       ))
+    )
+    return Instruction(
         keys=[
-            AccountMeta(public_key=sender, is_signer=True, is_writable=True),
-            AccountMeta(public_key=receiver, is_signer=False, is_writable=True),
+            AccountMeta(
+                public_key=account_public_key,
+                is_signer=True,
+                is_writable=True
+            ),
         ],
+        program_id=SYSTEM_PROGRAM_ID,
+        data=data,
+    )
+
+
+"""Need to implement assign_with_seed_here"""
+
+
+def transfer(
+        from_public_key: Keypair,
+        to_public_key: PublicKey,
+        lamports: int
+) -> Instruction:
+    account_metas: list[AccountMeta] = [
+        AccountMeta(
+            public_key=from_public_key,
+            is_signer=True,
+            is_writable=True
+        ),
+        AccountMeta(
+            public_key=to_public_key,
+            is_signer=False,
+            is_writable=True
+        ),
+    ],
+    data: bytes = SYSTEM_INSTRUCTIONS_LAYOUT.build(
+        dict(
+            type=InstructionType.TRANSFER,
+            args=dict(lamports=lamports)
+        )
+    )
+    return InstructionType(
+        keys=account_metas,
+        program_id=SYSTEM_PROGRAM_ID,
+        data=data,
+    )
+
+
+def allocate(
+        account_public_key: PublicKey,
+        space: int
+) -> Instruction:
+
+    data: bytes = SYSTEM_INSTRUCTIONS_LAYOUT.build(
+        dict(instruction_type="allocate", args=dict(space=space))
+    )
+    return Instruction(
+        keys=[AccountMeta(
+            public_key=account_public_key,
+            is_signer=True,
+            is_writable=True
+        )],
+        program_id=SYSTEM_PROGRAM_ID,
+        data=data,
+    )
+
+
+def allocate_with_seed(
+    account_public_key: PublicKey,
+    base_public_key: PublicKey,
+    seed: str,
+    space: int,
+    program_id: PublicKey
+) -> Instruction:
+
+    data: bytes = SYSTEM_INSTRUCTIONS_LAYOUT.build(
+        dict(
+            instruction_type="allocate_with_seed",
+            args=dict(
+                base=bytes(base_public_key),
+                seed=seed,
+                space=space,
+                program_id=bytes(program_id),
+            ),
+        )
+    )
+    return Instruction(
+        keys=[AccountMeta(
+            public_key=account_public_key,
+            is_signer=True,
+            is_writable=True
+        )],
         program_id=SYSTEM_PROGRAM_ID,
         data=data,
     )
