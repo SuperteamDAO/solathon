@@ -23,7 +23,9 @@ class Keypair:
                 "nacl.public.PrivateKey object. To initialize with "
                 "private key string, use 'from_private_key' method"
             )
-        verify_key = SigningKey(bytes(self.key_pair)).verify_key
+        verify_key: bytes = bytes(
+                            SigningKey(bytes(self.key_pair)).verify_key
+                            )
         self.public_key = PublicKey(verify_key)
         self.private_key = PrivateKey(
             bytes(self.key_pair) + bytes(self.public_key)

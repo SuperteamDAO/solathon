@@ -1,228 +1,109 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import NamedTuple, NewType
-
+from base58 import b58encode
 from nacl.signing import VerifyKey
-from base58 import b58decode, b58encode
-from nacl.exceptions import BadSignatureError
 from .keypair import Keypair
 from .publickey import PublicKey
-from .core.instructions import (
-    transfer,
-    Instruction,
-    AccountMeta
+from nacl.exceptions import BadSignatureError
+from .core.instructions import Instruction, AccountMeta
+from .core.message import (
+    Message,
+    MessageArgs,
+    MessageHeader,
+    CompiledInstruction,
+    encode_length
 )
 
-
-def encode_length(value: int) -> bytes:
-    elems, rem_len = [], value
-    while True:
-        elem = rem_len & 0x7F
-        rem_len >>= 7
-        if not rem_len:
-            elems.append(elem)
-            break
-        elem |= 0x80
-        elems.append(elem)
-    return bytes(elems)
-
-
-def to_uint8_bytes(val: int) -> bytes:
-    return val.to_bytes(1, byteorder="little")
-
-
-TransactionSignature = NewType("TransactionSignature", str)
-PACKET_DATA_SIZE = 1280 - 40 - 8
-
-
-class CompiledInstruction(NamedTuple):
-    accounts: bytes | list[int]
-    program_id_index: int
-    data: bytes
-
-
-class MessageHeader(NamedTuple):
-    num_required_signatures: int
-    num_readonly_signed_accounts: int
-    num_readonly_unsigned_accounts: int
-
-
-class MessageArgs(NamedTuple):
-    header: MessageHeader
-    account_keys: list[str]
-    recent_blockhash: str
-    instructions: list[CompiledInstruction]
-
-
-class Message:
-    def __init__(self, args: MessageArgs) -> None:
-        self.header = args.header
-        self.account_keys = [PublicKey(key) for key in args.account_keys]
-        self.recent_blockhash = args.recent_blockhash
-        self.instructions = args.instructions
-
-    def __encode_message(self) -> bytes:
-        MessageFormat = NamedTuple(
-            "MessageFormat",
-            [
-                ("num_required_signatures", bytes),
-                ("num_readonly_signed_accounts", bytes),
-                ("num_readonly_unsigned_accounts", bytes),
-                ("pubkeys_length", bytes),
-                ("pubkeys", bytes),
-                ("recent_blockhash", bytes),
-            ],
-        )
-        
-        return b"".join(
-            MessageFormat(
-                num_required_signatures=to_uint8_bytes(
-                    self.header.num_required_signatures),
-                num_readonly_signed_accounts=to_uint8_bytes(
-                    self.header.num_readonly_signed_accounts),
-                num_readonly_unsigned_accounts=to_uint8_bytes(
-                    self.header.num_readonly_unsigned_accounts),
-                pubkeys_length=encode_length(len(self.account_keys)),
-                pubkeys=b"".join([bytes(pubkey)
-                                 for pubkey in self.account_keys]),
-                recent_blockhash=b58decode(self.recent_blockhash),
-            )
-        )
-
-    @staticmethod
-    def __encode_instruction(
-        instruction: "CompiledInstruction",
-    ) -> bytes:
-        InstructionFormat = NamedTuple(
-            "InstructionFormat",
-            [
-                ("program_idx", bytes),
-                ("accounts_length", bytes),
-                ("accounts", bytes),
-                ("data_length", bytes),
-                ("data", bytes),
-            ],
-        )
-        data = b58decode(instruction.data)
-        data_length = encode_length(len(data))
-        return b"".join(
-            InstructionFormat(
-                program_idx=to_uint8_bytes(instruction.program_id_index),
-                accounts_length=encode_length(len(instruction.accounts)),
-                accounts=bytes(instruction.accounts),
-                data_length=data_length,
-                data=data,
-            )
-        )
-
-    def is_account_writable(self, index: int) -> bool:
-        writable = index < (self.header.num_required_signatures -
-                            self.header.num_readonly_signed_accounts)
-        return writable or self.header.num_required_signatures <= index < (
-            len(self.account_keys) - self.header.num_readonly_unsigned_accounts
-        )
-
-    def serialize(self) -> bytes:
-        message_buffer = bytearray()
-        # Message body
-        message_buffer.extend(self.__encode_message())
-        # Instructions
-        instruction_count = encode_length(len(self.instructions))
-        message_buffer.extend(instruction_count)
-        for instr in self.instructions:
-            message_buffer.extend(Message.__encode_instruction(instr))
-
-        return bytes(message_buffer)
+PACKET_DATA_SIZE = 1232
 
 @dataclass
 class PKSigPair():
     public_key: PublicKey
     signature: bytes | None = None
 
-
 class Transaction:
-    def __init__(
-        self,
-        **kwargs
-    ):
-        self.recent_blockhash = kwargs.get("recent_blockhash", None)
-        self.nonce_info = kwargs.get("nonce_info", None)
-        self.fee_payer: PublicKey = kwargs.get("fee_payer", None)
-
-        self.signers: list[Keypair] = kwargs.get("signers", None)
+    def __init__(self, **config):
+        self.recent_blockhash = config.get("recent_blockhash")
+        self.nonce_info = config.get("nonce_info")
+        self.fee_payer: PublicKey = config.get("fee_payer")
+        self.signers: list[Keypair] = config.get("signers")
         self.instructions: list[Instruction] = []
         self.signatures: list[PKSigPair] = []
-        if "instructions" in kwargs:
-            instructions: Instruction = kwargs.get("instructions")
+        if "instructions" in config:
+            instructions: Instruction = config.get("instructions")
             if (
-                type(instructions) == list and 
+                type(instructions) is list and
                 isinstance(instructions[0], Instruction)
-                ):
-                self.instructions.extend(kwargs["instructions"])
+            ):
+                self.instructions.extend(config["instructions"])
             else:
                 raise TypeError(("instructions keyword argument"
                                 "must be a list of Instruction objects"))
 
-
     def compile_transaction(self) -> Message:
-        if len(self.instructions) == 0:
-            raise AttributeError("No instructions for the transaction provided.")
+        if not self.instructions:
+            raise AttributeError("No instructions provided.")
 
         if not self.recent_blockhash:
             raise AttributeError("Recent blockhash not provided.")
 
-        if (self.nonce_info and self.instructions[0] !=
-                self.nonce_info.nonce_instruction
-            ):
+        if not self.signatures:
+            raise AttributeError("No signatures found in the transaction.")
+
+        if self.nonce_info:
             self.recent_blockhash = self.nonce_info.nonce
-            self.instructions = [
-                self.nonce_info.nonce_instruction
-            ] - self.instructions
 
         if not self.fee_payer:
             self.fee_payer = self.signatures[0].public_key
 
-        if not self.fee_payer:
-            raise AttributeError("Transaction fee payer required.")
+        account_metas: list[AccountMeta] = []
+        program_ids: list[str] = []
 
-        account_metas, program_ids = [], []
-        for instr in self.instructions:
-            if not instr.program_id:
-                raise AttributeError("invalid instruction:", instr)
-            account_metas.extend(instr.keys)
-            if str(instr.program_id) not in program_ids:
-                program_ids.append(str(instr.program_id))
-        for pg_id in program_ids:
-            account_metas.append(AccountMeta(PublicKey(pg_id), False, False))
+        for instruction in self.instructions:
+            if not instruction.program_id:
+                raise AttributeError(
+                    "Invalid instruction (no program ID found): ",
+                    instruction
+                )
+            account_metas.extend(instruction.keys)
+            if str(instruction.program_id) not in program_ids:
+                program_ids.append(str(instruction.program_id))
 
-        # Sort. Prioritizing first by signer, then by writable and converting from set to list.
+        for program_id in program_ids:
+            account_metas.append(AccountMeta(
+                public_key=PublicKey(program_id),
+                is_signer=False,
+                is_writable=False
+            ))
+
         account_metas.sort(key=lambda account: (
             not account.is_signer, not account.is_writable))
 
-        # Cull duplicate accounts
-        fee_payer_idx = 1
+        fee_payer_idx = 0
         seen: dict[str, int] = {}
         uniq_metas: list[AccountMeta] = []
+
         for sig in self.signatures:
-            pubkey = str(sig.public_key)
-            if pubkey in seen:
-                uniq_metas[seen[pubkey]].is_signer = True
+            public_key = str(sig.public_key)
+            if public_key in seen:
+                uniq_metas[seen[public_key]].is_signer = True
             else:
                 uniq_metas.append(AccountMeta(sig.public_key, True, True))
-                seen[pubkey] = len(uniq_metas) - 1
+                seen[public_key] = len(uniq_metas) - 1
                 if sig.public_key == self.fee_payer:
-                    fee_payer_idx = min(fee_payer_idx, seen[pubkey])
+                    fee_payer_idx = min(fee_payer_idx, seen[public_key])
+
         for a_m in account_metas:
-            pubkey = str(a_m.public_key)
-            if pubkey in seen:
-                idx = seen[pubkey]
+            public_key = str(a_m.public_key)
+            if public_key in seen:
+                idx = seen[public_key]
                 uniq_metas[idx].is_writable = uniq_metas[idx].is_writable or a_m.is_writable
             else:
                 uniq_metas.append(a_m)
-                seen[pubkey] = len(uniq_metas) - 1
+                seen[public_key] = len(uniq_metas) - 1
                 if a_m.public_key == self.fee_payer:
-                    fee_payer_idx = min(fee_payer_idx, seen[pubkey])
+                    fee_payer_idx = min(fee_payer_idx, seen[public_key])
 
         if fee_payer_idx == 1:
             uniq_metas = [AccountMeta(self.fee_payer, True, True)] + uniq_metas
@@ -259,7 +140,6 @@ class Transaction:
             )
             for instr in self.instructions
         ]
-
         return Message(
             MessageArgs(
                 header=MessageHeader(
@@ -276,7 +156,6 @@ class Transaction:
     def serialize_message(self) -> bytes:
         return self.compile_transaction().serialize()
 
-
     def sign(self) -> None:
 
         def to_public_key(signer: PublicKey | Keypair) -> PublicKey:
@@ -289,8 +168,8 @@ class Transaction:
                                 "PublicKey or Keypair object."))
 
         pk_sig_pairs: list[PKSigPair] = [PKSigPair(
-                                    public_key=to_public_key(signer)
-                                    ) for signer in self.signers]
+            public_key=to_public_key(signer)
+        ) for signer in self.signers]
 
         self.signatures = pk_sig_pairs
         sign_data = self.serialize_message()
@@ -299,9 +178,7 @@ class Transaction:
             if len(signature) != 64:
                 raise RuntimeError(
                     "Signature has invalid length, it should be 64 bytes long.")
-            print(self.signatures, idx, signature)
             self.signatures[idx].signature = signature
-
 
     def verify_signatures(self, signed_data: bytes | None = None) -> bool:
         if signed_data is None:

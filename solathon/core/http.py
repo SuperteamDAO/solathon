@@ -3,9 +3,11 @@ import asyncio
 import base64
 import httpx
 from typing import Any
+
+
 from .. import __version__
 from ..publickey import PublicKey
-
+from ..core.types import RPCResponse
 
 class HTTPClient:
     """HTTP Client to interact with Solana JSON RPC"""
@@ -23,14 +25,16 @@ class HTTPClient:
         self.request_id = 0
         self.client = httpx.Client()
 
-    def send(self, data: dict[str, Any]) -> dict[str, Any]:
+    def send(self, data: dict[str, Any]) -> RPCResponse:
         res = self.client.post(
                 url=self.endpoint, headers=self.headers, json=data)
         return res.json()
 
-    def build_data(self, method: str, params: tuple[Any]) -> tuple[str, Any]:
+    def build_data(self, method: str, params: list[Any]) -> dict[str, Any]:
         self.request_id += 1
-        params = [str(i) if isinstance(i, PublicKey) else i for i in params]
+        params: list[Any] = [
+            str(i) if isinstance(i, PublicKey) else i for i in params
+            ]
 
         if isinstance(params[0], bytes):
             params[0] = base64.b64encode(params[0]).decode("utf-8")
@@ -66,14 +70,16 @@ class AsyncHTTPClient:
         self.client = httpx.AsyncClient()
         
 
-    async def send(self, data: dict[str, Any]) -> dict[str, Any]:
+    async def send(self, data: dict[str, Any]) -> RPCResponse:
         res = await self.client.post(
                 url=self.endpoint, headers=self.headers, json=data)
         return res.json()
 
-    def build_data(self, method: str, params: tuple[Any]) -> tuple[str, Any]:
+    def build_data(self, method: str, params: list[Any]) -> dict[str, Any]:
         self.request_id += 1
-        params = [str(i) if isinstance(i, PublicKey) else i for i in params]
+        params: list[Any] = [
+            str(i) if isinstance(i, PublicKey) else i for i in params
+            ]
 
         if isinstance(params[0], bytes):
             params[0] = base64.b64encode(params[0]).decode("utf-8")

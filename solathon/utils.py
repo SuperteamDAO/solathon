@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 from solathon import PublicKey
 from nacl.signing import VerifyKey
-from solathon.core.types import RPCResponse
+from solathon.core.types import RPCError, RPCResponse
 
 
 LAMPORT_PER_SOL: int = 1000000000
@@ -11,7 +11,7 @@ SOL_PER_LAMPORT: float = 1 / LAMPORT_PER_SOL
 SOL_FLOATING_PRECISION: int = 9
 
 
-def truncate_float(number: int, length: int) -> float:
+def truncate_float(number: float, length: int) -> float:
     number = number * pow(10, length)
     number = int(number)
     number = float(number)
@@ -48,7 +48,7 @@ def verify_signature(
     vk.verify(message, bytes(signature))
 
 
-def clean_response(response: RPCResponse) -> dict[str, Any]:
+def clean_response(response: RPCResponse) -> dict[str, Any] | RPCError:
     if "error" in response.keys():
         return response["error"]
 
