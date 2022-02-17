@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import NamedTuple, NewType, Optional
+from typing import NamedTuple, NewType
+
+from nacl.signing import VerifyKey
 from base58 import b58decode, b58encode
 from nacl.exceptions import BadSignatureError
-from nacl.signing import VerifyKey
 from .keypair import Keypair
 from .publickey import PublicKey
 from .core.instructions import (
     transfer,
-    TransactionInstruction,
+    Instruction,
     AccountMeta
 )
 
@@ -73,6 +74,7 @@ class Message:
                 ("recent_blockhash", bytes),
             ],
         )
+        
         return b"".join(
             MessageFormat(
                 num_required_signatures=to_uint8_bytes(
@@ -133,36 +135,39 @@ class Message:
 
         return bytes(message_buffer)
 
-
 @dataclass
-class PublicKeySignature:
+class PKSigPair():
     public_key: PublicKey
-    signature: Optional[bytes] = None
+    signature: bytes | None = None
 
 
 class Transaction:
     def __init__(
         self,
-        sender,
-        receiver,
-        lamports,
-        recent_blockhash: Optional[str] = None,
-        fee_payer: Optional[PublicKey] = None,
+        **kwargs
     ):
-        self.sender = sender
-        self.receiver = receiver
-        self.lamports = lamports
-        self.instructions: list[TransactionInstruction] = [
-            transfer(sender.public_key, receiver, lamports)
-        ]
-        self.signatures: list[PublicKeySignature] = []
-        self.recent_blockhash, self.nonce_info = recent_blockhash, None
-        self.fee_payer: PublicKey = fee_payer
+        self.recent_blockhash = kwargs.get("recent_blockhash", None)
+        self.nonce_info = kwargs.get("nonce_info", None)
+        self.fee_payer: PublicKey = kwargs.get("fee_payer", None)
+
+        self.signers: list[Keypair] = kwargs.get("signers", None)
+        self.instructions: list[Instruction] = []
+        self.signatures: list[PKSigPair] = []
+        if "instructions" in kwargs:
+            instructions: Instruction = kwargs.get("instructions")
+            if (
+                type(instructions) == list and 
+                isinstance(instructions[0], Instruction)
+                ):
+                self.instructions.extend(kwargs["instructions"])
+            else:
+                raise TypeError(("instructions keyword argument"
+                                "must be a list of Instruction objects"))
+
 
     def compile_transaction(self) -> Message:
-
-        if len(self.instructions) < 1:
-            raise AttributeError("No instructions for transaction provided.")
+        if len(self.instructions) == 0:
+            raise AttributeError("No instructions for the transaction provided.")
 
         if not self.recent_blockhash:
             raise AttributeError("Recent blockhash not provided.")
@@ -175,20 +180,19 @@ class Transaction:
                 self.nonce_info.nonce_instruction
             ] - self.instructions
 
-        if not self.fee_payer and len(self.signatures) > 0:
+        if not self.fee_payer:
             self.fee_payer = self.signatures[0].public_key
 
         if not self.fee_payer:
             raise AttributeError("Transaction fee payer required.")
 
-        account_metas, program_ids = [], set()
+        account_metas, program_ids = [], []
         for instr in self.instructions:
             if not instr.program_id:
                 raise AttributeError("invalid instruction:", instr)
             account_metas.extend(instr.keys)
-            program_ids.add(str(instr.program_id))
-
-        # Append programID account metas.
+            if str(instr.program_id) not in program_ids:
+                program_ids.append(str(instr.program_id))
         for pg_id in program_ids:
             account_metas.append(AccountMeta(PublicKey(pg_id), False, False))
 
@@ -209,7 +213,6 @@ class Transaction:
                 seen[pubkey] = len(uniq_metas) - 1
                 if sig.public_key == self.fee_payer:
                     fee_payer_idx = min(fee_payer_idx, seen[pubkey])
-
         for a_m in account_metas:
             pubkey = str(a_m.public_key)
             if pubkey in seen:
@@ -241,7 +244,7 @@ class Transaction:
                 num_readonly_unsigned_accounts += int(not a_m.is_writable)
                 unsigned_keys.append(str(a_m.public_key))
         if not self.signatures:
-            self.signatures = [PublicKeySignature(public_key=PublicKey(
+            self.signatures = [PKSigPair(public_key=PublicKey(
                 key), signature=None) for key in signed_keys]
 
         account_keys: list[str] = signed_keys + unsigned_keys
@@ -274,13 +277,9 @@ class Transaction:
         return self.compile_transaction().serialize()
 
 
-    def sign(self, signers: Optional[list[PublicKey | Keypair]] = None) -> None:
-        if signers is None:
-            signers = []
-          
-        signers.insert(0, self.sender)  # Inserting sender to first index
+    def sign(self) -> None:
 
-        def to_public_key(signer: PublicKey | Keypair) -> Keypair | PublicKey:
+        def to_public_key(signer: PublicKey | Keypair) -> PublicKey:
             if isinstance(signer, Keypair):
                 return signer.public_key
             elif isinstance(signer, PublicKey):
@@ -289,21 +288,22 @@ class Transaction:
                 raise TypeError(("The argument must be either "
                                 "PublicKey or Keypair object."))
 
-        signatures: list[PublicKeySignature] = [
-            PublicKeySignature(
-                public_key=to_public_key(signer)) for signer in signers
-        ]
-        self.signatures.extend(signatures)
-        sign_data = self.serialize_message()
-        for idx, signer in enumerate(signers):
-            if isinstance(signer, Keypair):
-                signature = signer.sign(sign_data).signature
-                if len(signature) != 64:
-                    raise RuntimeError(
-                        "Signature has invalid length, it should be 64 bytes long.")
-                self.signatures[idx].signature = signature
+        pk_sig_pairs: list[PKSigPair] = [PKSigPair(
+                                    public_key=to_public_key(signer)
+                                    ) for signer in self.signers]
 
-    def verify_signatures(self, signed_data: Optional[bytes] = None) -> bool:
+        self.signatures = pk_sig_pairs
+        sign_data = self.serialize_message()
+        for idx, signer in enumerate(self.signers):
+            signature = signer.sign(sign_data).signature
+            if len(signature) != 64:
+                raise RuntimeError(
+                    "Signature has invalid length, it should be 64 bytes long.")
+            print(self.signatures, idx, signature)
+            self.signatures[idx].signature = signature
+
+
+    def verify_signatures(self, signed_data: bytes | None = None) -> bool:
         if signed_data is None:
             signed_data: bytes = self.serialize_message()
         for sig_pair in self.signatures:
