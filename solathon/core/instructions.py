@@ -145,7 +145,7 @@ def transfer(
             is_signer=False,
             is_writable=True
         ),
-    ],
+    ]
     data: bytes = SYSTEM_INSTRUCTIONS_LAYOUT.build(
         dict(
             type=InstructionType.TRANSFER,
