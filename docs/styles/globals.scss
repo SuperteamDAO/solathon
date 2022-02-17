@@ -91,6 +91,15 @@ p {
     line-height: 1.75rem;
     font-size: 1.15rem;
 }
+
+.md\:block > ul {
+     > li button, > li > a{
+        color: #ffffff !important;
+        font-weight: 600;
+    }
+    
+  }
+
 .table-container:not(:first-child),
 blockquote:not(:first-child),
 p:not(:first-child) {
@@ -560,7 +569,7 @@ a code {
 .dark .sidebar a,
 .dark .sidebar button {
     --tw-text-opacity: 1;
-    color: #ced2eb;
+    color: #a5a8be;
 }
 .sidebar a:hover,
 .sidebar button:hover {

@@ -6,13 +6,19 @@ import Callout from 'nextra-theme-docs/callout'
 
 <Code>
   ```python 
-    class Transaction(sender: Keypair, receiver: PublicKey | str, 
-                    lamports: int, recent_blockhash: Optional[str] = None)
+    class Transaction(self, **config)
   ```
 </Code>
 
-> The class requires a sender which should be a [keypair](/models/keypair) object, a receiver which can be either keypair or public key (public key can be string but preferrd to use [PublicKey](/models/publickey) object) and the amount in lamports, blockhash is optional.
-
+> A completely empty transaction can be initialized without any config, the table below shows the available config options
+| Config  | Description |
+|---------|------------ |
+| recent_blockhash  | Optional, latest on is fetched if not provided |
+| nonce_info  | Alternative to recent_blockhash |
+| fee_payer  | First signer's public key is used if this is not provided |
+| signers  | List of keypairs who will sign the transaction. |
+| instructions  | List of [Instructions](/models/transaction/instructions) which the transaction will execute |
+| signatures  | Initialize with externally created signatures |
 
 #### Methods
 - [compile_transaction](#compile_transaction)
@@ -24,8 +30,6 @@ import Callout from 'nextra-theme-docs/callout'
 - [serialize](#serialize)
 
 #### Attributes
-- [sender](#sender)
-- [receiver](#receiver)
 - [instructions](#instructions)
 - [signatures](#signatures)
 - [recent_blockhash](#recent_blockhash)
@@ -108,14 +112,8 @@ def serialize()
 - [recent_blockhash](#recent_blockhash)
 
 ## Attributes
-#### .sender
-Returns the keypair for the sender.
-
-#### .receiver
-Returns the public key object of the receiver.
-
 #### .instructions
-Returns transaction instructions.
+Returns all transaction instructions.
 
 #### .signatures
 Returns all the signatures of the transaction object.
