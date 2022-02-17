@@ -274,8 +274,9 @@ Example:
 
 <Code>
 ```python 
-from solathon import Client, Transaction, PublicKey, Keypair
 import time
+from solathon.core.instructions import transfer
+from solathon import Client, Transaction, PublicKey, Keypair
 ㅤ
 client = Client("https://api.devnet.solana.com")
 ㅤ
@@ -286,15 +287,20 @@ amount = 10000  # This is the amount in lamports
 # Requesting airdrop to get some devnet tokens for the transaction to succeed
 res = client.request_airdrop(sender.public_key, amount + amount)
 print("Airdrop response: ", res)
-time.sleep(15) # 15 second delay to make sure we get enough time to receive airdrop tokens
+time.sleep(20) # 20 second delay to make sure we get enough time to receive airdrop tokens
 ㅤ
-transaction = Transaction(sender, receiver, amount)
+# Creating transfer instruction
+instruction = transfer(
+        from_public_key=sender.public_key,
+        to_public_key=receiver, 
+        lamports=100
+    )
+transaction = Transaction(instructions=[instruction], signers=[sender])
 result = client.send_transaction(transaction)
 ㅤ
 print("Transaction response: ", result)
 ```
 </Code>
-
 
 
 ## Attributes
