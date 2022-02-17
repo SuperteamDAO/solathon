@@ -2,7 +2,6 @@
 
 from typing import NamedTuple
 from dataclasses import dataclass
-from ..keypair import Keypair
 from ..publickey import PublicKey
 from ..core.layouts import (
     InstructionType,
@@ -127,7 +126,7 @@ def assign(
     )
 
 
-"""Need to implement assign_with_seed_here"""
+# Need to implement assign_with_seed_here"
 
 
 def transfer(
