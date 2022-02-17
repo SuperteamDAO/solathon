@@ -11,7 +11,7 @@ SOL_PER_LAMPORT: float = 1 / LAMPORT_PER_SOL
 SOL_FLOATING_PRECISION: int = 9
 
 
-def truncate_float(number: int, length: int) -> float:
+def truncate_float(number: float, length: int) -> float:
     number = number * pow(10, length)
     number = int(number)
     number = float(number)

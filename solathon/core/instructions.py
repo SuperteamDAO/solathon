@@ -12,7 +12,7 @@ from ..core.layouts import (
 
 @dataclass
 class AccountMeta:
-    public_key: PublicKey
+    public_key: PublicKey | str
     is_signer: bool
     is_writable: bool
 
@@ -41,7 +41,7 @@ def create_account(
             is_signer=True,
             is_writable=True
         ),
-    ],
+    ]
     data: bytes = SYSTEM_INSTRUCTIONS_LAYOUT.build(
         dict(
             instruction_type=InstructionType.CREATE_ACCOUNT,

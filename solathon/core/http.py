@@ -28,9 +28,11 @@ class HTTPClient:
                 url=self.endpoint, headers=self.headers, json=data)
         return res.json()
 
-    def build_data(self, method: str, params: tuple[Any]) -> tuple[str, Any]:
+    def build_data(self, method: str, params: list[Any]) -> dict[str, Any]:
         self.request_id += 1
-        params = [str(i) if isinstance(i, PublicKey) else i for i in params]
+        params: list[Any] = [
+            str(i) if isinstance(i, PublicKey) else i for i in params
+            ]
 
         if isinstance(params[0], bytes):
             params[0] = base64.b64encode(params[0]).decode("utf-8")
@@ -71,9 +73,11 @@ class AsyncHTTPClient:
                 url=self.endpoint, headers=self.headers, json=data)
         return res.json()
 
-    def build_data(self, method: str, params: tuple[Any]) -> tuple[str, Any]:
+    def build_data(self, method: str, params: list[Any]) -> dict[str, Any]:
         self.request_id += 1
-        params = [str(i) if isinstance(i, PublicKey) else i for i in params]
+        params: list[Any] = [
+            str(i) if isinstance(i, PublicKey) else i for i in params
+            ]
 
         if isinstance(params[0], bytes):
             params[0] = base64.b64encode(params[0]).decode("utf-8")
