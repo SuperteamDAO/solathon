@@ -24,16 +24,16 @@ class PKSigPair():
 
 class Transaction:
     def __init__(self, **config):
-        self.recent_blockhash = config.get("recent_blockhash", None)
-        self.nonce_info = config.get("nonce_info", None)
-        self.fee_payer: PublicKey = config.get("fee_payer", None)
-        self.signers: list[Keypair] = config.get("signers", None)
+        self.recent_blockhash = config.get("recent_blockhash")
+        self.nonce_info = config.get("nonce_info")
+        self.fee_payer: PublicKey = config.get("fee_payer")
+        self.signers: list[Keypair] = config.get("signers")
         self.instructions: list[Instruction] = []
         self.signatures: list[PKSigPair] = []
         if "instructions" in config:
             instructions: Instruction = config.get("instructions")
             if (
-                type(instructions) == list and
+                type(instructions) is list and
                 isinstance(instructions[0], Instruction)
             ):
                 self.instructions.extend(config["instructions"])
