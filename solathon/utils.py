@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 from solathon import PublicKey
 from nacl.signing import VerifyKey
-from solathon.core.types import RPCResponse
+from solathon.core.types import RPCError, RPCResponse
 
 
 LAMPORT_PER_SOL: int = 1000000000
@@ -48,7 +48,7 @@ def verify_signature(
     vk.verify(message, bytes(signature))
 
 
-def clean_response(response: RPCResponse) -> dict[str, Any]:
+def clean_response(response: RPCResponse) -> dict[str, Any] | RPCError:
     if "error" in response.keys():
         return response["error"]
 

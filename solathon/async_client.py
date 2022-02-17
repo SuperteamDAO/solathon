@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Any
 from .publickey import PublicKey
 from .core.http import AsyncHTTPClient
 from .core.types import RPCResponse
@@ -27,45 +28,45 @@ class AsyncClient:
         await self.http.refresh()
 
     async def get_account_info(self, public_key: PublicKey | str) -> RPCResponse:
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getAccountInfo", params=[public_key]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_balance(self, public_key: PublicKey | str) -> RPCResponse:
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getBalance", params=[public_key]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_block(self, slot: int) -> RPCResponse:
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getBlock", params=[slot]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_block_height(self) -> RPCResponse:
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getBlockHeight", params=[None]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_block_production(self) -> RPCResponse:
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getBlockProduction", params=[None]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_block_commitment(self, block: int) -> RPCResponse:
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getBlockCommitment", params=[block]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_blocks(self, start_slot: int, end_slot: int | None = None
@@ -74,105 +75,105 @@ class AsyncClient:
         if end_slot:
             params.append(end_slot)
 
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getBlocks", params=params
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_blocks_with_limit(self, start_slot: int, limit: int
                               ) -> RPCResponse:
 
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getBlocksWithLimit", params=[start_slot, limit]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_block_time(self, block: int) -> RPCResponse:
 
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getBlockTime", params=[block]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_cluster_nodes(self) -> RPCResponse:
 
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getClusterNodes", params=[None]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_epoch_info(self) -> RPCResponse:
 
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getEpochInfo", params=[None]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_epoch_schedule(self) -> RPCResponse:
 
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getEpochSchedule", params=[None]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_fee_for_message(self, message: str) -> RPCResponse:
 
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getFeeForMessage", params=[message]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     # Going to be deprecated
     async def get_fees(self) -> RPCResponse:
 
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getFees", params=[None]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_first_available_block(self) -> RPCResponse:
 
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getFirstAvailableBlock", params=[None]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_supply(self) -> RPCResponse:
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getSupply", params=[None]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_identity(self) -> RPCResponse:
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getIdentity", params=[None]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_transaction(self, signature: str) -> RPCResponse:
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getTransaction", params=[signature]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     # Will switch to getFeeForMessage (latest)
     async def get_recent_blockhash(self) -> RPCResponse:
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getRecentBlockhash", params=[None]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def get_token_accounts_by_owner(self, public_key: str | PublicKey,
@@ -186,7 +187,7 @@ class AsyncClient:
         # Who doesn't like JSON?
         encoding = kwargs.get("encoding", "jsonParsed")
 
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="getTokenAccountsByOwner",
             params=[
                 str(public_key),
@@ -194,17 +195,17 @@ class AsyncClient:
                 {"encoding": encoding}
             ]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def request_airdrop(self, public_key: PublicKey | str, lamports: int
                         ) -> RPCResponse:
 
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="requestAirdrop",
             params=[public_key, lamports]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
 
     async def send_transaction(self, transaction: Transaction,
@@ -212,15 +213,15 @@ class AsyncClient:
                          ) -> RPCResponse:
 
         if recent_blockhash is None:
-            blockhash_resp = self.get_recent_blockhash()
+            blockhash_resp = await self.get_recent_blockhash()
             recent_blockhash = blockhash_resp["result"]["value"]["blockhash"]
 
         transaction.recent_blockhash = recent_blockhash
         transaction.sign()
 
-        data = self.http.build_data(
+        data: dict[str, Any] = self.http.build_data(
             method="sendTransaction",
             params=[transaction.serialize(), {"encoding": "base64"}]
         )
-        res = await self.http.send(data)
+        res: RPCResponse = await self.http.send(data)
         return res
