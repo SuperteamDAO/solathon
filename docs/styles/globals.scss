@@ -92,7 +92,7 @@ p {
     font-size: 1.15rem;
 }
 
-.md\:block > ul {
+.dark .md\:block > ul {
      > li button, > li > a{
         color: #ffffff !important;
         font-weight: 600;
@@ -100,6 +100,15 @@ p {
     
   }
 
+.md\:block > ul {
+    > li button, > li > a{
+       color: #55546b !important;
+       font-weight: 600;
+   }
+   
+ }
+
+ 
 .table-container:not(:first-child),
 blockquote:not(:first-child),
 p:not(:first-child) {
