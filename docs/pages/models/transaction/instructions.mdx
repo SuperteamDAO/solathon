@@ -6,7 +6,7 @@ import { Code } from '/components/Code';
 ```python
 from solathon.core.instructions import *
 ```
-#### Functions
+#### Instruction Functions
 - [create_account](#create_account)
 - [create_account_with_seed](#create_account_with_seed)
 - [assign](#assign)
@@ -18,8 +18,11 @@ from solathon.core.instructions import *
 - [AccountMeta](#accountmeta)
 - [Instruction](#instruction)
 
-## Functions
+
+## Instruction Functions
 #### create_account
+Creates a program account. When sending the transaction, both `from_public_key`'s and `new_account_public_key`'s keypairs need to be passed in the signers argument
+
 <Code>
 ```python 
 def create_account(
@@ -29,6 +32,33 @@ def create_account(
     space: int,
     program_id: PublicKey
 )
+```
+</Code>
+Example:
+
+<Code>
+```python 
+from solathon.core.instructions import create_account
+from solathon import Client, Transaction, PublicKey, Keypair
+ㅤ
+client = Client("https://api.devnet.solana.com")
+ㅤ
+# Requires you to have some SOLs to pay for transaction fees
+sender = Keypair.from_private_key("your_private_key")
+new_account = Keypair()
+program_id = PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA") # Token program
+ㅤ
+instruction = create_account(
+        from_public_key=sender.public_key,
+        new_account_public_key=new_account.public_key, 
+        lamports=100,
+        space=100,
+        program_id=program_id
+    )
+transaction = Transaction(instructions=[instruction], signers=[sender, new_account])
+ㅤ
+result = client.send_transaction(transaction)
+print("Transaction response: ", result)
 ```
 </Code>
 
@@ -93,7 +123,7 @@ def allocate_with_seed(
 
 ## Classes
 #### AccountMeta
-This is a dataclass reperenting meta-data of an account
+This is a dataclass representing meta-data of an account
 
 <Code>
 ```python
@@ -106,7 +136,7 @@ class AccountMeta:
 </Code>
 
 #### Instruction
-This is a named tuple reperenting a instruction object. Here keys are AccountMeta dataclass, program_id is the PublicKey of the program and data is our compiled instruction in bytes.
+This is a named tuple representing an instruction object. Here keys are `AccountMeta` dataclass, program_id is the `PublicKey` of the program and data is our compiled instruction in bytes.
 
 <Code>
 ```python
