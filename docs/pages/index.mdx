@@ -25,22 +25,41 @@ pip install solathon
 ```
 </Code>
 
-### Feature rich
-Solathon covers most of the Solana JSON RPC. Other than that, it provides utility functions which come in handy often.
+### ✨ Easy to use
+Using object-oriented approach, Solathon makes everything easy to understand and work with. The documentation has detailed explaination with examples for everything to get anyone started quickly.
 
-### High performance
+### ⚡Feature rich
+Most of the Solana JSON RPC with the latest methods are supported. Other than that, many utility functions are also provided which come in handy often.
+
+### 🚀 High performance
 Being light weight and optimized for the best performance; Solathon comes with batteries included without being too heavy.
 
-### Easy to use
-Everything has been simplified down for it to be easy to use, using object-oriented approach, Solathon makes everything easy to understand and work with.
+### 🌀 Async support
+Both synchronous and asynchronous clients are available, use the one more suitable for your application.
 
-### Async support
-Solathon supports both synchronous and asynchronous clients, use the one more suitable for your application.
+---
+### Example usage
+Create new account and airdrop some devnet tokens:
 
 <Code>
-```python 
-# Simple example to fetch a wallet's balance using synchronous client
+```python
+from solathon import Client, Keypair
 ㅤ
+client = Client("https://api.devnet.solana.com")
+ㅤ
+new_account = Keypair()
+print(new_account.public_key, new_account.private_key)
+amount = 10000  # This is the amount in lamports
+ㅤ
+res = client.request_airdrop(new_account.public_key, amount)
+print("Airdrop response: ", res)
+```
+</Code>
+
+Fetch a wallet's balance using it's public key:
+
+<Code>
+```python
 from solathon import Client, PublicKey
 ㅤ
 client = Client("https://api.devnet.solana.com")
@@ -48,5 +67,30 @@ public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
 balance = Client.get_balance(public_key)
 ㅤ
 print(balance)
+```
+</Code>
+
+Send a transaction:
+
+<Code>
+```python
+from solathon.core.instructions import transfer
+from solathon import Client, Transaction, PublicKey, Keypair
+ㅤ
+client = Client("https://api.devnet.solana.com")
+ㅤ
+sender = Keypair().from_private_key("your_private_key")
+receiver = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
+amount = 10000 # This is the amount in lamports
+ㅤ
+instruction = transfer(
+    from_public_key=sender.public_key,
+    to_public_key=receiver, 
+    lamports=amount
+)
+transaction = Transaction(instructions=[instruction], signers=[sender])
+ㅤ
+result = client.send_transaction(transaction)
+print(result)
 ```
 </Code>
