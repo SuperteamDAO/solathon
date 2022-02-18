@@ -254,7 +254,7 @@ async def main():
     # Token program ID
     program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
     ㅤ
-    tokens = await client.get_token_accounts_by_owner(public_key, program_id)
+    tokens = await client.get_token_accounts_by_owner(public_key, program_id=program_id)
     print(tokens)
 ㅤ
 asyncio.run(main)

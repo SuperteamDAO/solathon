@@ -251,7 +251,7 @@ client = Client("https://api.mainnet-beta.solana.com")
 public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
 program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" # Token program ID
 ㅤ
-tokens = client.get_token_accounts_by_owner(public_key, program_id)
+tokens = client.get_token_accounts_by_owner(public_key, program_id=program_id)
 ㅤ
 print(tokens)
 ```
