@@ -30,18 +30,19 @@ class MessageHeader(NamedTuple):
     num_readonly_signed_accounts: int
     num_readonly_unsigned_accounts: int
 
-class MessageArgs(NamedTuple):
-    header: MessageHeader
-    account_keys: list[str]
-    recent_blockhash: str
-    instructions: list[CompiledInstruction]
 
 class Message:
-    def __init__(self, args: MessageArgs):
-        self.header = args.header
-        self.account_keys = [PublicKey(key) for key in args.account_keys]
-        self.recent_blockhash = args.recent_blockhash
-        self.instructions = args.instructions
+    def __init__(
+        self,
+        header: MessageHeader,
+        account_keys: list[str],
+        instructions: list[CompiledInstruction],
+        recent_blockhash: str
+    ):
+        self.header = header
+        self.account_keys = [PublicKey(key) for key in account_keys]
+        self.recent_blockhash = recent_blockhash
+        self.instructions = instructions
 
     def encode_message(self) -> bytes:
         MessageFormat = NamedTuple(

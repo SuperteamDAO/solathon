@@ -44,7 +44,7 @@ def create_account(
     ]
     data: bytes = SYSTEM_INSTRUCTIONS_LAYOUT.build(
         dict(
-            instruction_type=InstructionType.CREATE_ACCOUNT,
+            type=InstructionType.CREATE_ACCOUNT,
             args=dict(
                 lamports=lamports, space=space,
                 program_id=bytes(program_id)
@@ -79,9 +79,10 @@ def create_account_with_seed(
             is_writable=True
         ),
     ]
+    
     data: bytes = SYSTEM_INSTRUCTIONS_LAYOUT.build(
         dict(
-            instruction_type=InstructionType.CREATE_ACCOUNT_WITH_SEED,
+            type=InstructionType.CREATE_ACCOUNT_WITH_SEED,
             args=dict(
                 base=bytes(base_public_key),
                 seed=seed,
@@ -109,7 +110,7 @@ def assign(
 ) -> Instruction:
 
     data = SYSTEM_INSTRUCTIONS_LAYOUT.build(
-        dict(instruction_type=InstructionType.ASSIGN,
+        dict(type=InstructionType.ASSIGN,
              args=dict(program_id=bytes(program_id)
                        ))
     )
@@ -126,7 +127,7 @@ def assign(
     )
 
 
-# Need to implement assign_with_seed_here"
+# Need to implement assign_with_seed_here
 
 
 def transfer(
@@ -165,7 +166,7 @@ def allocate(
 ) -> Instruction:
 
     data: bytes = SYSTEM_INSTRUCTIONS_LAYOUT.build(
-        dict(instruction_type="allocate", args=dict(space=space))
+        dict(type=InstructionType.ALLOCATE, args=dict(space=space))
     )
     return Instruction(
         keys=[AccountMeta(
@@ -188,7 +189,7 @@ def allocate_with_seed(
 
     data: bytes = SYSTEM_INSTRUCTIONS_LAYOUT.build(
         dict(
-            instruction_type="allocate_with_seed",
+            type=InstructionType.ALLOCATE_WITH_SEED,
             args=dict(
                 base=bytes(base_public_key),
                 seed=seed,

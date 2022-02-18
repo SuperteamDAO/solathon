@@ -2,14 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from base58 import b58encode
-from nacl.signing import VerifyKey
 from .keypair import Keypair
 from .publickey import PublicKey
+from nacl.signing import VerifyKey
 from nacl.exceptions import BadSignatureError
 from .core.instructions import Instruction, AccountMeta
 from .core.message import (
     Message,
-    MessageArgs,
     MessageHeader,
     CompiledInstruction,
     encode_length
@@ -18,15 +17,16 @@ from .core.message import (
 PACKET_DATA_SIZE = 1232
 
 @dataclass
-class PKSigPair():
+class PKSigPair:
     public_key: PublicKey
     signature: bytes | None = None
 
+
 class Transaction:
     def __init__(self, **config):
-        self.recent_blockhash = config.get("recent_blockhash")
-        self.nonce_info = config.get("nonce_info")
         self.fee_payer: PublicKey = config.get("fee_payer")
+        self.nonce_info = config.get("nonce_info")
+        self.recent_blockhash = config.get("recent_blockhash")
         self.signers: list[Keypair] = config.get("signers")
         self.instructions: list[Instruction] = []
         self.signatures: list[PKSigPair] = []
@@ -38,10 +38,15 @@ class Transaction:
             ):
                 self.instructions.extend(config["instructions"])
             else:
-                raise TypeError(("instructions keyword argument"
-                                "must be a list of Instruction objects"))
+                raise TypeError((
+                                "instructions keyword argument"
+                                "must be a list of Instruction objects"
+                                ))
 
     def compile_transaction(self) -> Message:
+        if self.nonce_info:
+            self.recent_blockhash = self.nonce_info.nonce
+
         if not self.instructions:
             raise AttributeError("No instructions provided.")
 
@@ -50,9 +55,6 @@ class Transaction:
 
         if not self.signatures:
             raise AttributeError("No signatures found in the transaction.")
-
-        if self.nonce_info:
-            self.recent_blockhash = self.nonce_info.nonce
 
         if not self.fee_payer:
             self.fee_payer = self.signatures[0].public_key
@@ -141,20 +143,15 @@ class Transaction:
             for instr in self.instructions
         ]
         return Message(
-            MessageArgs(
-                header=MessageHeader(
-                    num_required_signatures=num_required_signatures,
-                    num_readonly_signed_accounts=num_readonly_signed_accounts,
-                    num_readonly_unsigned_accounts=num_readonly_unsigned_accounts,
-                ),
-                account_keys=account_keys,
-                instructions=compiled_instructions,
-                recent_blockhash=self.recent_blockhash,
-            )
-        )
-
-    def serialize_message(self) -> bytes:
-        return self.compile_transaction().serialize()
+            MessageHeader(
+                num_required_signatures=num_required_signatures,
+                num_readonly_signed_accounts=num_readonly_signed_accounts,
+                num_readonly_unsigned_accounts=num_readonly_unsigned_accounts,
+            ),
+            account_keys,
+            compiled_instructions,
+            self.recent_blockhash,
+        ).serialize()
 
     def sign(self) -> None:
 
@@ -172,17 +169,19 @@ class Transaction:
         ) for signer in self.signers]
 
         self.signatures = pk_sig_pairs
-        sign_data = self.serialize_message()
+        sign_data = self.compile_transaction()
         for idx, signer in enumerate(self.signers):
             signature = signer.sign(sign_data).signature
             if len(signature) != 64:
                 raise RuntimeError(
-                    "Signature has invalid length, it should be 64 bytes long.")
+                    "Signature has invalid length: ",
+                    signature
+                )
             self.signatures[idx].signature = signature
 
     def verify_signatures(self, signed_data: bytes | None = None) -> bool:
         if signed_data is None:
-            signed_data: bytes = self.serialize_message()
+            signed_data: bytes = self.compile_transaction()
         for sig_pair in self.signatures:
             if not sig_pair.signature:
                 return False
@@ -196,33 +195,43 @@ class Transaction:
 
     def serialize(self) -> bytes:
         if not self.signatures:
-            raise AttributeError("transaction has not been signed")
+            raise AttributeError("Transaction has not been signed.")
 
-        sign_data = self.serialize_message()
+        sign_data = self.compile_transaction()
         if not self.verify_signatures(sign_data):
-            raise AttributeError("transaction has not been signed correctly")
+            raise AttributeError("Transaction has not been signed correctly.")
 
         if len(self.signatures) >= 64 * 4:
-            raise AttributeError("too many singatures to encode")
+            raise AttributeError("Too many signatures to encode.")
+
         wire_transaction = bytearray()
-        # Encode signature count
         signature_count = encode_length(len(self.signatures))
         wire_transaction.extend(signature_count)
-        # Encode signatures
         for sig_pair in self.signatures:
             if sig_pair.signature and len(sig_pair.signature) != 64:
                 raise RuntimeError(
-                    "signature has invalid length", sig_pair.signature)
+                    "Signature has invalid length: ", sig_pair.signature
+                )
 
             if not sig_pair.signature:
                 wire_transaction.extend(bytearray(64))
             else:
                 wire_transaction.extend(sig_pair.signature)
-        # Encode signed data
+
         wire_transaction.extend(sign_data)
 
         if len(wire_transaction) > PACKET_DATA_SIZE:
             raise RuntimeError(
-                f"transaction too large: {len(wire_transaction)} > {PACKET_DATA_SIZE}")
-
+                "Transaction too large: ",
+                len(wire_transaction)
+            )
         return bytes(wire_transaction)
+
+    def add_instructions(self, *instructions: Instruction) -> None:
+        for instr in instructions:
+            if not isinstance(instr, Instruction):
+                raise ValueError(
+                    "Argument not an instruction object: ",
+                    instr
+                )
+            self.instructions.append(instr)
