@@ -10,7 +10,7 @@ import Callout from 'nextra-theme-docs/callout'
   ```
 </Code>
 
-> To initialise a client, one of the three [RPC cluster endpoint URLs](https://docs.solana.com/cluster/rpc-endpoints) must be passed. When running a local cluster, the local argument must be passed as true for the local endpoint to work.
+> To initialize a client, one of the three [RPC cluster endpoint URLs](https://docs.solana.com/cluster/rpc-endpoints) must be passed. When running a local cluster, the local argument must be passed as true for the local endpoint to work.
 
 #### Methods
 - [refresh_http](#refresh_http)
@@ -229,11 +229,14 @@ def get_recent_blockhash()
 </Code>
 
 #### .get_token_accounts_by_owner
-Returns all SPL Token accounts of the public key provided. Either mint_id or program_id keyword argument is required, encoding is optional.
+Returns all SPL Token accounts of the public key provided. Either `mint_id` or `program_id` keyword argument is required, encoding is optional.
 
 <Code>
 ```python 
-def get_token_accounts_by_owner(public_key: PublicKey | str, **kwargs)
+def get_token_accounts_by_owner(
+    public_key: PublicKey | str, 
+    **kwargs
+)
 ```
 </Code>
 
@@ -258,15 +261,27 @@ print(tokens)
     <p style={{fontSize:"1rem"}}>This method returns token on mainnet only.</p>
 </Callout>
 
+#### .request_airdrop
+Requests the amount of lamport specified to be airdropped to the public key.
+
+<Code>
+```python 
+def request_airdrop(
+    public_key: public_key, 
+    amount: int
+)
+```
+</Code>
+
 #### .send_transaction
 Submits a signed [transaction object](/models/transaction) to the cluster for processing, recent blockhash is optional.
 
 <Code>
 ```python 
 def send_transaction(
-                    transaction: Transaction, 
-                    recent_blockhash: str | None = None
-                    )
+    transaction: Transaction, 
+    recent_blockhash: str | None = None
+)
 ```
 </Code>
 
@@ -287,7 +302,8 @@ amount = 10000  # This is the amount in lamports
 # Requesting airdrop to get some devnet tokens for the transaction to succeed
 res = client.request_airdrop(sender.public_key, amount + amount)
 print("Airdrop response: ", res)
-time.sleep(20) # 20 second delay to make sure we get enough time to receive airdrop tokens
+# 20 second delay to make sure we get enough time to receive airdrop tokens
+time.sleep(20)
 ㅤ
 # Creating transfer instruction
 instruction = transfer(
