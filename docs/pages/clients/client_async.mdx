@@ -278,14 +278,11 @@ def request_airdrop(
 </Code>
 
 #### .send_transaction
-Submits a signed [transaction object](/models/transaction) to the cluster for processing, recent blockhash is optional.
+Submits a signed [Transaction object](/models/transaction) to the cluster for processing, recent blockhash is optional.
 
 <Code>
 ```python 
-async def send_transaction(
-    transaction: Transaction, 
-    recent_blockhash: str | None = None
-)
+async def send_transaction(transaction: Transaction)
 ```
 </Code>
 
@@ -312,9 +309,9 @@ async def main():
     ㅤ
     # Creating transfer instruction
     instruction = transfer(
-            from_public_key=sender.public_key,
-            to_public_key=receiver, 
-            lamports=100
+        from_public_key=sender.public_key,
+        to_public_key=receiver, 
+        lamports=100
     )
     transaction = Transaction(instructions=[instruction], signers=[sender])
     result = await client.send_transaction(transaction)

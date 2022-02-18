@@ -233,10 +233,7 @@ Returns all SPL Token accounts of the public key provided. Either `mint_id` or `
 
 <Code>
 ```python 
-def get_token_accounts_by_owner(
-    public_key: PublicKey | str, 
-    **kwargs
-)
+def get_token_accounts_by_owner(public_key: PublicKey | str,  **kwargs)
 ```
 </Code>
 
@@ -274,14 +271,11 @@ def request_airdrop(
 </Code>
 
 #### .send_transaction
-Submits a signed [transaction object](/models/transaction) to the cluster for processing, recent blockhash is optional.
+Submits a signed [Transaction object](/models/transaction) to the cluster for processing.
 
 <Code>
 ```python 
-def send_transaction(
-    transaction: Transaction, 
-    recent_blockhash: str | None = None
-)
+def send_transaction(transaction: Transaction)
 ```
 </Code>
 
@@ -307,10 +301,10 @@ time.sleep(20)
 ㅤ
 # Creating transfer instruction
 instruction = transfer(
-        from_public_key=sender.public_key,
-        to_public_key=receiver, 
-        lamports=100
-    )
+    from_public_key=sender.public_key,
+    to_public_key=receiver, 
+    lamports=100
+)
 transaction = Transaction(instructions=[instruction], signers=[sender])
 result = client.send_transaction(transaction)
 ㅤ

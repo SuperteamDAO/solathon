@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Any
-from typing import Optional
 from .publickey import PublicKey
 from .core.http import HTTPClient
 from .core.types import RPCResponse
@@ -70,7 +69,7 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
 
-    def get_blocks(self, start_slot: int, end_slot: Optional[int] = None
+    def get_blocks(self, start_slot: int, end_slot: int | None = None
                    ) -> RPCResponse:
         params = [start_slot]
         if end_slot:
@@ -209,11 +208,9 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
 
-    def send_transaction(self, transaction: Transaction,
-                         recent_blockhash: Optional[str] = None
-                         ) -> RPCResponse:
+    def send_transaction(self, transaction: Transaction) -> RPCResponse:
 
-        if recent_blockhash is None:
+        if transaction.recent_blockhash is None:
             blockhash_resp = self.get_recent_blockhash()
             recent_blockhash = blockhash_resp["result"]["value"]["blockhash"]
 
