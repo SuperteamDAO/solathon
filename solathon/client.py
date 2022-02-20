@@ -148,6 +148,13 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
 
+    def get_genesis_hash(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getGenesisHash", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
     def get_supply(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getSupply", params=[None]
