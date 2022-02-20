@@ -32,6 +32,7 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_genesis_hash](#get_genesis_hash)
 - [get_health](#get_health)
 - [get_identity](#get_identity)
+- [get_inflation_governor](#get_inflation_governor)
 - [get_supply](#get_supply)
 - [get_transaction](#get_transaction)
 - [get_recent_blockhash](#get_recent_blockhash)
@@ -212,11 +213,20 @@ def get_health()
 </Code>
 
 #### .get_identity
-Returns the current health of the node.
+Returns the identity public key for the current node
 
 <Code>
 ```python 
 def get_identity()
+```
+</Code>
+
+#### .get_inflation_governor
+Returns the current inflation governor.
+
+<Code>
+```python 
+def get_inflation_governor()
 ```
 </Code>
 
@@ -228,16 +238,6 @@ Returns information about the current supply.
 def get_supply()
 ```
 </Code>
-
-#### .get_identity
-Returns the identity public key for the current node
-
-<Code>
-```python 
-def get_identity()
-```
-</Code>
-
 
 #### .get_transaction
 Returns a transaction's details by the confirmed transaction signature string (in base 58)
