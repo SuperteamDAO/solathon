@@ -29,6 +29,7 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_fee_for_message](#get_fee_for_message)
 - [get_fees](#get_fees)
 - [get_first_available_block](#get_first_available_block)
+- [get_genesis_hash](#get_genesis_hash)
 - [get_supply](#get_supply)
 - [get_block](#get_block)
 - [get_transaction](#get_transaction)
@@ -188,6 +189,15 @@ Returns the slot of the lowest confirmed block that has not been purged from the
 <Code>
 ```python 
 def get_first_available_block()
+```
+</Code>
+
+#### .get_genesis_hash
+Returns the genesis hash.
+
+<Code>
+```python 
+def get_genesis_hash()
 ```
 </Code>
 
