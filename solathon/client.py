@@ -176,6 +176,14 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
     
+    def get_inflation_rate(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getInflationRate", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    
     def get_supply(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getSupply", params=[None]
