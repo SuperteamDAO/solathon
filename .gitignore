@@ -10,7 +10,7 @@ venv/
 env3/
 .ipynb_checkpoints
 
-
+.history/*
 
 
 
