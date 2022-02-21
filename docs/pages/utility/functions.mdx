@@ -10,7 +10,7 @@ import Callout from 'nextra-theme-docs/callout'
 - [clean_response](#clean_response)
 
 #### .lamport_to_sol
-Converts lamports into SOLs. JSON RPC accepts and returns amounts in lamports so this can come in handy to convert RPC response lamports into SOL amounts.
+Converts lamports into SOL. JSON RPC accepts and returns amounts in lamports so this can come in handy to convert RPC response lamports into SOL amounts.
 
 <Code>
   ```python 
@@ -19,7 +19,7 @@ Converts lamports into SOLs. JSON RPC accepts and returns amounts in lamports so
 </Code>
 
 #### .sol_to_lamport
-Opposite of the previous function. This converts SOLs into lamports, useful when sending amounts to JSON RPC ([send_transaction](/models/client#send_transaction) for example).
+Opposite of the previous function. This converts SOL amounts into lamports, useful when sending amounts to JSON RPC ([send_transaction](/models/client#send_transaction) for example).
 
 <Code>
   ```python 
@@ -28,7 +28,7 @@ Opposite of the previous function. This converts SOLs into lamports, useful when
 </Code>
 
 #### .verify_signature
-Verifies if the signature is signed by the public key, useful when implementing Web3 authorization and checking the signed message from browser wallets using the signature array.
+Verifies that the signature is signed by the public key, useful when implementing Web3 authorization and checking the signed message from browser wallets using the signature array.
 The message argument is optional, when not provided the public key itself is used as the message to verify the signature.
 
 <Code>
