@@ -33,6 +33,9 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_health](#get_health)
 - [get_identity](#get_identity)
 - [get_inflation_governor](#get_inflation_governor)
+- [get_inflation_rate](#get_inflation_rate)
+- [get_inflation_reward](#get_inflation_reward) 
+- [get_largest_accounts](#get_largest_accounts)
 - [get_supply](#get_supply)
 - [get_transaction](#get_transaction)
 - [get_recent_blockhash](#get_recent_blockhash)
@@ -231,11 +234,29 @@ def get_inflation_governor()
 </Code>
 
 #### .get_inflation_rate
-Returns the specific inflation values for the current epoch.
+Returns the inflation / staking reward for a list of addresses for an epoch
 
 <Code>
 ```python 
 def get_inflation_rate()
+```
+</Code>
+
+#### .get_inflation_reward
+Returns the specific inflation values for the current epoch.
+
+<Code>
+```python 
+def get_inflation_reward()
+```
+</Code>
+
+#### .get_largest_accounts
+Returns the 20 largest accounts, by lamport balance (results may be cached up to two hours).
+
+<Code>
+```python 
+def get_largest_accounts()
 ```
 </Code>
 
