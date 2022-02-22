@@ -30,8 +30,13 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_fees](#get_fees)
 - [get_first_available_block](#get_first_available_block)
 - [get_genesis_hash](#get_genesis_hash)
+- [get_health](#get_health)
+- [get_identity](#get_identity)
+- [get_inflation_governor](#get_inflation_governor)
+- [get_inflation_rate](#get_inflation_rate)
+- [get_inflation_reward](#get_inflation_reward) 
+- [get_largest_accounts](#get_largest_accounts)
 - [get_supply](#get_supply)
-- [get_block](#get_block)
 - [get_transaction](#get_transaction)
 - [get_recent_blockhash](#get_recent_blockhash)
 - [get_token_accounts_by_owner](#get_token_accounts_by_owner)
@@ -210,6 +215,51 @@ def get_health()
 ```
 </Code>
 
+#### .get_identity
+Returns the identity public key for the current node.
+
+<Code>
+```python 
+def get_identity()
+```
+</Code>
+
+#### .get_inflation_governor
+Returns the current inflation governor.
+
+<Code>
+```python 
+def get_inflation_governor()
+```
+</Code>
+
+#### .get_inflation_rate
+Returns the inflation / staking reward for a list of addresses for an epoch
+
+<Code>
+```python 
+def get_inflation_rate()
+```
+</Code>
+
+#### .get_inflation_reward
+Returns the specific inflation values for the current epoch.
+
+<Code>
+```python 
+def get_inflation_reward()
+```
+</Code>
+
+#### .get_largest_accounts
+Returns the 20 largest accounts, by lamport balance (results may be cached up to two hours).
+
+<Code>
+```python 
+def get_largest_accounts()
+```
+</Code>
+
 #### .get_supply
 Returns information about the current supply.
 
@@ -218,16 +268,6 @@ Returns information about the current supply.
 def get_supply()
 ```
 </Code>
-
-#### .get_identity
-Returns the identity public key for the current node
-
-<Code>
-```python 
-def get_identity()
-```
-</Code>
-
 
 #### .get_transaction
 Returns a transaction's details by the confirmed transaction signature string (in base 58)
