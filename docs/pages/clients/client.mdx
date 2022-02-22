@@ -253,6 +253,8 @@ def get_inflation_reward()
 
 #### .get_largest_accounts
 Returns the 20 largest accounts, by lamport balance (results may be cached up to two hours).
+Currently if using get_largest_accounts you will need to nest the method inside of a try/except block and 
+make an exception for a TimeoutError.
 
 <Code>
 ```python 
