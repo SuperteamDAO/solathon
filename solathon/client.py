@@ -183,7 +183,21 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
 
-    
+    def get_inflation_reward(self , addresses: list) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getInflationReward", 
+            params=[addresses]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    def get_largest_accounts(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getLargestAccounts", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
     def get_supply(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getSupply", params=[None]
