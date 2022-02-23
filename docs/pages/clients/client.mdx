@@ -38,6 +38,9 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_largest_accounts](#get_largest_accounts)
 - [get_leader_schedule](#get_leader_schedule)
 - [get_max_retransmit_slot](#get_max_retransmit_slot)
+- [get_max_shred_insert_slot](#get_max_shred_insert_slot)
+- [get_minimum_balance_for_rent_exmeption](#get_minimum_balance_for_rent_exmeption)
+- [get_multiple_accounts](#get_multiple_accounts)
 - [get_supply](#get_supply)
 - [get_transaction](#get_transaction)
 - [get_recent_blockhash](#get_recent_blockhash)
@@ -298,6 +301,15 @@ Returns minimum balance required to make account rent exempt.
 <Code>
 ```python 
 def get_minimum_balance_for_rent_exmeption()
+```
+</Code>
+
+#### .get_multiple_accounts
+Returns the account information for a list of Pubkeys.
+
+<Code>
+```python 
+def get_multiple_accounts()
 ```
 </Code>
 
