@@ -16,6 +16,7 @@ from .core.message import (
 
 PACKET_DATA_SIZE = 1232
 
+
 @dataclass
 class PKSigPair:
     public_key: PublicKey
@@ -171,7 +172,7 @@ class Transaction:
         ) for signer in self.signers]
 
         self.signatures = pk_sig_pairs
-        sign_data = self.compile_transaction()
+        sign_data: bytes = self.compile_transaction()
         for idx, signer in enumerate(self.signers):
             signature = signer.sign(sign_data).signature
             if len(signature) != 64:
