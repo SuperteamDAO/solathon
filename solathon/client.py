@@ -205,6 +205,13 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
 
+    def get_max_retransmit_slot(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getMaxRetransmitSlot", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
     def get_supply(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getSupply", params=[None]
