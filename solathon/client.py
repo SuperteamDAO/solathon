@@ -185,8 +185,7 @@ class Client:
 
     def get_inflation_reward(self , addresses: list) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
-            method="getInflationReward", 
-            params=[addresses]
+            method="getInflationReward", params=[addresses]
         )
         res: RPCResponse = self.http.send(data)
         return res
@@ -211,7 +210,21 @@ class Client:
         )
         res: RPCResponse = self.http.send(data)
         return res
-
+    
+    def get_max_shred_insert_slot(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getMaxShredInsertSlot", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+   
+    def get_minimum_balance_for_rent_exmeption(self, acct_length) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getMinimumBalanceForRentExemption", params=[acct_length]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+    
     def get_supply(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getSupply", params=[None]
