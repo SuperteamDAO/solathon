@@ -147,9 +147,16 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
 
-    def get_supply(self) -> RPCResponse:
+    def get_genesis_hash(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
-            method="getSupply", params=[None]
+            method="getGenesisHash", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    def get_health(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getHealth", params=[None]
         )
         res: RPCResponse = self.http.send(data)
         return res
@@ -157,6 +164,76 @@ class Client:
     def get_identity(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getIdentity", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    def get_inflation_governor(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getInflationGovernor", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+    
+    def get_inflation_rate(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getInflationRate", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    def get_inflation_reward(self , addresses: list) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getInflationReward", params=[addresses]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    def get_largest_accounts(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getLargestAccounts", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    def get_leader_schedule(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getLeaderSchedule", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    def get_max_retransmit_slot(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getMaxRetransmitSlot", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+    
+    def get_max_shred_insert_slot(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getMaxShredInsertSlot", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+   
+    def get_minimum_balance_for_rent_exmeption(self, acct_length: int) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getMinimumBalanceForRentExemption", params=[acct_length]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    def get_multiple_accounts(self, pubkeys: list) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getMultipleAccounts", params=[pubkeys]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+    
+    def get_supply(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getSupply", params=[None]
         )
         res: RPCResponse = self.http.send(data)
         return res
