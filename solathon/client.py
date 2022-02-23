@@ -224,6 +224,13 @@ class Client:
         )
         res: RPCResponse = self.http.send(data)
         return res
+
+    def get_multiple_accounts(self, pubkeys: list) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getMultipleAccounts", params=[pubkeys]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
     
     def get_supply(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
