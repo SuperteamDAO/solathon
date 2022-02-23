@@ -36,6 +36,11 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_inflation_rate](#get_inflation_rate)
 - [get_inflation_reward](#get_inflation_reward) 
 - [get_largest_accounts](#get_largest_accounts)
+- [get_leader_schedule](#get_leader_schedule)
+- [get_max_retransmit_slot](#get_max_retransmit_slot)
+- [get_max_shred_insert_slot](#get_max_shred_insert_slot)
+- [get_minimum_balance_for_rent_exmeption](#get_minimum_balance_for_rent_exmeption)
+- [get_multiple_accounts](#get_multiple_accounts)
 - [get_supply](#get_supply)
 - [get_transaction](#get_transaction)
 - [get_recent_blockhash](#get_recent_blockhash)
@@ -253,10 +258,58 @@ def get_inflation_reward()
 
 #### .get_largest_accounts
 Returns the 20 largest accounts, by lamport balance (results may be cached up to two hours).
+Currently if using get_largest_accounts you will need to nest the method inside of a try/except block and 
+make an exception for a TimeoutError.
 
 <Code>
 ```python 
 def get_largest_accounts()
+```
+</Code>
+
+#### .get_leader_schedule
+Returns the leader schedule for an epoch.
+Lots of data!
+
+<Code>
+```python 
+def get_leader_schedule()
+```
+</Code>
+
+#### .get_max_retransmit_slot
+Get the max slot seen from retransmit stage.
+
+<Code>
+```python 
+def get_max_retransmit_slot()
+```
+</Code>
+
+#### .get_max_shred_insert_slot
+Get the max slot seen from after shred insert.
+
+<Code>
+```python 
+def get_max_shred_insert_slot()
+```
+</Code>
+
+#### .get_minimum_balance_for_rent_exmeption
+Returns minimum balance required to make account rent exempt.
+
+<Code>
+```python 
+def get_minimum_balance_for_rent_exmeption()
+```
+</Code>
+
+#### .get_multiple_accounts
+Returns the account information for a list of Pubkeys.
+
+<Code>
+```python 
+def get_multiple_accounts()
 ```
 </Code>
 
