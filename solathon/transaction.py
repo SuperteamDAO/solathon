@@ -43,7 +43,7 @@ class Transaction:
                                 "must be a list of Instruction objects"
                                 ))
 
-    def compile_transaction(self) -> Message:
+    def compile_transaction(self) -> bytes:
         if self.nonce_info:
             self.recent_blockhash = self.nonce_info.nonce
 
