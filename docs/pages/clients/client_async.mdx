@@ -29,8 +29,19 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_fee_for_message](#get_fee_for_message)
 - [get_fees](#get_fees)
 - [get_first_available_block](#get_first_available_block)
+- [get_genesis_hash](#get_genesis_hash)
+- [get_health](#get_health)
+- [get_identity](#get_identity)
+- [get_inflation_governor](#get_inflation_governor)
+- [get_inflation_rate](#get_inflation_rate)
+- [get_inflation_reward](#get_inflation_reward) 
+- [get_largest_accounts](#get_largest_accounts)
+- [get_leader_schedule](#get_leader_schedule)
+- [get_max_retransmit_slot](#get_max_retransmit_slot)
+- [get_max_shred_insert_slot](#get_max_shred_insert_slot)
+- [get_minimum_balance_for_rent_exmeption](#get_minimum_balance_for_rent_exmeption)
+- [get_multiple_accounts](#get_multiple_accounts)
 - [get_supply](#get_supply)
-- [get_block](#get_block)
 - [get_transaction](#get_transaction)
 - [get_recent_blockhash](#get_recent_blockhash)
 - [get_token_accounts_by_owner](#get_token_accounts_by_owner)
@@ -191,6 +202,117 @@ async def get_first_available_block()
 ```
 </Code>
 
+#### .get_genesis_hash
+Returns the genesis hash.
+
+<Code>
+```python 
+async def get_genesis_hash()
+```
+</Code>
+
+#### .get_health
+Returns the current health of the node.
+
+<Code>
+```python 
+async def get_health()
+```
+</Code>
+
+#### .get_identity
+Returns the identity public key for the current node.
+
+<Code>
+```python 
+async def get_identity()
+```
+</Code>
+
+#### .get_inflation_governor
+Returns the current inflation governor.
+
+<Code>
+```python 
+async def get_inflation_governor()
+```
+</Code>
+
+#### .get_inflation_rate
+Returns the inflation / staking reward for a list of addresses for an epoch
+
+<Code>
+```python 
+async def get_inflation_rate()
+```
+</Code>
+
+#### .get_inflation_reward
+Returns the specific inflation values for the current epoch.
+
+<Code>
+```python 
+async def get_inflation_reward()
+```
+</Code>
+
+#### .get_largest_accounts
+Returns the 20 largest accounts, by lamport balance (results may be cached up to two hours).
+Currently if using get_largest_accounts you will need to nest the method inside of a try/except block and 
+make an exception for a TimeoutError.
+
+<Code>
+```python 
+async def get_largest_accounts()
+```
+</Code>
+
+#### .get_leader_schedule
+Returns the leader schedule for an epoch.
+Lots of data!
+
+<Code>
+```python 
+async def get_leader_schedule()
+```
+</Code>
+
+#### .get_max_retransmit_slot
+Get the max slot seen from retransmit stage.
+
+<Code>
+```python 
+async def get_max_retransmit_slot()
+```
+</Code>
+
+#### .get_max_shred_insert_slot
+Get the max slot seen from after shred insert.
+
+<Code>
+```python 
+async def get_max_shred_insert_slot()
+```
+</Code>
+
+#### .get_minimum_balance_for_rent_exemption
+Returns minimum balance required to make account rent exempt.
+
+<Code>
+```python 
+async def get_minimum_balance_for_rent_exmeption()
+```
+</Code>
+
+#### .get_multiple_accounts
+Returns the account information for a list of Pubkeys.
+
+<Code>
+```python 
+async def get_multiple_accounts()
+```
+</Code>
+
 #### .get_supply
 Returns information about the current supply.
 
@@ -199,16 +321,6 @@ Returns information about the current supply.
 async def get_supply()
 ```
 </Code>
-
-#### .get_identity
-Returns the identity public key for the current node
-
-<Code>
-```python 
-async def get_identity()
-```
-</Code>
-
 
 #### .get_transaction
 Returns a transaction's details by the confirmed transaction signature string (in base 58)
@@ -270,7 +382,7 @@ Requests the amount of lamport specified to be airdropped to the public key.
 
 <Code>
 ```python 
-def request_airdrop(
+async def request_airdrop(
     public_key: public_key, 
     amount: int
 )
