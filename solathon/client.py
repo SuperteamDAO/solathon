@@ -218,7 +218,7 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
    
-    def get_minimum_balance_for_rent_exmeption(self, acct_length) -> RPCResponse:
+    def get_minimum_balance_for_rent_exmeption(self, acct_length: int) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getMinimumBalanceForRentExemption", params=[acct_length]
         )
