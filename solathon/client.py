@@ -232,6 +232,13 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
     
+    def get_program_accounts(self, public_key: PublicKey) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getProgramAccounts", params=[public_key]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+    
     def get_supply(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getSupply", params=[None]
