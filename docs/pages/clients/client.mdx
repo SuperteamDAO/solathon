@@ -41,6 +41,7 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_max_shred_insert_slot](#get_max_shred_insert_slot)
 - [get_minimum_balance_for_rent_exmeption](#get_minimum_balance_for_rent_exmeption)
 - [get_multiple_accounts](#get_multiple_accounts)
+- [get_program_accounts](#get_program_accounts)
 - [get_supply](#get_supply)
 - [get_transaction](#get_transaction)
 - [get_recent_blockhash](#get_recent_blockhash)
@@ -310,6 +311,15 @@ Returns the account information for a list of Pubkeys.
 <Code>
 ```python 
 def get_multiple_accounts()
+```
+</Code>
+
+#### .get_program_accounts
+Returns all accounts owned by the provided program Pubkey.
+
+<Code>
+```python 
+def get_program_accounts()
 ```
 </Code>
 
