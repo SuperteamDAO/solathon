@@ -246,6 +246,20 @@ class Client:
         )
         res: RPCResponse = self.http.send(data)
         return res
+    
+    def get_recent_performance_samples(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getRecentPerformanceSamples", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    def get_signatures_for_address(self, acct_address: str) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getSignaturesForAddress", params=[acct_address]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
 
     def get_supply(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
@@ -253,7 +267,7 @@ class Client:
         )
         res: RPCResponse = self.http.send(data)
         return res
-        
+
     def get_token_accounts_by_owner(self, public_key: str | PublicKey,
                                     **kwargs) -> RPCResponse:
         if "mint_id" not in kwargs and "program_id" not in kwargs:
