@@ -43,6 +43,7 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_multiple_accounts](#get_multiple_accounts)
 - [get_program_accounts](#get_program_accounts)
 - [get_recent_blockhash](#get_recent_blockhash)
+- [get_recent_performance_samples](#get_recent_performance_samples)
 - [get_supply](#get_supply)
 - [get_token_accounts_by_owner](#get_token_accounts_by_owner)
 - [get_transaction](#get_transaction)
@@ -330,6 +331,24 @@ Returns a recent block hash from the ledger, and a fee schedule that can be used
 <Code>
 ```python 
 def get_recent_blockhash()
+```
+</Code>
+
+#### .get_recent_performance_samples
+Returns a list of recent performance samples, in reverse slot order. Performance samples are taken every 60 seconds and include the number of transactions and slots that occur in a given time window.
+
+<Code>
+```python 
+def get_recent_performance_samples()
+```
+</Code>
+
+#### .get_signatures_for_address
+Returns signatures for confirmed transactions that include the given address in their accountKeys list. Returns signatures backwards in time from the provided signature or most recent confirmed block
+
+<Code>
+```python 
+def get_signatures_for_address()
 ```
 </Code>
 
