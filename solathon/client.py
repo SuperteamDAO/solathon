@@ -238,20 +238,6 @@ class Client:
         )
         res: RPCResponse = self.http.send(data)
         return res
-    
-    def get_supply(self) -> RPCResponse:
-        data: dict[str, Any] = self.http.build_data(
-            method="getSupply", params=[None]
-        )
-        res: RPCResponse = self.http.send(data)
-        return res
-
-    def get_transaction(self, signature: str) -> RPCResponse:
-        data: dict[str, Any] = self.http.build_data(
-            method="getTransaction", params=[signature]
-        )
-        res: RPCResponse = self.http.send(data)
-        return res
 
     # Will switch to getFeeForMessage (latest)
     def get_recent_blockhash(self) -> RPCResponse:
@@ -261,6 +247,13 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
 
+    def get_supply(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getSupply", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+        
     def get_token_accounts_by_owner(self, public_key: str | PublicKey,
                                     **kwargs) -> RPCResponse:
         if "mint_id" not in kwargs and "program_id" not in kwargs:
@@ -283,6 +276,14 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
 
+    def get_transaction(self, signature: str) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getTransaction", params=[signature]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    # Non "get" methods
     def request_airdrop(self, public_key: PublicKey | str, lamports: int
                         ) -> RPCResponse:
 
