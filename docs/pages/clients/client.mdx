@@ -41,10 +41,12 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_max_shred_insert_slot](#get_max_shred_insert_slot)
 - [get_minimum_balance_for_rent_exmeption](#get_minimum_balance_for_rent_exmeption)
 - [get_multiple_accounts](#get_multiple_accounts)
-- [get_supply](#get_supply)
-- [get_transaction](#get_transaction)
+- [get_program_accounts](#get_program_accounts)
 - [get_recent_blockhash](#get_recent_blockhash)
+- [get_recent_performance_samples](#get_recent_performance_samples)
+- [get_supply](#get_supply)
 - [get_token_accounts_by_owner](#get_token_accounts_by_owner)
+- [get_transaction](#get_transaction)
 - [request_airdrop](#request_airdrop)
 - [send_transaction](#send_transaction)
 
@@ -313,21 +315,13 @@ def get_multiple_accounts()
 ```
 </Code>
 
-#### .get_supply
-Returns information about the current supply.
+#### .get_program_accounts
+Returns all accounts owned by the provided program Pubkey.
+
 
 <Code>
 ```python 
-def get_supply()
-```
-</Code>
-
-#### .get_transaction
-Returns a transaction's details by the confirmed transaction signature string (in base 58)
-
-<Code>
-```python 
-def get_transaction(signature: str)
+def get_program_accounts()
 ```
 </Code>
 
@@ -337,6 +331,33 @@ Returns a recent block hash from the ledger, and a fee schedule that can be used
 <Code>
 ```python 
 def get_recent_blockhash()
+```
+</Code>
+
+#### .get_recent_performance_samples
+Returns a list of recent performance samples, in reverse slot order. Performance samples are taken every 60 seconds and include the number of transactions and slots that occur in a given time window.
+
+<Code>
+```python 
+def get_recent_performance_samples()
+```
+</Code>
+
+#### .get_signatures_for_address
+Returns signatures for confirmed transactions that include the given address in their accountKeys list. Returns signatures backwards in time from the provided signature or most recent confirmed block
+
+<Code>
+```python 
+def get_signatures_for_address()
+```
+</Code>
+
+#### .get_supply
+Returns information about the current supply.
+
+<Code>
+```python 
+def get_supply()
 ```
 </Code>
 
@@ -369,18 +390,6 @@ print(tokens)
 <Callout emoji="⚠️" type="warning">
     <p style={{fontSize:"1rem"}}>This method returns token on mainnet only.</p>
 </Callout>
-
-#### .request_airdrop
-Requests the amount of lamport specified to be airdropped to the public key.
-
-<Code>
-```python 
-def request_airdrop(
-    public_key: public_key, 
-    amount: int
-)
-```
-</Code>
 
 #### .send_transaction
 Submits a signed [Transaction object](/models/transaction) to the cluster for processing.

@@ -231,16 +231,9 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
     
-    def get_supply(self) -> RPCResponse:
+    def get_program_accounts(self, public_key: PublicKey) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
-            method="getSupply", params=[None]
-        )
-        res: RPCResponse = self.http.send(data)
-        return res
-
-    def get_transaction(self, signature: str) -> RPCResponse:
-        data: dict[str, Any] = self.http.build_data(
-            method="getTransaction", params=[signature]
+            method="getProgramAccounts", params=[public_key]
         )
         res: RPCResponse = self.http.send(data)
         return res
@@ -249,6 +242,27 @@ class Client:
     def get_recent_blockhash(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getRecentBlockhash", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+    
+    def get_recent_performance_samples(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getRecentPerformanceSamples", params=[None]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    def get_signatures_for_address(self, acct_address: str) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getSignaturesForAddress", params=[acct_address]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    def get_supply(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getSupply", params=[None]
         )
         res: RPCResponse = self.http.send(data)
         return res
@@ -275,6 +289,14 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
 
+    def get_transaction(self, signature: str) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getTransaction", params=[signature]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+
+    # Non "get" methods
     def request_airdrop(self, public_key: PublicKey | str, lamports: int
                         ) -> RPCResponse:
 
