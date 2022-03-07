@@ -217,7 +217,7 @@ class AsyncClient:
         res: RPCResponse = await self.http.send(data)
         return res
    
-    async def get_minimum_balance_for_rent_exmeption(self, acct_length: int) -> RPCResponse:
+    async def get_minimum_balance_for_rent_exemption(self, acct_length: int) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getMinimumBalanceForRentExemption", params=[acct_length]
         )
@@ -231,16 +231,9 @@ class AsyncClient:
         res: RPCResponse = await self.http.send(data)
         return res
     
-    async def get_supply(self) -> RPCResponse:
+    async def get_program_accounts(self, public_key: PublicKey) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
-            method="getSupply", params=[None]
-        )
-        res: RPCResponse = await self.http.send(data)
-        return res
-
-    async def get_transaction(self, signature: str) -> RPCResponse:
-        data: dict[str, Any] = self.http.build_data(
-            method="getTransaction", params=[signature]
+            method="getProgramAccounts", params=[public_key]
         )
         res: RPCResponse = await self.http.send(data)
         return res
@@ -249,6 +242,27 @@ class AsyncClient:
     async def get_recent_blockhash(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getRecentBlockhash", params=[None]
+        )
+        res: RPCResponse = await self.http.send(data)
+        return res
+    
+    async def get_recent_performance_samples(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getRecentPerformanceSamples", params=[None]
+        )
+        res: RPCResponse = await self.http.send(data)
+        return res
+
+    async def get_signatures_for_address(self, acct_address: str) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getSignaturesForAddress", params=[acct_address]
+        )
+        res: RPCResponse = await self.http.send(data)
+        return res
+
+    async def get_supply(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getSupply", params=[None]
         )
         res: RPCResponse = await self.http.send(data)
         return res
@@ -275,6 +289,14 @@ class AsyncClient:
         res: RPCResponse = await self.http.send(data)
         return res
 
+    async def get_transaction(self, signature: str) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getTransaction", params=[signature]
+        )
+        res: RPCResponse = await self.http.send(data)
+        return res
+
+    # Non "get" methods
     async def request_airdrop(self, public_key: PublicKey | str, lamports: int
                         ) -> RPCResponse:
 
