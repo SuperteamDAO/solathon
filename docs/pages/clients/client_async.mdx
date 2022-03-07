@@ -41,10 +41,12 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_max_shred_insert_slot](#get_max_shred_insert_slot)
 - [get_minimum_balance_for_rent_exmeption](#get_minimum_balance_for_rent_exmeption)
 - [get_multiple_accounts](#get_multiple_accounts)
-- [get_supply](#get_supply)
-- [get_transaction](#get_transaction)
+- [get_program_accounts](#get_program_accounts)
 - [get_recent_blockhash](#get_recent_blockhash)
+- [get_recent_performance_samples](#get_recent_performance_samples)
+- [get_supply](#get_supply)
 - [get_token_accounts_by_owner](#get_token_accounts_by_owner)
+- [get_transaction](#get_transaction)
 - [request_airdrop](#request_airdrop)
 - [send_transaction](#send_transaction)
 
@@ -313,21 +315,13 @@ async def get_multiple_accounts()
 ```
 </Code>
 
-#### .get_supply
-Returns information about the current supply.
+#### .get_program_accounts
+Returns all accounts owned by the provided program Pubkey.
+
 
 <Code>
 ```python 
-async def get_supply()
-```
-</Code>
-
-#### .get_transaction
-Returns a transaction's details by the confirmed transaction signature string (in base 58)
-
-<Code>
-```python 
-async def get_transaction(signature: str)
+async def get_program_accounts()
 ```
 </Code>
 
@@ -340,15 +334,39 @@ async def get_recent_blockhash()
 ```
 </Code>
 
+#### .get_recent_performance_samples
+Returns a list of recent performance samples, in reverse slot order. Performance samples are taken every 60 seconds and include the number of transactions and slots that occur in a given time window.
+
+<Code>
+```python 
+async def get_recent_performance_samples()
+```
+</Code>
+
+#### .get_signatures_for_address
+Returns signatures for confirmed transactions that include the given address in their accountKeys list. Returns signatures backwards in time from the provided signature or most recent confirmed block
+
+<Code>
+```python 
+async def get_signatures_for_address()
+```
+</Code>
+
+#### .get_supply
+Returns information about the current supply.
+
+<Code>
+```python 
+async def get_supply()
+```
+</Code>
+
 #### .get_token_accounts_by_owner
 Returns all SPL Token accounts of the public key provided. Either `mint_id` or `program_id` keyword argument is required, encoding is optional.
 
 <Code>
 ```python 
-async def get_token_accounts_by_owner(
-    public_key: PublicKey | str, 
-    **kwargs
-)
+async def get_token_accounts_by_owner(public_key: PublicKey | str,  **kwargs)
 ```
 </Code>
 
@@ -359,17 +377,17 @@ Example:
 import asyncio
 from solathon import AsyncClient, PublicKey
 ㅤ
-async def main():
+def main():
     client = AsyncClient("https://api.mainnet-beta.solana.com")
-    ㅤ
-    public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
-    # Token program ID
-    program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
-    ㅤ
-    tokens = await client.get_token_accounts_by_owner(public_key, program_id=program_id)
-    print(tokens)
 ㅤ
-asyncio.run(main)
+    public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
+    program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" # Token program ID
+ㅤ
+    tokens = await client.get_token_accounts_by_owner(public_key, program_id=program_id)
+ㅤ
+    print(tokens)
+    
+asyncio.run(main())
 ```
 </Code>
 
@@ -382,15 +400,12 @@ Requests the amount of lamport specified to be airdropped to the public key.
 
 <Code>
 ```python 
-async def request_airdrop(
-    public_key: public_key, 
-    amount: int
-)
+async def request_airdrop(public_key: PublicKey | lamports: int)
 ```
 </Code>
 
 #### .send_transaction
-Submits a signed [Transaction object](/models/transaction) to the cluster for processing, recent blockhash is optional.
+Submits a signed [Transaction object](/models/transaction) to the cluster for processing.
 
 <Code>
 ```python 
@@ -402,23 +417,24 @@ Example:
 
 <Code>
 ```python 
-import time, asyncio
+import time
+import asyncio
 from solathon.core.instructions import transfer
 from solathon import AsyncClient, Transaction, PublicKey, Keypair
 ㅤ
-async def main():
+def main():
     client = AsyncClient("https://api.devnet.solana.com")
-    ㅤ
+ㅤ
     sender = Keypair()
     receiver = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44a")
     amount = 10000  # This is the amount in lamports
-    ㅤ
+ㅤ
     # Requesting airdrop to get some devnet tokens for the transaction to succeed
     res = await client.request_airdrop(sender.public_key, amount + amount)
     print("Airdrop response: ", res)
     # 20 second delay to make sure we get enough time to receive airdrop tokens
     time.sleep(20)
-    ㅤ
+ㅤ
     # Creating transfer instruction
     instruction = transfer(
         from_public_key=sender.public_key,
@@ -427,13 +443,12 @@ async def main():
     )
     transaction = Transaction(instructions=[instruction], signers=[sender])
     result = await client.send_transaction(transaction)
-    ㅤ
-    print("Transaction response: ", result)
 ㅤ
+    print("Transaction response: ", result)
+
 asyncio.run(main())
 ```
 </Code>
-
 
 
 ## Attributes

@@ -391,6 +391,15 @@ print(tokens)
     <p style={{fontSize:"1rem"}}>This method returns token on mainnet only.</p>
 </Callout>
 
+#### .request_airdrop
+Requests the amount of lamport specified to be airdropped to the public key.
+
+<Code>
+```python 
+def request_airdrop(public_key: PublicKey | lamports: int)
+```
+</Code>
+
 #### .send_transaction
 Submits a signed [Transaction object](/models/transaction) to the cluster for processing.
 
