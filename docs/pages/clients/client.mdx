@@ -10,7 +10,7 @@ import Callout from 'nextra-theme-docs/callout'
   ```
 </Code>
 
-> To initialise a client, one of the three [RPC cluster endpoint URLs](https://docs.solana.com/cluster/rpc-endpoints) must be passed. When running a local cluster, the local argument must be passed as true for the local endpoint to work.
+> To initialize a client, one of the three [RPC cluster endpoint URLs](https://docs.solana.com/cluster/rpc-endpoints) must be passed. When running a local cluster, the local argument must be passed as true for the local endpoint to work.
 
 #### Methods
 - [refresh_http](#refresh_http)
@@ -297,7 +297,7 @@ def get_max_shred_insert_slot()
 ```
 </Code>
 
-#### .get_minimum_balance_for_rent_exmeption
+#### .get_minimum_balance_for_rent_exemption
 Returns minimum balance required to make account rent exempt.
 
 <Code>
@@ -362,11 +362,11 @@ def get_supply()
 </Code>
 
 #### .get_token_accounts_by_owner
-Returns all SPL Token accounts of the public key provided. Either mint_id or program_id keyword argument is required, encoding is optional.
+Returns all SPL Token accounts of the public key provided. Either `mint_id` or `program_id` keyword argument is required, encoding is optional.
 
 <Code>
 ```python 
-def get_token_accounts_by_owner(public_key: PublicKey | str, **kwargs)
+def get_token_accounts_by_owner(public_key: PublicKey | str,  **kwargs)
 ```
 </Code>
 
@@ -381,7 +381,7 @@ client = Client("https://api.mainnet-beta.solana.com")
 public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
 program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" # Token program ID
 ㅤ
-tokens = client.get_token_accounts_by_owner(public_key, program_id)
+tokens = client.get_token_accounts_by_owner(public_key, program_id=program_id)
 ㅤ
 print(tokens)
 ```
@@ -391,24 +391,12 @@ print(tokens)
     <p style={{fontSize:"1rem"}}>This method returns token on mainnet only.</p>
 </Callout>
 
-#### .get_transaction
-Returns a transaction's details by the confirmed transaction signature string (in base 58)
-
-<Code>
-```python 
-def get_transaction(signature: str)
-```
-</Code>
-
 #### .send_transaction
-Submits a signed [transaction object](/models/transaction) to the cluster for processing, recent blockhash is optional.
+Submits a signed [Transaction object](/models/transaction) to the cluster for processing.
 
 <Code>
 ```python 
-def send_transaction(
-                    transaction: Transaction, 
-                    recent_blockhash: str | None = None
-                    )
+def send_transaction(transaction: Transaction)
 ```
 </Code>
 
@@ -429,14 +417,15 @@ amount = 10000  # This is the amount in lamports
 # Requesting airdrop to get some devnet tokens for the transaction to succeed
 res = client.request_airdrop(sender.public_key, amount + amount)
 print("Airdrop response: ", res)
-time.sleep(20) # 20 second delay to make sure we get enough time to receive airdrop tokens
+# 20 second delay to make sure we get enough time to receive airdrop tokens
+time.sleep(20)
 ㅤ
 # Creating transfer instruction
 instruction = transfer(
-        from_public_key=sender.public_key,
-        to_public_key=receiver, 
-        lamports=100
-    )
+    from_public_key=sender.public_key,
+    to_public_key=receiver, 
+    lamports=100
+)
 transaction = Transaction(instructions=[instruction], signers=[sender])
 result = client.send_transaction(transaction)
 ㅤ

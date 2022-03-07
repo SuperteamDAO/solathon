@@ -1,27 +1,27 @@
 import { Code } from '/components/Code';
 
 # Instructions
-**A transaction requires you to have instructions which it will execute, following functions are the available instructions which you can use.**
+**A transaction requires you to have instructions which it will execute. The following functions are the available instructions which you can use.**
 #### Import syntax
 ```python
 from solathon.core.instructions import *
 ```
-#### Instruction Functions
+#### Instruction functions
 - [create_account](#create_account)
 - [create_account_with_seed](#create_account_with_seed)
-- [assign](#assign)
-- [transfer](#transfer)
 - [allocate](#allocate)
 - [allocate_with_seed](#allocate_with_seed)
+- [assign](#assign)
+- [transfer](#transfer)
 
 #### Classes
 - [AccountMeta](#accountmeta)
 - [Instruction](#instruction)
 
 
-## Instruction Functions
+## Instructions
 #### create_account
-Creates a program account. When sending the transaction, both `from_public_key`'s and `new_account_public_key`'s keypairs need to be passed in the signers argument
+Creates a program account. When sending the transaction, both existing account and new account keypairs need to be passed in the signers argument of the `Transaction` object.
 
 <Code>
 ```python 
@@ -34,6 +34,7 @@ def create_account(
 )
 ```
 </Code>
+
 Example:
 
 <Code>
@@ -46,15 +47,15 @@ client = Client("https://api.devnet.solana.com")
 # Requires you to have some SOLs to pay for transaction fees
 sender = Keypair.from_private_key("your_private_key")
 new_account = Keypair()
-program_id = PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA") # Token program
+program_id = PublicKey("11111111111111111111111111111111") # System program
 ㅤ
 instruction = create_account(
-        from_public_key=sender.public_key,
-        new_account_public_key=new_account.public_key, 
-        lamports=100,
-        space=100,
-        program_id=program_id
-    )
+    from_public_key=sender.public_key,
+    new_account_public_key=new_account.public_key, 
+    lamports=100,
+    space=0,
+    program_id=program_id
+)
 transaction = Transaction(instructions=[instruction], signers=[sender, new_account])
 ㅤ
 result = client.send_transaction(transaction)
@@ -63,6 +64,8 @@ print("Transaction response: ", result)
 </Code>
 
 #### create_account_with_seed
+Creates a program account using seed
+
 <Code>
 ```python 
 def create_account_with_seed(
@@ -77,28 +80,9 @@ def create_account_with_seed(
 ```
 </Code>
 
-#### assign
-<Code>
-```python 
-def assign(
-    account_public_key: PublicKey,
-    program_id: 
-)
-```
-</Code>
-
-#### transfer
-<Code>
-```python 
-def transfer(
-    from_public_key: PublicKey | str,
-    to_public_key: PublicKey | str,
-    lamports: int
-)
-```
-</Code>
-
 #### allocate
+Allocates bytes for an account, this can only be used once for an account without any space already.
+
 <Code>
 ```python 
 def allocate(
@@ -108,7 +92,32 @@ def allocate(
 ```
 </Code>
 
+Example:
+
+<Code>
+```python
+from solathon.core.instructions import allocate
+from solathon import Client, Transaction, PublicKey, Keypair
+ㅤ
+client = Client("https://api.devnet.solana.com")
+ㅤ
+# Requires you to have some SOLs to pay for transaction fees
+account = Keypair.from_private_key("your_private_key")
+ㅤ
+instruction = allocate(
+    account_public_key=account.public_key,
+    space=100
+)
+transaction = Transaction(instructions=[instruction], signers=[account])
+ㅤ
+result = client.send_transaction(transaction)
+print("Transaction response: ", result)
+```
+</Code>
+
 #### allocate_with_seed
+Allocates bytes for an account with seed.
+
 <Code>
 ```python 
 def allocate_with_seed(
@@ -120,6 +129,83 @@ def allocate_with_seed(
 )
 ```
 </Code>
+
+#### assign
+Assigns an existing account to a program.
+
+<Code>
+```python 
+def assign(
+    account_public_key: PublicKey,
+    program_id: PublicKey
+)
+```
+</Code>
+
+Example:
+
+<Code>
+```python
+from solathon.core.instructions import assign
+from solathon import Client, Transaction, PublicKey, Keypair
+ㅤ
+client = Client("https://api.devnet.solana.com")
+ㅤ
+# Requires you to have some SOLs to pay for transaction fees
+account = Keypair.from_private_key("your_private_key")
+program_id = PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA") # Token program
+ㅤ
+instruction = assign(
+    account_public_key=account.public_key,
+    program_id=program_id
+)
+transaction = Transaction(instructions=[instruction], signers=[account])
+ㅤ
+result = client.send_transaction(transaction)
+print("Transaction response: ", result)
+```
+</Code>
+
+
+#### transfer
+Transfers lamports between accounts
+
+<Code>
+```python 
+def transfer(
+    from_public_key: PublicKey | str,
+    to_public_key: PublicKey | str,
+    lamports: int
+)
+```
+</Code>
+
+Example:
+
+<Code>
+```python
+from solathon.core.instructions import transfer
+from solathon import Client, Transaction, PublicKey, Keypair
+ㅤ
+client = Client("https://api.devnet.solana.com")
+ㅤ
+# Requires you to have some SOLs to pay for transaction fees
+sender = Keypair.from_private_key("your_private_key")
+receiver = PublicKey("receiver_public_key")
+ㅤ
+instruction = transfer(
+    from_public_key=sender.public_key,
+    to_public_key=receiver, 
+    lamports=100
+)
+ㅤ
+transaction = Transaction(instructions=[instruction], signers=[sender])
+ㅤ
+result = client.send_transaction(transaction)
+print("Transaction response: ", result)
+```
+</Code>
+
 
 ## Classes
 #### AccountMeta

@@ -1,8 +1,8 @@
 import { Code } from '/components/Code';
 import Callout from 'nextra-theme-docs/callout'
 
-# Client
-**The base ***async*** client object used to interact with the blockchain. This is is identical to normal sync client, the only difference is that all methods are asynchronous.**
+# AsyncClient
+**The base ***async*** client object used to interact with the blockchain. This is identical to normal sync client, the only difference is that all methods are asynchronous.**
 
 <Code>
   ```python 
@@ -10,7 +10,7 @@ import Callout from 'nextra-theme-docs/callout'
   ```
 </Code>
 
-> To initialise a async client, one of the three [RPC cluster endpoint URLs](https://docs.solana.com/cluster/rpc-endpoints) must be passed. When running a local cluster, the local argument must be passed as true for the local endpoint to work.
+> To initialize an async client, one of the three [RPC cluster endpoint URLs](https://docs.solana.com/cluster/rpc-endpoints) must be passed. When running a local cluster, the local argument must be passed as true for the local endpoint to work.
 
 #### Methods
 - [refresh_http](#refresh_http)
@@ -29,8 +29,19 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_fee_for_message](#get_fee_for_message)
 - [get_fees](#get_fees)
 - [get_first_available_block](#get_first_available_block)
+- [get_genesis_hash](#get_genesis_hash)
+- [get_health](#get_health)
+- [get_identity](#get_identity)
+- [get_inflation_governor](#get_inflation_governor)
+- [get_inflation_rate](#get_inflation_rate)
+- [get_inflation_reward](#get_inflation_reward) 
+- [get_largest_accounts](#get_largest_accounts)
+- [get_leader_schedule](#get_leader_schedule)
+- [get_max_retransmit_slot](#get_max_retransmit_slot)
+- [get_max_shred_insert_slot](#get_max_shred_insert_slot)
+- [get_minimum_balance_for_rent_exmeption](#get_minimum_balance_for_rent_exmeption)
+- [get_multiple_accounts](#get_multiple_accounts)
 - [get_supply](#get_supply)
-- [get_block](#get_block)
 - [get_transaction](#get_transaction)
 - [get_recent_blockhash](#get_recent_blockhash)
 - [get_token_accounts_by_owner](#get_token_accounts_by_owner)
@@ -191,6 +202,117 @@ async def get_first_available_block()
 ```
 </Code>
 
+#### .get_genesis_hash
+Returns the genesis hash.
+
+<Code>
+```python 
+async def get_genesis_hash()
+```
+</Code>
+
+#### .get_health
+Returns the current health of the node.
+
+<Code>
+```python 
+async def get_health()
+```
+</Code>
+
+#### .get_identity
+Returns the identity public key for the current node.
+
+<Code>
+```python 
+async def get_identity()
+```
+</Code>
+
+#### .get_inflation_governor
+Returns the current inflation governor.
+
+<Code>
+```python 
+async def get_inflation_governor()
+```
+</Code>
+
+#### .get_inflation_rate
+Returns the inflation / staking reward for a list of addresses for an epoch
+
+<Code>
+```python 
+async def get_inflation_rate()
+```
+</Code>
+
+#### .get_inflation_reward
+Returns the specific inflation values for the current epoch.
+
+<Code>
+```python 
+async def get_inflation_reward()
+```
+</Code>
+
+#### .get_largest_accounts
+Returns the 20 largest accounts, by lamport balance (results may be cached up to two hours).
+Currently if using get_largest_accounts you will need to nest the method inside of a try/except block and 
+make an exception for a TimeoutError.
+
+<Code>
+```python 
+async def get_largest_accounts()
+```
+</Code>
+
+#### .get_leader_schedule
+Returns the leader schedule for an epoch.
+Lots of data!
+
+<Code>
+```python 
+async def get_leader_schedule()
+```
+</Code>
+
+#### .get_max_retransmit_slot
+Get the max slot seen from retransmit stage.
+
+<Code>
+```python 
+async def get_max_retransmit_slot()
+```
+</Code>
+
+#### .get_max_shred_insert_slot
+Get the max slot seen from after shred insert.
+
+<Code>
+```python 
+async def get_max_shred_insert_slot()
+```
+</Code>
+
+#### .get_minimum_balance_for_rent_exemption
+Returns minimum balance required to make account rent exempt.
+
+<Code>
+```python 
+async def get_minimum_balance_for_rent_exmeption()
+```
+</Code>
+
+#### .get_multiple_accounts
+Returns the account information for a list of Pubkeys.
+
+<Code>
+```python 
+async def get_multiple_accounts()
+```
+</Code>
+
 #### .get_supply
 Returns information about the current supply.
 
@@ -199,16 +321,6 @@ Returns information about the current supply.
 async def get_supply()
 ```
 </Code>
-
-#### .get_identity
-Returns the identity public key for the current node
-
-<Code>
-```python 
-async def get_identity()
-```
-</Code>
-
 
 #### .get_transaction
 Returns a transaction's details by the confirmed transaction signature string (in base 58)
@@ -229,11 +341,14 @@ async def get_recent_blockhash()
 </Code>
 
 #### .get_token_accounts_by_owner
-Returns all SPL Token accounts of the public key provided. Either mint_id or program_id keyword argument is required, encoding is optional.
+Returns all SPL Token accounts of the public key provided. Either `mint_id` or `program_id` keyword argument is required, encoding is optional.
 
 <Code>
 ```python 
-async def get_token_accounts_by_owner(public_key: PublicKey | str, **kwargs)
+async def get_token_accounts_by_owner(
+    public_key: PublicKey | str, 
+    **kwargs
+)
 ```
 </Code>
 
@@ -241,16 +356,20 @@ Example:
 
 <Code>
 ```python 
+import asyncio
 from solathon import AsyncClient, PublicKey
 ㅤ
-client = AsyncClient("https://api.mainnet-beta.solana.com")
+async def main():
+    client = AsyncClient("https://api.mainnet-beta.solana.com")
+    ㅤ
+    public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
+    # Token program ID
+    program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+    ㅤ
+    tokens = await client.get_token_accounts_by_owner(public_key, program_id=program_id)
+    print(tokens)
 ㅤ
-public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
-program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" # Token program ID
-ㅤ
-tokens = await client.get_token_accounts_by_owner(public_key, program_id)
-ㅤ
-print(tokens)
+asyncio.run(main)
 ```
 </Code>
 
@@ -258,15 +377,24 @@ print(tokens)
     <p style={{fontSize:"1rem"}}>This method returns token on mainnet only.</p>
 </Callout>
 
-#### .send_transaction
-Submits a signed [transaction object](/models/transaction) to the cluster for processing, recent blockhash is optional.
+#### .request_airdrop
+Requests the amount of lamport specified to be airdropped to the public key.
 
 <Code>
 ```python 
-async def send_transaction(
-                    transaction: Transaction, 
-                    recent_blockhash: str | None = None
-                    )
+async def request_airdrop(
+    public_key: public_key, 
+    amount: int
+)
+```
+</Code>
+
+#### .send_transaction
+Submits a signed [Transaction object](/models/transaction) to the cluster for processing, recent blockhash is optional.
+
+<Code>
+```python 
+async def send_transaction(transaction: Transaction)
 ```
 </Code>
 
@@ -274,31 +402,35 @@ Example:
 
 <Code>
 ```python 
-import time
+import time, asyncio
 from solathon.core.instructions import transfer
 from solathon import AsyncClient, Transaction, PublicKey, Keypair
 ㅤ
-client = AsyncClient("https://api.devnet.solana.com")
-ㅤ
-sender = Keypair()
-receiver = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44a")
-amount = 10000  # This is the amount in lamports
-ㅤ
-# Requesting airdrop to get some devnet tokens for the transaction to succeed
-res = await client.request_airdrop(sender.public_key, amount + amount)
-print("Airdrop response: ", res)
-time.sleep(20) # 20 second delay to make sure we get enough time to receive airdrop tokens
-ㅤ
-# Creating transfer instruction
-instruction = transfer(
+async def main():
+    client = AsyncClient("https://api.devnet.solana.com")
+    ㅤ
+    sender = Keypair()
+    receiver = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44a")
+    amount = 10000  # This is the amount in lamports
+    ㅤ
+    # Requesting airdrop to get some devnet tokens for the transaction to succeed
+    res = await client.request_airdrop(sender.public_key, amount + amount)
+    print("Airdrop response: ", res)
+    # 20 second delay to make sure we get enough time to receive airdrop tokens
+    time.sleep(20)
+    ㅤ
+    # Creating transfer instruction
+    instruction = transfer(
         from_public_key=sender.public_key,
         to_public_key=receiver, 
         lamports=100
     )
-transaction = Transaction(instructions=[instruction], signers=[sender])
-result = await client.send_transaction(transaction)
+    transaction = Transaction(instructions=[instruction], signers=[sender])
+    result = await client.send_transaction(transaction)
+    ㅤ
+    print("Transaction response: ", result)
 ㅤ
-print("Transaction response: ", result)
+asyncio.run(main())
 ```
 </Code>
 

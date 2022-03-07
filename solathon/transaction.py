@@ -16,6 +16,7 @@ from .core.message import (
 
 PACKET_DATA_SIZE = 1232
 
+
 @dataclass
 class PKSigPair:
     public_key: PublicKey
@@ -43,7 +44,7 @@ class Transaction:
                                 "must be a list of Instruction objects"
                                 ))
 
-    def compile_transaction(self) -> Message:
+    def compile_transaction(self) -> bytes:
         if self.nonce_info:
             self.recent_blockhash = self.nonce_info.nonce
 
@@ -142,7 +143,7 @@ class Transaction:
             )
             for instr in self.instructions
         ]
-        return Message(
+        message: Message = Message(
             MessageHeader(
                 num_required_signatures=num_required_signatures,
                 num_readonly_signed_accounts=num_readonly_signed_accounts,
@@ -151,7 +152,9 @@ class Transaction:
             account_keys,
             compiled_instructions,
             self.recent_blockhash,
-        ).serialize()
+        )
+        serialized_message: bytes = message.serialize()
+        return serialized_message
 
     def sign(self) -> None:
 
@@ -169,7 +172,7 @@ class Transaction:
         ) for signer in self.signers]
 
         self.signatures = pk_sig_pairs
-        sign_data = self.compile_transaction()
+        sign_data: bytes = self.compile_transaction()
         for idx, signer in enumerate(self.signers):
             signature = signer.sign(sign_data).signature
             if len(signature) != 64:
@@ -186,7 +189,6 @@ class Transaction:
             if not sig_pair.signature:
                 return False
             try:
-
                 VerifyKey(bytes(sig_pair.public_key)).verify(
                     signed_data, sig_pair.signature)
             except BadSignatureError:
@@ -197,7 +199,7 @@ class Transaction:
         if not self.signatures:
             raise AttributeError("Transaction has not been signed.")
 
-        sign_data = self.compile_transaction()
+        sign_data: bytes = self.compile_transaction()
         if not self.verify_signatures(sign_data):
             raise AttributeError("Transaction has not been signed correctly.")
 
@@ -218,7 +220,7 @@ class Transaction:
             else:
                 wire_transaction.extend(sig_pair.signature)
 
-        wire_transaction.extend(sign_data)
+        wire_transaction.extend(bytearray(sign_data))
 
         if len(wire_transaction) > PACKET_DATA_SIZE:
             raise RuntimeError(
