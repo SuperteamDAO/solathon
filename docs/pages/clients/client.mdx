@@ -363,6 +363,15 @@ def get_signature_statuses()
 ```
 </Code>
 
+#### .get_slot
+Returns the slot that has reached the given or default commitment level
+
+<Code>
+```python 
+def get_slot()
+```
+</Code>
+
 #### .get_supply
 Returns information about the current supply.
 
@@ -402,7 +411,6 @@ print(tokens)
     <p style={{fontSize:"1rem"}}>This method returns token on mainnet only.</p>
 </Callout>
 
-<<<<<<< HEAD
 #### .get_transaction
 Returns a transaction's details by the confirmed transaction signature string (in base 58)
 
@@ -412,8 +420,6 @@ def get_transaction(signature: str)
 ```
 </Code>
 
-=======
->>>>>>> 3ab307a16ff8ef8bb505ef93d660cf54a6483eab
 #### .send_transaction
 Submits a signed [Transaction object](/models/transaction) to the cluster for processing.
 
