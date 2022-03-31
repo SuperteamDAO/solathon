@@ -1,7 +1,7 @@
 from __future__ import annotations
+from array import array
 
 from typing import Any
-from typing import Optional
 from .publickey import PublicKey
 from .core.http import HTTPClient
 from .core.types import RPCResponse
@@ -70,7 +70,7 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
 
-    def get_blocks(self, start_slot: int, end_slot: Optional[int] = None
+    def get_blocks(self, start_slot: int, end_slot: int | None = None
                    ) -> RPCResponse:
         params = [start_slot]
         if end_slot:
@@ -218,7 +218,7 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
    
-    def get_minimum_balance_for_rent_exmeption(self, acct_length: int) -> RPCResponse:
+    def get_minimum_balance_for_rent_exemption(self, acct_length: int) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getMinimumBalanceForRentExemption", params=[acct_length]
         )
@@ -257,6 +257,13 @@ class Client:
     def get_signatures_for_address(self, acct_address: str) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getSignaturesForAddress", params=[acct_address]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+        
+    def get_signature_statuses(self, transaction_sigs: array) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getSignatureStatuses", params=[transaction_sigs]
         )
         res: RPCResponse = self.http.send(data)
         return res
@@ -308,11 +315,9 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
 
-    def send_transaction(self, transaction: Transaction,
-                         recent_blockhash: Optional[str] = None
-                         ) -> RPCResponse:
+    def send_transaction(self, transaction: Transaction) -> RPCResponse:
 
-        if recent_blockhash is None:
+        if transaction.recent_blockhash is None:
             blockhash_resp = self.get_recent_blockhash()
             recent_blockhash = blockhash_resp["result"]["value"]["blockhash"]
 
