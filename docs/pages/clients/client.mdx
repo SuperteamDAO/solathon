@@ -44,6 +44,8 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_program_accounts](#get_program_accounts)
 - [get_recent_blockhash](#get_recent_blockhash)
 - [get_recent_performance_samples](#get_recent_performance_samples)
+- [get_signatures_for_address](#get_signatures_for_address)
+- [get_signature_statuses](#get_signature_statuses)
 - [get_supply](#get_supply)
 - [get_token_accounts_by_owner](#get_token_accounts_by_owner)
 - [get_transaction](#get_transaction)
@@ -348,6 +350,24 @@ Returns signatures for confirmed transactions that include the given address in 
 <Code>
 ```python 
 def get_signatures_for_address()
+```
+</Code>
+
+#### .get_signature_statuses
+Returns the statuses of a list of signatures. Unless the searchTransactionHistory configuration parameter is included, this method only searches the recent status cache of signatures, which retains statuses for all active slots plus MAX_RECENT_BLOCKHASHES rooted slots.
+
+<Code>
+```python 
+def get_signature_statuses()
+```
+</Code>
+
+#### .get_slot
+Returns the slot that has reached the given or default commitment level
+
+<Code>
+```python 
+def get_slot()
 ```
 </Code>
 

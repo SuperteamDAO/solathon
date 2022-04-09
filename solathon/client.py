@@ -1,4 +1,5 @@
 from __future__ import annotations
+from array import array
 
 from typing import Any
 from .publickey import PublicKey
@@ -256,6 +257,20 @@ class Client:
     def get_signatures_for_address(self, acct_address: str) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getSignaturesForAddress", params=[acct_address]
+        )
+        res: RPCResponse = self.http.send(data)
+        return res
+        
+    def get_signature_statuses(self, transaction_sigs: array) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getSignatureStatuses", params=[transaction_sigs]
+        )
+        res: RPCResponse = self.http.send(data)
+        return 
+        
+    def get_slot(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getSlot", params=[None]
         )
         res: RPCResponse = self.http.send(data)
         return res
