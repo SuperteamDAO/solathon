@@ -182,7 +182,7 @@ class AsyncClient:
         res: RPCResponse = await self.http.send(data)
         return res
 
-    async def get_inflation_reward(self , addresses: list) -> RPCResponse:
+    async def get_inflation_reward(self , addresses: list[str]) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getInflationReward", params=[addresses]
         )
@@ -256,6 +256,20 @@ class AsyncClient:
     async def get_signatures_for_address(self, acct_address: str) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getSignaturesForAddress", params=[acct_address]
+        )
+        res: RPCResponse = await self.http.send(data)
+        return res
+        
+    async def get_signature_statuses(self, transaction_sigs: list[str]) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getSignatureStatuses", params=[transaction_sigs]
+        )
+        res: RPCResponse = await self.http.send(data)
+        return res 
+        
+    async def get_slot(self) -> RPCResponse:
+        data: dict[str, Any] = self.http.build_data(
+            method="getSlot", params=[None]
         )
         res: RPCResponse = await self.http.send(data)
         return res

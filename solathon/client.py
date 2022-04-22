@@ -1,5 +1,4 @@
 from __future__ import annotations
-from array import array
 
 from typing import Any
 from .publickey import PublicKey
@@ -183,7 +182,7 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
 
-    def get_inflation_reward(self , addresses: list) -> RPCResponse:
+    def get_inflation_reward(self , addresses: list[str]) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getInflationReward", params=[addresses]
         )
@@ -261,7 +260,7 @@ class Client:
         res: RPCResponse = self.http.send(data)
         return res
         
-    def get_signature_statuses(self, transaction_sigs: array) -> RPCResponse:
+    def get_signature_statuses(self, transaction_sigs: list[str]) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
             method="getSignatureStatuses", params=[transaction_sigs]
         )
