@@ -1,4 +1,5 @@
 # Developer reference: https://github.com/solana-labs/solana/blob/master/sdk/program/src/system_instruction.rs
+from __future__ import annotations
 
 from typing import NamedTuple
 from dataclasses import dataclass

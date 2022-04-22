@@ -1,4 +1,5 @@
 # Thanks to https://github.com/michaelhly/solana-py/blob/master/src/solana/system_program.py
+from __future__ import annotations
 
 from enum import IntEnum
 from construct import (
