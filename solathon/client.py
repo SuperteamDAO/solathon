@@ -266,7 +266,7 @@ class Client:
             method="getSignatureStatuses", params=[transaction_sigs]
         )
         res: RPCResponse = self.http.send(data)
-        return 
+        return res 
         
     def get_slot(self) -> RPCResponse:
         data: dict[str, Any] = self.http.build_data(
