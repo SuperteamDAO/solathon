@@ -323,11 +323,9 @@ class AsyncClient:
 
     async def send_transaction(self, transaction: Transaction) -> RPCResponse:
 
-        if transaction.recent_blockhash is None:
-            blockhash_resp = self.get_recent_blockhash()
-            recent_blockhash = blockhash_resp["result"]["value"]["blockhash"]
+        if not transaction.recent_blockhash:
+            transaction.recent_blockhash = (await self.get_recent_blockhash())["result"]["value"]["blockhash"]
 
-        transaction.recent_blockhash = recent_blockhash
         transaction.sign()
 
         data: dict[str, Any] = self.http.build_data(
