@@ -49,3 +49,13 @@ class Keypair:
         private_key = base58.b58decode(private_key)
         seed = private_key[:32]
         return cls(NaclPrivateKey(seed))
+
+    @staticmethod
+    def from_file(file_path: str) -> Keypair:
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+
+        private_key_bytes = bytes(data[:32])
+        private_key = base58.b58encode(private_key_bytes)
+        keypair = Keypair.from_private_key(private_key)
+        return keypair
