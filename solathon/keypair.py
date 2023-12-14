@@ -50,7 +50,9 @@ class Keypair:
         try:
             private_key = base58.b58decode(private_key)
         except base58.DecodeError as e:
-            seed = private_key[:32]
+            raise ValueError(f"Error decoding private key: {str(e)}")
+        
+        seed = private_key[:32]
         return cls(NaclPrivateKey(seed))
 
     @staticmethod
