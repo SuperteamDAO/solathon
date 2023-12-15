@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import base58
 from .publickey import PublicKey
 from nacl.signing import SigningKey, SignedMessage
@@ -46,7 +47,11 @@ class Keypair:
 
     @classmethod
     def from_private_key(cls, private_key: str | bytes) -> Keypair:
-        private_key = base58.b58decode(private_key)
+        try:
+            private_key = base58.b58decode(private_key)
+        except base58.DecodeError as e:
+            raise ValueError(f"Error decoding private key: {str(e)}")
+        
         seed = private_key[:32]
         return cls(NaclPrivateKey(seed))
 
