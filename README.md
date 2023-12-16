@@ -47,4 +47,4 @@ print(balance)
 ```
 
 # 🗃️ Contribution
-Drop a pull request for anything which seems wrong or can be improved, could be a small typo or an entirely new feature!
+Drop a pull request for anything which seems wrong or can be improved, could be a small typo or an entirely new feature! Checkout [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to proceed.
