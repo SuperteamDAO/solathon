@@ -89,11 +89,11 @@ To set up your development environment, follow these steps:
     ```bash
     .\venv\Scripts\activate
     ```
-3. Install dependancies:
+3. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-4. Install dev dependancies:
+4. Install dev dependencies:
    ```bash
    pip install -r requirements-dev.txt
    ```
