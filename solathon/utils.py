@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 from solathon import PublicKey
 from nacl.signing import VerifyKey
-from solathon.core.types import RPCError, RPCResponse
+from solathon.core.types import Commitment, RPCError, RPCResponse
 
 
 LAMPORT_PER_SOL: int = 1000000000
@@ -19,6 +19,17 @@ def truncate_float(number: float, length: int) -> float:
     return number
 
 
+def validate_commitment(value: Commitment) -> Commitment:
+    # If the types change make the same change in the type hint
+    allowed_commitments = {"processed", "confirmed", "finalized",
+                           "recent", "single", "singleGossip", "root", "max"}
+
+    if value not in allowed_commitments:
+        raise ValueError(
+            f"Invalid commitment value. Allowed values are {allowed_commitments}")
+
+    return value
+
 def lamport_to_sol(lamports: int) -> float:
     return truncate_float(lamports * SOL_PER_LAMPORT, SOL_FLOATING_PRECISION)
 
@@ -31,7 +42,7 @@ def verify_signature(
     public_key: PublicKey | str,
     signature: list,
     message: bytes | str | None = None
-    ) -> None:
+) -> None:
 
     if not message:
         message = public_key.base58_encode()
@@ -41,7 +52,6 @@ def verify_signature(
 
     if isinstance(message, str):
         message = bytes(message, encoding="utf8")
-
 
     bytes_pk = bytes(public_key)
     vk = VerifyKey(bytes_pk)

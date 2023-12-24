@@ -11,3 +11,5 @@ class RPCResponse(TypedDict):
     id: int
     result: Any
     error: RPCError
+
+Commitment = Literal["processed", "confirmed", "finalized", "recent", "single", "singleGossip", "root", "max"]
