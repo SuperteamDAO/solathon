@@ -26,4 +26,11 @@ class AccountInfo(TypedDict):
     executable: bool
     rentEpoch: int
 
+class FeeCalculator(TypedDict):
+    lamportsPerSignature: int
+
+class BlockHash(TypedDict):
+    blockhash: str
+    feeCalculator: FeeCalculator
+
 Commitment = Literal["processed", "confirmed", "finalized", "recent", "single", "singleGossip", "root", "max"]
