@@ -385,7 +385,7 @@ Returns all SPL Token accounts of the public key provided. Either `mint_id` or `
 
 <Code>
 ```python 
-def get_token_accounts_by_owner(public_key: PublicKey | str,  **kwargs)
+def get_token_accounts_by_owner(public_key: PublicKey | str, **kwargs)
 ```
 </Code>
 
@@ -415,7 +415,7 @@ Requests the amount of lamport specified to be airdropped to the public key.
 
 <Code>
 ```python 
-def request_airdrop(public_key: PublicKey | lamports: int)
+def request_airdrop(public_key: PublicKey, lamports: int)
 ```
 </Code>
 
@@ -457,7 +457,7 @@ instruction = transfer(
 transaction = Transaction(instructions=[instruction], signers=[sender])
 result = client.send_transaction(transaction)
 ㅤ
-print("Transaction response: ", result)
+print("Transaction response:", result)
 ```
 </Code>
 

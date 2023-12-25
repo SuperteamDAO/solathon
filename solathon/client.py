@@ -5,7 +5,7 @@ from typing import Any, List, Optional, Text
 from solathon.utils import validate_commitment
 from .publickey import PublicKey
 from .core.http import HTTPClient
-from .core.types import Commitment, RPCResponse
+from .core.types import AccountInfo, BlockHash, Commitment, RPCResponse
 from .transaction import Transaction
 
 ENDPOINTS = (
@@ -42,7 +42,7 @@ class Client:
         """
         self.http.refresh()
 
-    def get_account_info(self, public_key: PublicKey | Text, commitment: Optional[Commitment]=None) -> RPCResponse:
+    def get_account_info(self, public_key: PublicKey | Text, commitment: Optional[Commitment]=None) -> RPCResponse[AccountInfo]:
         """
         Returns all the account info for the specified public key.
 
@@ -351,7 +351,7 @@ class Client:
         return self.build_and_send_request("getProgramAccounts", [public_key])
 
     # Will switch to getFeeForMessage (latest)
-    def get_recent_blockhash(self, commitment: Optional[Commitment]=None) -> RPCResponse:
+    def get_recent_blockhash(self, commitment: Optional[Commitment]=None) -> RPCResponse[BlockHash]:
         """
         Returns the recent blockhash.
 
