@@ -8,7 +8,7 @@ from solathon.transaction import Transaction
 from solathon.utils import sol_to_lamport
 
 
-def create_transfer(client: Client,  sender: PublicKey, transfer_fields: CreateTransferFields, commitment: Optional[Commitment]=None):
+def create_transfer(client: Client,  sender: PublicKey, transfer_fields: CreateTransferFields, commitment: Optional[Commitment]=None) -> Transaction:
     sender_info = client.get_account_info(sender)
     if sender_info['result']['value'] == None:
         raise ValueError("Sender account does not exist")
