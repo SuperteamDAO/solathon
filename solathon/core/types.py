@@ -25,6 +25,8 @@ class AccountInfo(TypedDict):
     owner: str
     executable: bool
     rentEpoch: int
+    size: int
+    data: Union[str, dict[str, Any]]
 
 class FeeCalculator(TypedDict):
     lamportsPerSignature: int
