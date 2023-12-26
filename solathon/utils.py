@@ -5,6 +5,11 @@ from solathon import PublicKey
 from nacl.signing import VerifyKey
 from solathon.core.types import Commitment, RPCError, RPCResponse
 
+class RPCRequestError(Exception):
+    def __init__(self, message="Failed to fetch data from RPC endpoint"):
+        self.message = message
+        super().__init__(self.message)
+
 
 LAMPORT_PER_SOL: int = 1000000000
 SOL_PER_LAMPORT: float = 1 / LAMPORT_PER_SOL
@@ -59,7 +64,7 @@ def verify_signature(
 
 
 def clean_response(response: RPCResponse) -> dict[str, Any] | RPCError:
-    if "error" in response.keys():
+    if "error" in response:
         return response["error"]
 
     result = response["result"]
@@ -67,7 +72,7 @@ def clean_response(response: RPCResponse) -> dict[str, Any] | RPCError:
     if isinstance(result, dict):
         result.pop("context", None)
         result.pop("id", None)
-        if "value" in result.keys():
+        if "value" in result:
             return result["value"]
 
     return result
