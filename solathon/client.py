@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, List, Optional, Text
 
-from solathon.utils import validate_commitment
+from solathon.utils import RPCRequestError, validate_commitment
 from .publickey import PublicKey
 from .core.http import HTTPClient
 from .core.types import AccountInfo, BlockHash, Commitment, RPCResponse
@@ -14,15 +14,15 @@ ENDPOINTS = (
     "https://api.testnet.solana.com",
 )
 
-
 class Client:
-    def __init__(self, endpoint: Text, local: bool = False):
+    def __init__(self, endpoint: Text, local: bool = False, clean_response: bool=True):
         """
         Initializes a new instance of the Client class.
 
         Args:
             endpoint (str): The endpoint to connect to.
             local (bool, optional): Whether to use a local development endpoint. Defaults to False.
+            clean_response (bool, optional): Whether to clean the response from the RPC endpoint. Defaults to True.
 
         Raises:
             ValueError: If the endpoint is not valid and local is False.
@@ -35,6 +35,7 @@ class Client:
             )
         self.http = HTTPClient(endpoint)
         self.endpoint = endpoint
+        self.clean_response = clean_response
 
     def refresh_http(self) -> None:
         """
@@ -42,7 +43,7 @@ class Client:
         """
         self.http.refresh()
 
-    def get_account_info(self, public_key: PublicKey | Text, commitment: Optional[Commitment]=None) -> RPCResponse[AccountInfo]:
+    def get_account_info(self, public_key: PublicKey | Text, commitment: Optional[Commitment]=None) -> RPCResponse[AccountInfo] | AccountInfo:
         """
         Returns all the account info for the specified public key.
 
@@ -351,7 +352,7 @@ class Client:
         return self.build_and_send_request("getProgramAccounts", [public_key])
 
     # Will switch to getFeeForMessage (latest)
-    def get_recent_blockhash(self, commitment: Optional[Commitment]=None) -> RPCResponse[BlockHash]:
+    def get_recent_blockhash(self, commitment: Optional[Commitment]=None) -> RPCResponse[BlockHash] | BlockHash:
         """
         Returns the recent blockhash.
 
@@ -461,7 +462,7 @@ class Client:
         """
         return self.build_and_send_request("getTransaction", [signature])
 
-    def build_and_send_request(self, method, params: List[Any]) -> RPCResponse:
+    def build_and_send_request(self, method, params: List[Any]) -> RPCResponse | dict[str, Any]:
         """
         Builds and sends an RPC request to the server.
 
@@ -474,6 +475,15 @@ class Client:
         """
         data: dict[str, Any] = self.http.build_data(method=method, params=params)
         res: RPCResponse = self.http.send(data)
+        if self.clean_response:
+            if "error" in res:
+                raise RPCRequestError(f"Failed to fetch data from RPC endpoint. Error: {res['error']}")
+            
+            if isinstance(res['result'], dict):
+                return res['result']['value']
+            else:
+                raise RPCRequestError(f"Invalid response from RPC endpoint. Expected dict, got {type(res['result']).__name__}")
+            
         return res
 
     # Non "get" methods
