@@ -11,7 +11,6 @@
 
 <p align="center">
   <a href="https://pypi.org/project/solathon/" target="_blank"><img src="https://badge.fury.io/py/solathon.svg" alt="PyPI version"></a>
-  <a href="https://deepsource.io/gh/GitBolt/solathon/?ref=repository-badge}" target="_blank"><img src="https://deepsource.io/gh/GitBolt/solathon.svg/?label=active+issues&show_trend=true&token=O-2BAnF5y1x-YJyaIe-p4hsK" alt="DeepSource" /></a>
   <a href="https://github.com/GitBolt/solathon/blob/master/LICENSE" target="_blank"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License"></a>
   <br>
 </p>
