@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-from typing import Any, List, Optional, Text
+from typing import Any, List, Literal, Optional, Text
 
 from solathon.utils import RPCRequestError, validate_commitment
 from .publickey import PublicKey
 from .core.http import HTTPClient
-from .core.types import AccountInfo, BlockHash, Commitment, RPCResponse
+from .core.types import (BlockHash, Commitment, RPCResponse, AccountInfo, AccountInfoType, 
+                         Block, BlockType, BlockProductionType, BlockProduction, BlockCommitmentType, 
+                         BlockCommitment, ClusterNode, ClusterNodeType, Epoch, EpochType, 
+                         EpochSchedule, EpochScheduleType)
 from .transaction import Transaction
 
 ENDPOINTS = (
@@ -43,7 +46,7 @@ class Client:
         """
         self.http.refresh()
 
-    def get_account_info(self, public_key: PublicKey | Text, commitment: Optional[Commitment]=None) -> RPCResponse[AccountInfo] | AccountInfo:
+    def get_account_info(self, public_key: PublicKey | Text, commitment: Optional[Commitment]=None) -> RPCResponse[AccountInfoType] | AccountInfo:
         """
         Returns all the account info for the specified public key.
 
@@ -54,9 +57,13 @@ class Client:
             RPCResponse: The response from the RPC endpoint.
         """
         commitment = validate_commitment(commitment) if commitment else None
-        return self.build_and_send_request("getAccountInfo", [public_key, commitment])
+        response = self.build_and_send_request("getAccountInfo", [public_key, commitment])
+        if self.clean_response:
+            result = AccountInfo(response['value'])
+            return result
+        return response
 
-    def get_balance(self, public_key: PublicKey | Text, commitment: Optional[Commitment]=None) -> RPCResponse:
+    def get_balance(self, public_key: PublicKey | Text, commitment: Optional[Commitment]=None) -> RPCResponse[int] | int:
         """
         Returns the balance of the specified public key.
 
@@ -67,9 +74,13 @@ class Client:
             RPCResponse: The response from the RPC endpoint.
         """
         commitment = validate_commitment(commitment) if commitment else None
-        return self.build_and_send_request("getBalance", [public_key, commitment])
+        response = self.build_and_send_request("getBalance", [public_key, commitment])
+        if self.clean_response:
+            return response['value']
 
-    def get_block(self, slot: int) -> RPCResponse:
+        return response
+
+    def get_block(self, slot: int) -> RPCResponse[BlockType] | Block:
         """
         Returns the block at the specified slot.
 
@@ -79,9 +90,12 @@ class Client:
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
-        return self.build_and_send_request("getBlock", [slot])
+        response = self.build_and_send_request("getBlock", [slot])
+        if self.clean_response:
+            return Block(response)
+        return response
 
-    def get_block_height(self, commitment: Optional[Commitment]=None) -> RPCResponse:
+    def get_block_height(self, commitment: Optional[Commitment]=None) -> RPCResponse[int] | int:
         """
         Returns the current block height.
 
@@ -91,7 +105,7 @@ class Client:
         commitment = validate_commitment(commitment) if commitment else None
         return self.build_and_send_request("getBlockHeight", [commitment])
 
-    def get_block_production(self, commitment: Optional[Commitment]=None) -> RPCResponse:
+    def get_block_production(self, commitment: Optional[Commitment]=None) -> RPCResponse[BlockProductionType] | BlockProduction:
         """
         Returns the block production information.
 
@@ -99,9 +113,12 @@ class Client:
             RPCResponse: The response from the RPC endpoint.
         """
         commitment = validate_commitment(commitment) if commitment else None
-        return self.build_and_send_request("getBlockProduction", [commitment])
+        response = self.build_and_send_request("getBlockProduction", [commitment])
+        if self.clean_response:
+            return BlockProduction(response['value'])
+        return response
 
-    def get_block_commitment(self, block: int) -> RPCResponse:
+    def get_block_commitment(self, block: int) -> RPCResponse[BlockCommitmentType] | BlockCommitment:
         """
         Returns the block commitment information for the specified block.
 
@@ -111,9 +128,12 @@ class Client:
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
-        return self.build_and_send_request("getBlockCommitment", [block])
+        response = self.build_and_send_request("getBlockCommitment", [block])
+        if self.clean_response:
+            return BlockCommitment(response)
+        return response
 
-    def get_blocks(self, start_slot: int, end_slot: int | None = None, commitment: Optional[Commitment]=None) -> RPCResponse:
+    def get_blocks(self, start_slot: int, end_slot: int | None = None, commitment: Optional[Commitment]=None) -> RPCResponse[List[int]] | List[int]:
         """
         Returns the blocks in the specified range.
 
@@ -125,13 +145,14 @@ class Client:
             RPCResponse: The response from the RPC endpoint.
         """
         commitment = validate_commitment(commitment) if commitment else None
-        params = [commitment, start_slot]
+        params = [start_slot]
         if end_slot:
             params.append(end_slot)
+        params.append(commitment)
 
         return self.build_and_send_request("getBlocks", params)
 
-    def get_blocks_with_limit(self, start_slot: int, limit: int) -> RPCResponse:
+    def get_blocks_with_limit(self, start_slot: int, limit: int) -> RPCResponse[List[int]] | List[int]:
         """
         Returns the blocks in the specified range with a limit.
 
@@ -144,7 +165,7 @@ class Client:
         """
         return self.build_and_send_request("getBlocksWithLimit", [start_slot, limit])
 
-    def get_block_time(self, block: int) -> RPCResponse:
+    def get_block_time(self, block: int) -> RPCResponse[int] | int:
         """
         Returns the block time for the specified block.
 
@@ -156,16 +177,19 @@ class Client:
         """
         return self.build_and_send_request("getBlockTime", [block])
 
-    def get_cluster_nodes(self) -> RPCResponse:
+    def get_cluster_nodes(self) -> RPCResponse[List[ClusterNodeType]] | List[ClusterNode]:
         """
         Returns the cluster nodes.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
-        return self.build_and_send_request("getClusterNodes", [None])
+        response = self.build_and_send_request("getClusterNodes", [None])
+        if self.clean_response:
+            return [ClusterNode(node) for node in response]
+        return response
 
-    def get_epoch_info(self, commitment: Optional[Commitment]=None) -> RPCResponse:
+    def get_epoch_info(self, commitment: Optional[Commitment]=None) -> RPCResponse[EpochType] | Epoch:
         """
         Returns the epoch information.
 
@@ -173,18 +197,24 @@ class Client:
             RPCResponse: The response from the RPC endpoint.
         """
         commitment = validate_commitment(commitment) if commitment else None
-        return self.build_and_send_request("getEpochInfo", [commitment])
+        response = self.build_and_send_request("getEpochInfo", [commitment])
+        if self.clean_response:
+            return Epoch(response)
+        return response
 
-    def get_epoch_schedule(self) -> RPCResponse:
+    def get_epoch_schedule(self) -> RPCResponse[EpochScheduleType] | EpochSchedule:
         """
         Returns the epoch schedule.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
-        return self.build_and_send_request("getEpochSchedule", [None])
+        response = self.build_and_send_request("getEpochSchedule", [None])
+        if self.clean_response:
+            return EpochSchedule(response)
+        return response
 
-    def get_fee_for_message(self, message: Text, commitment: Optional[Commitment]=None) -> RPCResponse:
+    def get_fee_for_message(self, message: Text, commitment: Optional[Commitment]=None) -> RPCResponse[int] | int:
         """
         Returns the fee for the specified message.
 
@@ -195,7 +225,10 @@ class Client:
             RPCResponse: The response from the RPC endpoint.
         """
         commitment = validate_commitment(commitment) if commitment else None
-        return self.build_and_send_request("getFeeForMessage", [message, commitment])
+        response = self.build_and_send_request("getFeeForMessage", [message, commitment])
+        if self.clean_response:
+            return response['value']
+        return response
 
     # Going to be deprecated
     def get_fees(self) -> RPCResponse:
@@ -207,7 +240,7 @@ class Client:
         """
         return self.build_and_send_request("getFees", [None])
 
-    def get_first_available_block(self) -> RPCResponse:
+    def get_first_available_block(self) -> RPCResponse[int] | int:
         """
         Returns the first available block.
 
@@ -216,7 +249,7 @@ class Client:
         """
         return self.build_and_send_request("getFirstAvailableBlock", [None])
 
-    def get_genesis_hash(self) -> RPCResponse:
+    def get_genesis_hash(self) -> RPCResponse[str] | str:
         """
         Returns the genesis hash.
 
@@ -225,7 +258,7 @@ class Client:
         """
         return self.build_and_send_request("getGenesisHash", [None])
 
-    def get_health(self) -> RPCResponse:
+    def get_health(self) -> RPCResponse[Literal["ok"]] | Literal["ok"]:
         """
         Returns the health.
 
@@ -477,10 +510,10 @@ class Client:
         res: RPCResponse = self.http.send(data)
         if self.clean_response:
             if "error" in res:
-                raise RPCRequestError(f"Failed to fetch data from RPC endpoint. Error: {res['error']}")
+                raise RPCRequestError(f"Failed to fetch data from RPC endpoint. Error {res['error']['status_code']}: {res['error']['message']}")
             
             if isinstance(res['result'], dict):
-                return res['result']['value']
+                return res['result']
             else:
                 raise RPCRequestError(f"Invalid response from RPC endpoint. Expected dict, got {type(res['result']).__name__}")
             
