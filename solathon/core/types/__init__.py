@@ -2,6 +2,7 @@ from .account_info import AccountInfo, AccountInfoType
 from .block import Block, BlockType, BlockProduction, BlockProductionType, BlockCommitment, BlockCommitmentType
 from .cluster_node import ClusterNode, ClusterNodeType
 from .epoch import Epoch, EpochType, EpochSchedule, EpochScheduleType
+from .inflation import InflationGovernor, InflationGovernorType, InflationRate, InflationRateType, InflationReward, InflationRewardType
 from typing import Generic, TypeVar, TypedDict, Literal, Any, Union
 
 T = TypeVar('T')
@@ -46,15 +47,31 @@ class BlockHash(TypedDict):
 
 Commitment = Literal["processed", "confirmed", "finalized", "recent", "single", "singleGossip", "root", "max"]
 
-class RPCResponseR(Generic[T]):
-    jsonrpc: Literal["2.0"]
-    id: int
-    result: Result[T]
-    error: RPCError
-    
-    def __init__(self, response: RPCResponse):
-        self.jsonrpc: Literal["2.0"] = response['jsonrpc']
-        self.id = response['id']
-        self.result = response['result']
-        self.error = RPCError(response['error'])
-    
+class PubKeyIdentityType(TypedDict):
+    '''
+    JSON Response type of PubKey Identity received by RPC
+    '''
+    identity: str
+
+class PubKeyIdentity:
+    '''
+    Convert PubKey Identity JSON to Class
+    '''
+
+    def __init__(self, response: PubKeyIdentityType) -> None:
+        self.identity = response['identity']
+
+class LargestAccountsType(TypedDict):
+    '''
+    JSON Response type of Largest Accounts received by RPC
+    '''
+    lamports: int
+    address: str
+
+class LargestAccounts:
+    '''
+    Convert Largest Accounts JSON to Class
+    '''
+    def __init__(self, response: LargestAccountsType) -> None:
+        self.lamports = response['lamports']
+        self.address = response['address']

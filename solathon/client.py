@@ -5,10 +5,10 @@ from typing import Any, List, Literal, Optional, Text
 from solathon.utils import RPCRequestError, validate_commitment
 from .publickey import PublicKey
 from .core.http import HTTPClient
-from .core.types import (BlockHash, Commitment, RPCResponse, AccountInfo, AccountInfoType, 
-                         Block, BlockType, BlockProductionType, BlockProduction, BlockCommitmentType, 
-                         BlockCommitment, ClusterNode, ClusterNodeType, Epoch, EpochType, 
-                         EpochSchedule, EpochScheduleType)
+from .core.types import (BlockHash, Commitment, LargestAccounts, LargestAccountsType, PubKeyIdentity, PubKeyIdentityType, RPCResponse, AccountInfo, AccountInfoType, 
+                         Block, BlockType, BlockProductionType, BlockProduction, BlockCommitmentType, BlockCommitment, 
+                         ClusterNode, ClusterNodeType, Epoch, EpochType, EpochSchedule, EpochScheduleType, InflationGovernor, 
+                         InflationGovernorType, InflationRate, InflationRateType, InflationReward, InflationRewardType)
 from .transaction import Transaction
 
 ENDPOINTS = (
@@ -267,16 +267,19 @@ class Client:
         """
         return self.build_and_send_request("getHealth", [None])
 
-    def get_identity(self) -> RPCResponse:
+    def get_identity(self) -> RPCResponse[PubKeyIdentityType] | PubKeyIdentity:
         """
         Returns the identity.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
-        return self.build_and_send_request("getIdentity", [None])
+        response = self.build_and_send_request("getIdentity", [None])
+        if self.clean_response:
+            return PubKeyIdentity(response)
+        return response
 
-    def get_inflation_governor(self, commitment: Optional[Commitment]=None) -> RPCResponse:
+    def get_inflation_governor(self, commitment: Optional[Commitment]=None) -> RPCResponse[InflationGovernorType] | InflationGovernor:
         """
         Returns the inflation governor.
 
@@ -284,18 +287,24 @@ class Client:
             RPCResponse: The response from the RPC endpoint.
         """
         commitment = validate_commitment(commitment) if commitment else None
-        return self.build_and_send_request("getInflationGovernor", [commitment])
+        response = self.build_and_send_request("getInflationGovernor", [commitment])
+        if self.clean_response:
+            return InflationGovernor(response)
+        return response
 
-    def get_inflation_rate(self) -> RPCResponse:
+    def get_inflation_rate(self) -> RPCResponse[InflationRateType] | InflationRate:
         """
         Returns the inflation rate.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
-        return self.build_and_send_request("getInflationRate", [None])
+        response = self.build_and_send_request("getInflationRate", [None])
+        if self.clean_response:
+            return InflationRate(response)
+        return response
 
-    def get_inflation_reward(self, addresses: List[Text], commitment: Optional[Commitment]=None) -> RPCResponse:
+    def get_inflation_reward(self, addresses: List[Text], commitment: Optional[Commitment]=None) -> RPCResponse[List[InflationRewardType]] | List[InflationReward]:
         """
         Returns the inflation reward for the specified addresses.
 
@@ -307,18 +316,24 @@ class Client:
         """
         commitment = validate_commitment(commitment) if commitment else None
         addresses.append(commitment)
-        return self.build_and_send_request("getInflationReward", addresses)
+        response = self.build_and_send_request("getInflationReward", addresses)
+        if self.clean_response:
+            return [InflationReward(reward) for reward in response]
+        return response
 
-    def get_largest_accounts(self) -> RPCResponse:
+    def get_largest_accounts(self) -> RPCResponse[List[LargestAccountsType]] | List[LargestAccounts]:
         """
         Returns the largest accounts.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
-        return self.build_and_send_request("getLargestAccounts", [None])
+        response = self.build_and_send_request("getLargestAccounts", [None])
+        if self.clean_response:
+            return [LargestAccounts(account) for account in response['value']]
+        return response
 
-    def get_leader_schedule(self) -> RPCResponse:
+    def get_leader_schedule(self) -> RPCResponse[dict[str, List[int] | Any]] | dict[str, List[int] | Any]:
         """
         Returns the leader schedule.
 
@@ -327,7 +342,7 @@ class Client:
         """
         return self.build_and_send_request("getLeaderSchedule", [None])
 
-    def get_max_retransmit_slot(self) -> RPCResponse:
+    def get_max_retransmit_slot(self) -> RPCResponse[int] | int:
         """
         Returns the maximum retransmit slot.
 
@@ -336,7 +351,7 @@ class Client:
         """
         return self.build_and_send_request("getMaxRetransmitSlot", [None])
 
-    def get_max_shred_insert_slot(self) -> RPCResponse:
+    def get_max_shred_insert_slot(self) -> RPCResponse[int] | int:
         """
         Returns the maximum shred insert slot.
 
@@ -345,7 +360,7 @@ class Client:
         """
         return self.build_and_send_request("getMaxShredInsertSlot", [None])
 
-    def get_minimum_balance_for_rent_exemption(self, acct_length: int, commitment: Optional[Commitment]=None) -> RPCResponse:
+    def get_minimum_balance_for_rent_exemption(self, acct_length: int, commitment: Optional[Commitment]=None) -> RPCResponse[int] | int:
         """
         Returns the minimum balance for rent exemption.
 
@@ -495,7 +510,7 @@ class Client:
         """
         return self.build_and_send_request("getTransaction", [signature])
 
-    def build_and_send_request(self, method, params: List[Any]) -> RPCResponse | dict[str, Any]:
+    def build_and_send_request(self, method, params: List[Any]) -> RPCResponse | dict[str, Any] | List[dict[str, Any]]:
         """
         Builds and sends an RPC request to the server.
 
