@@ -62,8 +62,7 @@ class Client:
         commitment = validate_commitment(commitment) if commitment else None
         response = self.build_and_send_request("getAccountInfo", [public_key, commitment])
         if self.clean_response:
-            result = AccountInfo(response['value'])
-            return result
+            return AccountInfo(response['value'])
         return response
 
     def get_balance(self, public_key: PublicKey | Text, commitment: Optional[Commitment]=None) -> RPCResponse[int] | int:
