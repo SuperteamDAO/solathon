@@ -22,3 +22,18 @@ class AccountInfo():
         self.rent_epoch = result['rentEpoch']
         self.size = result['size']
         self.data = result['data']
+
+class ProgramAccountType(TypedDict):
+    '''
+    JSON Response type of Program Account Information received by RPC
+    '''
+    pubkey: str
+    account: AccountInfoType
+
+class ProgramAccount:
+    '''
+    Convert Program Account Information JSON to Class
+    '''
+    def __init__(self, result: ProgramAccountType) -> None:
+        self.pubkey = result['pubkey']
+        self.account = AccountInfo(result['account'])

@@ -1,9 +1,9 @@
-from .account_info import AccountInfo, AccountInfoType
-from .block import Block, BlockType, BlockProduction, BlockProductionType, BlockCommitment, BlockCommitmentType
+from .account_info import AccountInfo, AccountInfoType, ProgramAccount, ProgramAccountType
+from .block import Block, BlockType, BlockProduction, BlockProductionType, BlockCommitment, BlockCommitmentType, BlockHash, BlockHashType, TransactionElement, TransactionElementType
 from .cluster_node import ClusterNode, ClusterNodeType
 from .epoch import Epoch, EpochType, EpochSchedule, EpochScheduleType
 from .inflation import InflationGovernor, InflationGovernorType, InflationRate, InflationRateType, InflationReward, InflationRewardType
-from typing import Generic, TypeVar, TypedDict, Literal, Any, Union
+from typing import Generic, List, Optional, TypeVar, TypedDict, Literal, Any, Union
 
 T = TypeVar('T')
 
@@ -38,14 +38,8 @@ class RPCResponse(Generic[T], TypedDict):
     result: Union[Result[T], T]
     error: RPCErrorType
 
-class FeeCalculator(TypedDict):
-    lamportsPerSignature: int
-
-class BlockHash(TypedDict):
-    blockhash: str
-    feeCalculator: FeeCalculator
-
 Commitment = Literal["processed", "confirmed", "finalized", "recent", "single", "singleGossip", "root", "max"]
+CommitmentConfig = Literal["processed", "confirmed", "finalized"]
 
 class PubKeyIdentityType(TypedDict):
     '''
@@ -75,3 +69,88 @@ class LargestAccounts:
     def __init__(self, response: LargestAccountsType) -> None:
         self.lamports = response['lamports']
         self.address = response['address']
+
+class RecentPerformanceSamplesType(TypedDict):
+    '''
+    JSON Response type of Recent Performance Samples received by RPC
+    '''
+    slot: int
+    numSlots: int
+    numTransactions: int
+    samplePeriodSecs: int
+    numNonVoteTransaction: int
+
+class RecentPerformanceSamples:
+    '''
+    Convert Recent Performance Samples JSON to Class
+    '''
+    def __init__(self, response: RecentPerformanceSamplesType) -> None:
+        self.slot = response['slot']
+        self.num_slots = response['numSlots']
+        self.num_transactions = response['numTransactions']
+        self.sample_period_secs = response['samplePeriodSecs']
+        self.num_non_vote_transaction = response['numNonVoteTransaction']
+
+class TransactionSignatureType(TypedDict):
+    '''
+    JSON Response type of Transaction Signature received by RPC
+    '''
+    signature: str
+    slot: int
+    err: Any
+    memo: Optional[str]
+    blockTime: Optional[int]
+    confirmationStatus: Optional[CommitmentConfig]
+
+class TransactionSignature:
+    '''
+    Convert Transaction Signature JSON to Class
+    '''
+
+    def __init__(self, response: TransactionSignatureType) -> None:
+        self.signature = response['signature']
+        self.err = response['err']
+        self.slot = response['slot']
+        self.memo = response['memo']
+        self.block_time = response['blockTime']
+        self.confirmation_status = response['confirmationStatus']
+
+class SignatureStatusType(TypedDict):
+    '''
+    JSON Response type of Signature Status received by RPC
+    '''
+    slot: int
+    confirmations: Optional[int]
+    err: Any
+    confirmationStatus: Optional[CommitmentConfig]
+
+class SignatureStatus:
+    '''
+    Convert Signature Status JSON to Class
+    '''
+
+    def __init__(self, response: SignatureStatusType) -> None:
+        self.slot = response['slot']
+        self.confirmations = response['confirmations']
+        self.err = response['err']
+        self.confirmation_status = response['confirmationStatus']
+
+class SupplyType(TypedDict):
+    '''
+    JSON Response type of Supply received by RPC
+    '''
+    total: int
+    circulating: int
+    nonCirculating: int
+    nonCirculatingAccounts: List[str]
+
+class Supply:
+    '''
+    Convert Supply JSON to Class
+    '''
+
+    def __init__(self, response: SupplyType) -> None:
+        self.total = response['total']
+        self.circulating = response['circulating']
+        self.non_circulating = response['nonCirculating']
+        self.non_circulating_accounts = response['nonCirculatingAccounts']

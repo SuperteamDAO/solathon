@@ -180,3 +180,32 @@ class BlockCommitment:
     def __init__(self, response: BlockCommitmentType) -> None:
         self.commitment = response['commitment']
         self.total_stake = response['totalStake']
+
+class FeeCalculatorType(TypedDict):
+    '''
+    JSON Response type of Fee Calculator Information received by RPC
+    '''
+    lamportsPerSignature: int
+
+class BlockHashType(TypedDict):
+    '''
+    JSON Response type of Block Hash Information received by RPC
+    '''
+    blockhash: str
+    feeCalculator: FeeCalculatorType
+
+class FeeCalculator:
+    '''
+    Convert Fee Calculator JSON to Class
+    '''
+
+    def __init__(self, response: FeeCalculatorType) -> None:
+        self.lamports_per_signature = response['lamportsPerSignature']
+
+class BlockHash:
+    '''
+    Convert Block Hash JSON to Class
+    '''
+    def __init__(self, response: BlockHashType) -> None:
+        self.blockhash = response['blockhash']
+        self.fee_calculator = FeeCalculator(response['feeCalculator'])
