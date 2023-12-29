@@ -9,7 +9,7 @@ from typing import Any
 
 from .. import __version__
 from ..publickey import PublicKey
-from ..core.types import RPCResponse
+from .types import RPCResponse
 
 class HTTPClient:
     """HTTP Client to interact with Solana JSON RPC"""
