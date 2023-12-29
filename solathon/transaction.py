@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from base58 import b58encode
+from typing import List, Tuple
+from base58 import b58decode, b58encode
 from .keypair import Keypair
 from .publickey import PublicKey
 from nacl.signing import VerifyKey
@@ -11,10 +12,12 @@ from .core.message import (
     Message,
     MessageHeader,
     CompiledInstruction,
-    encode_length
+    encode_length,
+    decode_length
 )
 
 PACKET_DATA_SIZE = 1232
+DEFAULT_SIGNATURE = bytes([0] * 64)
 
 
 @dataclass
@@ -237,3 +240,52 @@ class Transaction:
                     instr
                 )
             self.instructions.append(instr)
+
+    @classmethod
+    def from_buffer(buffer: bytes) -> Transaction:
+        if not isinstance(buffer, bytes):
+            raise TypeError("Buffer must be a bytes object.")
+
+        buffer_array: List[int] = list(buffer)
+        signature_length = decode_length(buffer_array)
+
+        signatures: List[bytes] = []
+        for _ in range(signature_length):
+            signature = bytes(buffer_array[:64])
+            buffer_array = buffer_array[64:]
+            signatures.append(b58encode(signature))
+
+        decoded_signatures = list(map(lambda x: PKSigPair(
+            public_key=message.account_keys[x[0]],
+            signature=None if x[1] == b58encode(
+                DEFAULT_SIGNATURE) else b58decode(x[1])
+        ), enumerate(signatures)))
+
+        message: Message = Message.from_buffer(bytes(buffer_array))
+        instructions: List[Instruction] = []
+        for instruction in message.instructions:
+
+            acc_metas: List[AccountMeta] = []
+            for account in instruction.accounts:
+                pubkey = message.account_keys[account]
+                acc_metas.append(AccountMeta(
+                    public_key=pubkey,
+                    is_signer=message.is_account_signer(account) or pubkey in [
+                        x.public_key for x in decoded_signatures],
+                    is_writable=message.is_account_writable(account)
+                ))
+            
+            instructions.append(Instruction(
+                program_id=message.account_keys[instruction.program_id_index],
+                accounts=acc_metas,
+                data=b58decode(instruction.data)
+            ))
+
+        fee_payer = message.account_keys[0] if message.header.num_required_signatures > 0 else None
+
+        return Transaction(
+            fee_payer=fee_payer,
+            recent_blockhash=message.recent_blockhash,
+            signatures=decoded_signatures,
+            instructions=instructions
+        )

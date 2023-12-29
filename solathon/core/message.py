@@ -1,8 +1,22 @@
 from __future__ import annotations
 
-from typing import NamedTuple
-from base58 import b58decode
+from typing import List, NamedTuple
+from base58 import b58decode, b58encode
 from ..publickey import PublicKey
+
+PUBLIC_KEY_LENGTH = 32
+
+
+def decode_length(value: bytes) -> int:
+    len_value: int = 0
+    size: int = 0
+    while True:
+        elem = value.pop(0)
+        len_value |= (elem & 0x7f) << (size * 7)
+        size += 1
+        if (elem & 0x80) == 0:
+            break
+    return len_value
 
 
 def encode_length(value: int) -> bytes:
@@ -17,13 +31,16 @@ def encode_length(value: int) -> bytes:
         elems.append(elem)
     return bytes(elems)
 
+
 def to_uint8_bytes(val: int) -> bytes:
     return val.to_bytes(1, byteorder="little")
+
 
 class CompiledInstruction(NamedTuple):
     accounts: bytes | list[int]
     program_id_index: int
     data: bytes
+
 
 class MessageHeader(NamedTuple):
     num_required_signatures: int
@@ -98,6 +115,9 @@ class Message:
             )
         )
 
+    def is_account_signer(self, index: int) -> bool:
+        return index < self.header.num_required_signatures
+    
     def is_account_writable(self, index: int) -> bool:
         writable = index < (self.header.num_required_signatures -
                             self.header.num_readonly_signed_accounts)
@@ -116,3 +136,43 @@ class Message:
             message_buffer.extend(Message.encode_instruction(instr))
 
         return bytes(message_buffer)
+
+    @classmethod
+    def from_buffer(buffer: bytes) -> Message:
+
+        buffer_array = list(buffer)
+        num_required_signatures = buffer_array.pop(0)
+
+        if num_required_signatures != (num_required_signatures & 0x7f):
+            raise ValueError("Versioned messages must be deserialized")
+
+        num_readonly_signed_accounts = buffer_array.pop(0)
+        num_readonly_unsigned_accounts = buffer_array.pop(0)
+
+        account_count = decode_length(buffer_array)
+        account_keys: List[PublicKey] = []
+        for _ in range(account_count):
+            account = bytes(buffer_array[:PUBLIC_KEY_LENGTH])
+            buffer_array = buffer_array[PUBLIC_KEY_LENGTH:]
+            account_keys.append(PublicKey(bytes(account)))
+
+        recent_blockhash = buffer_array[:PUBLIC_KEY_LENGTH]
+        buffer_array = buffer_array[PUBLIC_KEY_LENGTH:]
+
+        instruction_count = decode_length(buffer_array)
+        instructions: List[CompiledInstruction] = []
+        for _ in range(instruction_count):
+            program_id_index = buffer_array.pop(0)
+            account_count = decode_length(buffer_array)
+            accounts = buffer_array[:account_count]
+            buffer_array = buffer_array[account_count:]
+            data_length = decode_length(buffer_array)
+            data_slice = buffer_array[:data_length]
+            data = b58encode(bytes(data_slice))
+            buffer_array = buffer_array[data_length:]
+            instructions.append(CompiledInstruction(
+                accounts, program_id_index, data))
+
+        header = MessageHeader(
+            num_required_signatures, num_readonly_signed_accounts, num_readonly_unsigned_accounts)
+        return Message(header, account_keys, instructions, b58encode(recent_blockhash).decode("utf-8"))
