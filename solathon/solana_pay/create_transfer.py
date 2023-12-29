@@ -1,4 +1,3 @@
-from typing import Optional
 from solathon.client import Client
 from solathon.core.instructions import AccountMeta, transfer
 from solathon.core.types import Commitment
@@ -6,6 +5,8 @@ from solathon.publickey import PublicKey
 from solathon.solana_pay.types import CreateTransferFields
 from solathon.transaction import Transaction
 from solathon.utils import sol_to_lamport
+
+from typing import Optional
 
 
 def create_transfer(client: Client,  sender: PublicKey, transfer_fields: CreateTransferFields, commitment: Optional[Commitment] = None) -> Transaction:
