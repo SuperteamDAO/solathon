@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 from solathon import PublicKey
 from nacl.signing import VerifyKey
-from solathon.core.types import Commitment, RPCError, RPCResponse
+from solathon.core.types import Commitment, RPCErrorType, RPCResponse
 
 class RPCRequestError(Exception):
     def __init__(self, message="Failed to fetch data from RPC endpoint"):
@@ -63,7 +63,7 @@ def verify_signature(
     vk.verify(message, bytes(signature))
 
 
-def clean_response(response: RPCResponse) -> dict[str, Any] | RPCError:
+def clean_response(response: RPCResponse) -> dict[str, Any] | RPCErrorType:
     if "error" in response:
         return response["error"]
 
