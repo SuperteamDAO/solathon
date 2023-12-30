@@ -1,6 +1,8 @@
 from solathon.client import Client
 from solathon.core.instructions import AccountMeta, transfer
-from solathon.core.types import Commitment
+from solathon.core.types import Commitment, RPCResponse
+from solathon.core.types.account_info import AccountInfo, AccountInfoType
+from solathon.core.types.block import BlockHash, BlockHashType
 from solathon.publickey import PublicKey
 from solathon.solana_pay.types import CreateTransferFields
 from solathon.transaction import Transaction
@@ -29,11 +31,12 @@ def create_transfer(client: Client,  sender: PublicKey, transfer_fields: CreateT
     :rtype: solathon.transaction.Transaction
     """
 
+    sender_info: AccountInfo = None
     if client.clean_response == False:
-        raw_sender_info = client.get_account_info(sender)
-        sender_info = raw_sender_info['result']['value']
+        raw_sender_info: RPCResponse[AccountInfoType] = client.get_account_info(sender)
+        sender_info = AccountInfo(raw_sender_info['result']['value'])
     else:
-        sender_info = client.get_account_info(sender)
+        sender_info: AccountInfo = client.get_account_info(sender)
 
     if transfer_fields.get("recipient", None) == None:
         raise ValueError("Recipient is missing from transfer_fields")
@@ -57,11 +60,12 @@ def create_transfer(client: Client,  sender: PublicKey, transfer_fields: CreateT
             )
             instruction.keys.append(acc_ref)
 
+    block_hash: BlockHash = None
     if client.clean_response == False:
-        raw_block_hash = client.get_recent_blockhash(commitment=commitment)
-        block_hash = raw_block_hash['result']['value']
+        raw_block_hash: RPCResponse[BlockHashType] = client.get_recent_blockhash(commitment=commitment)
+        block_hash: BlockHash = BlockHash(raw_block_hash['result']['value'])
     else:
-        block_hash = client.get_recent_blockhash(commitment=commitment)
+        block_hash: BlockHash = client.get_recent_blockhash(commitment=commitment)
 
     transaction = Transaction(instructions=[instruction], signers=[
                               sender], fee_payer=sender, recent_blockhash=block_hash.blockhash)
