@@ -12,6 +12,18 @@ import json
 
 
 def fetch_transaction(client: Client, account: PublicKey, link: str, commitment: Optional[Commitment] = None) -> Transaction:
+    '''
+    Fetches a transaction from a Solana Pay transaction link.
+
+    Args
+        client (Client) - A connection client to the cluster.
+        account (PublicKey) - Account that may sign the transaction.
+        link (str) - [Solana Pay Spec](https://github.com/solana-labs/solana-pay/blob/master/SPEC.md#link) link to fetch the transaction from.
+        commitment (Commitment, optional) - commitment option for `getRecentBlockhash`.
+
+    Raises
+        ValueError - If `transaction` is not found in the response.
+    '''
     http = httpx.Client()
     headers = {
         'Accept': 'application/json',
