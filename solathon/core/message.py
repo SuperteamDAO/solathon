@@ -139,6 +139,7 @@ class Message:
 
     @classmethod
     def from_buffer(buffer: bytes) -> Message:
+        # Reference: https://github.com/solana-labs/solana-web3.js/blob/a1fafee/packages/library-legacy/src/message/legacy.ts#L267
 
         buffer_array = list(buffer)
         num_required_signatures = buffer_array.pop(0)

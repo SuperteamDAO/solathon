@@ -243,6 +243,7 @@ class Transaction:
 
     @classmethod
     def from_buffer(buffer: bytes) -> Transaction:
+        # Reference: https://github.com/solana-labs/solana-web3.js/blob/a1fafee/packages/library-legacy/src/transaction/legacy.ts#L878
         if not isinstance(buffer, bytes):
             raise TypeError("Buffer must be a bytes object.")
 
