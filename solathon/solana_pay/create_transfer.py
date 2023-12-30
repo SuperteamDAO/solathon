@@ -20,10 +20,10 @@ def create_transfer(client: Client,  sender: PublicKey, transfer_fields: CreateT
         sender (PublicKey) - Account that will send the transfer.
         transfer_fields (CreateTransferFields) - Fields of a Solana Pay transfer request URL.
         commitment (Commitment, optional) - commitment option for `getRecentBlockhash`.
-    
+
     Raises
         ValueError - If `recipient` or `amount` is missing from `transfer_fields`.
-    
+
     :type client: solathon.client.Client
     :type sender: solathon.publickey.PublicKey
     :type transfer_fields: solathon.solana_pay.types.CreateTransferFields
@@ -33,7 +33,8 @@ def create_transfer(client: Client,  sender: PublicKey, transfer_fields: CreateT
 
     sender_info: AccountInfo = None
     if client.clean_response == False:
-        raw_sender_info: RPCResponse[AccountInfoType] = client.get_account_info(sender)
+        raw_sender_info: RPCResponse[AccountInfoType] = client.get_account_info(
+            sender)
         sender_info = AccountInfo(raw_sender_info['result']['value'])
     else:
         sender_info: AccountInfo = client.get_account_info(sender)
@@ -62,10 +63,12 @@ def create_transfer(client: Client,  sender: PublicKey, transfer_fields: CreateT
 
     block_hash: BlockHash = None
     if client.clean_response == False:
-        raw_block_hash: RPCResponse[BlockHashType] = client.get_recent_blockhash(commitment=commitment)
+        raw_block_hash: RPCResponse[BlockHashType] = client.get_recent_blockhash(
+            commitment=commitment)
         block_hash: BlockHash = BlockHash(raw_block_hash['result']['value'])
     else:
-        block_hash: BlockHash = client.get_recent_blockhash(commitment=commitment)
+        block_hash: BlockHash = client.get_recent_blockhash(
+            commitment=commitment)
 
     transaction = Transaction(instructions=[instruction], signers=[
                               sender], fee_payer=sender, recent_blockhash=block_hash.blockhash)
