@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import List, TypedDict, Optional, Union
 from solathon.publickey import PublicKey
 
@@ -21,3 +22,10 @@ class CreateTransferFields(TypedDict):
     spl_token: Optional[PublicKey]
     references: Optional[Union[List[PublicKey], PublicKey]]
     memo: Optional[str]
+
+@dataclass
+class TransactionRequestURL():
+    link: str
+    label: Optional[str]
+    message: Optional[str]
+
