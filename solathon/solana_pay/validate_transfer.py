@@ -7,6 +7,7 @@ from solathon.utils import LAMPORT_PER_SOL
 
 from typing import Optional
 
+
 def validate_transfer(client: Client, signature: str, transfer_fields: CreateTransferFields, commitment: Optional[Commitment] = None) -> TransactionElement:
     '''
     Check that a given transaction contains a valid Solana Pay transfer.
@@ -36,7 +37,7 @@ def validate_transfer(client: Client, signature: str, transfer_fields: CreateTra
 
     if not response.meta:
         raise ValueError("Transaction meta not found")
-    
+
     if response.meta.err:
         raise ValueError(f"Meta failed with error: {response.meta.err}")
 
@@ -46,20 +47,21 @@ def validate_transfer(client: Client, signature: str, transfer_fields: CreateTra
     instruction = instructions.pop()
     if not instruction:
         raise ValueError("Instruction not found")
-    
+
     if transfer_fields.get("recipient", None) == None:
         raise ValueError("Recipient is missing from transfer_fields")
-    
+
     try:
-        acc_index = message.account_keys.index(transfer_fields['recipient'].decode('utf-8'))
+        acc_index = message.account_keys.index(
+            transfer_fields['recipient'].decode('utf-8'))
     except ValueError:
         raise ValueError("Recipient not found in transaction")
-    
+
     if transfer_fields.get("references", None) != None:
         _from, _to, *extra_keys = instruction.keys
         if len(extra_keys) != len(transfer_fields['references']):
             raise ValueError("Invalid number of references")
-        
+
         for index, reference in enumerate(transfer_fields['references']):
             if extra_keys[index].public_key != reference:
                 raise ValueError(f"Invalid reference {index}")
@@ -68,7 +70,7 @@ def validate_transfer(client: Client, signature: str, transfer_fields: CreateTra
     post_balance = response.meta.post_balances[acc_index] / LAMPORT_PER_SOL
     if post_balance - pre_balance < transfer_fields['amount']:
         raise ValueError("Amount not transferred to recipient")
-    
+
     if transfer_fields.get("memo", None) != None:
         instruction = instructions.pop()
         if not instruction:
@@ -79,5 +81,3 @@ def validate_transfer(client: Client, signature: str, transfer_fields: CreateTra
             raise ValueError("Invalid memo")
 
     return response
-        
-        
