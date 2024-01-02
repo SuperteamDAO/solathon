@@ -27,8 +27,8 @@ PyNaCl = "^1.5.0"
 base58 = "^2.1.1"
 construct = "^2.10.67"
 typing-extensions = { version = "^4.1.1", python = "3.10" }
-qrcode = { version = "^7.4.2", python = "^3.8" }
-Pillow = { version = "^10.1.0", python = "^3.8" }
+qrcode = "^7.4.2"
+pillow = "^10.2.0"
 
 [tool.poetry.dev-dependencies]
 jedi = "^0.18.1"
