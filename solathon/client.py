@@ -55,6 +55,7 @@ class Client:
 
         Args:
             public_key (PublicKey | str): The public key of the account.
+            commitment (Commitment, optional): The level of commitment desired when querying state.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
@@ -71,6 +72,7 @@ class Client:
 
         Args:
             public_key (PublicKey | Text): The public key of the account.
+            commitment (Commitment, optional): The level of commitment desired when querying state.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
@@ -101,6 +103,9 @@ class Client:
         """
         Returns the current block height.
 
+        Args:
+            commitment (Commitment, optional): The level of commitment desired when querying state.
+
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
@@ -110,6 +115,9 @@ class Client:
     def get_block_production(self, commitment: Optional[Commitment]=None) -> RPCResponse[BlockProductionType] | BlockProduction:
         """
         Returns the block production information.
+
+        Args:
+            commitment (Commitment, optional): The level of commitment desired when querying state.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
@@ -142,6 +150,7 @@ class Client:
         Args:
             start_slot (int): The start slot.
             end_slot (int | None, optional): The end slot. Defaults to None.
+            commitment (Commitment, optional): The level of commitment desired when querying state.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
@@ -195,6 +204,9 @@ class Client:
         """
         Returns the epoch information.
 
+        Args:
+            commitment (Commitment, optional): The level of commitment desired when querying state.
+
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
@@ -222,6 +234,7 @@ class Client:
 
         Args:
             message (str): The message.
+            commitment (Commitment, optional): The level of commitment desired when querying state.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
@@ -285,6 +298,9 @@ class Client:
         """
         Returns the inflation governor.
 
+        Args:
+            commitment (Commitment, optional): The level of commitment desired when querying state.
+
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
@@ -312,6 +328,7 @@ class Client:
 
         Args:
             addresses (list[str]): The addresses.
+            commitment (Commitment, optional): The level of commitment desired when querying state.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
@@ -368,6 +385,7 @@ class Client:
 
         Args:
             acct_length (int): The length of the account.
+            commitment (Commitment, optional): The level of commitment desired when querying state.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
@@ -412,6 +430,9 @@ class Client:
         """
         Returns the recent blockhash.
 
+        Args:
+            commitment (Commitment, optional): The level of commitment desired when querying state.
+
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
@@ -424,6 +445,9 @@ class Client:
     def get_recent_performance_samples(self, commitment: Optional[Commitment]=None) -> RPCResponse[List[RecentPerformanceSamplesType]] | List[RecentPerformanceSamples]:
         """
         Returns the recent performance samples.
+
+        Args:
+            commitment (Commitment, optional): The level of commitment desired when querying state.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
@@ -493,6 +517,7 @@ class Client:
 
         Args:
             public_key (str | PublicKey): The public key of the owner.
+            commitment (Commitment, optional): The level of commitment desired when querying state.
             **kwargs: Additional keyword arguments.
 
         Raises:
@@ -524,17 +549,18 @@ class Client:
             return [ProgramAccount(account) for account in response['value']]
         return response
 
-    def get_transaction(self, signature: Text) -> RPCResponse[TransactionElementType] | TransactionElement:
+    def get_transaction(self, signature: Text, commitment: Optional[Commitment]=None) -> RPCResponse[TransactionElementType] | TransactionElement:
         """
         Sends a request to the Solana RPC endpoint to retrieve a transaction by its signature.
 
         Args:
             signature (str): The signature of the transaction to retrieve.
+            commitment (Commitment, optional): The level of commitment desired when querying state.
 
         Returns:
             RPCResponse: The response from the Solana RPC endpoint.
         """
-        response = self.build_and_send_request("getTransaction", [signature])
+        response = self.build_and_send_request("getTransaction", [signature, commitment])
         if self.clean_response:
             return TransactionElement(response)
         return response

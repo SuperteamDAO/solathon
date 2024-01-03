@@ -242,6 +242,41 @@ class Transaction:
             self.instructions.append(instr)
 
     @classmethod
+    def populate(message: Message, signatures: List[bytes]) -> Transaction:
+        decoded_signatures = list(map(lambda x: PKSigPair(
+            public_key=message.account_keys[x[0]],
+            signature=None if x[1] == b58encode(
+                DEFAULT_SIGNATURE) else b58decode(x[1])
+        ), enumerate(signatures)))
+
+        instructions: List[Instruction] = []
+        for instruction in message.instructions:
+
+            acc_metas: List[AccountMeta] = []
+            for account in instruction.accounts:
+                pubkey = message.account_keys[account]
+                acc_metas.append(AccountMeta(
+                    public_key=pubkey,
+                    is_signer=message.is_account_signer(account) or pubkey in [
+                        x.public_key for x in decoded_signatures],
+                    is_writable=message.is_account_writable(account)
+                ))
+
+            instructions.append(Instruction(
+                program_id=message.account_keys[instruction.program_id_index],
+                accounts=acc_metas,
+                data=b58decode(instruction.data)
+            ))
+
+        fee_payer = message.account_keys[0] if message.header.num_required_signatures > 0 else None
+        return Transaction(
+            fee_payer=fee_payer,
+            recent_blockhash=message.recent_blockhash,
+            signatures=decoded_signatures,
+            instructions=instructions
+        )
+
+    @classmethod
     def from_buffer(buffer: bytes) -> Transaction:
         # Reference: https://github.com/solana-labs/solana-web3.js/blob/a1fafee/packages/library-legacy/src/transaction/legacy.ts#L878
         if not isinstance(buffer, bytes):
@@ -256,37 +291,5 @@ class Transaction:
             buffer_array = buffer_array[64:]
             signatures.append(b58encode(signature))
 
-        decoded_signatures = list(map(lambda x: PKSigPair(
-            public_key=message.account_keys[x[0]],
-            signature=None if x[1] == b58encode(
-                DEFAULT_SIGNATURE) else b58decode(x[1])
-        ), enumerate(signatures)))
-
         message: Message = Message.from_buffer(bytes(buffer_array))
-        instructions: List[Instruction] = []
-        for instruction in message.instructions:
-
-            acc_metas: List[AccountMeta] = []
-            for account in instruction.accounts:
-                pubkey = message.account_keys[account]
-                acc_metas.append(AccountMeta(
-                    public_key=pubkey,
-                    is_signer=message.is_account_signer(account) or pubkey in [
-                        x.public_key for x in decoded_signatures],
-                    is_writable=message.is_account_writable(account)
-                ))
-            
-            instructions.append(Instruction(
-                program_id=message.account_keys[instruction.program_id_index],
-                accounts=acc_metas,
-                data=b58decode(instruction.data)
-            ))
-
-        fee_payer = message.account_keys[0] if message.header.num_required_signatures > 0 else None
-
-        return Transaction(
-            fee_payer=fee_payer,
-            recent_blockhash=message.recent_blockhash,
-            signatures=decoded_signatures,
-            instructions=instructions
-        )
+        return Transaction.populate(message, signatures)
