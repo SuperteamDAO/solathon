@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, List, Literal, Optional, Text
 
-from solathon.utils import RPCRequestError, validate_commitment
+from .utils import RPCRequestError, validate_commitment
 from .publickey import PublicKey
 from .core.http import HTTPClient
 from .transaction import Transaction

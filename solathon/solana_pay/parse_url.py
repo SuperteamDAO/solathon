@@ -11,6 +11,8 @@ def parse_url(url: str) -> TransactionRequestURL:
 
     Raises
         ValueError - If `url` is invalid.
+    
+    :rtype: solathon.solana_pay.types.TransactionRequestURL
     '''
     if len(url) > 2048:
         raise ValueError('URL Length is Invalid (Max 2048 characters)')

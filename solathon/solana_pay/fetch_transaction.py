@@ -23,6 +23,11 @@ def fetch_transaction(client: Client, account: PublicKey, link: str, commitment:
 
     Raises
         ValueError - If `transaction` is not found in the response.
+    
+    :type client: solathon.client.Client
+    :type account: solathon.publickey.PublicKey
+    :type commitment: solathon.core.types.Commitment
+    :rtype: solathon.transaction.Transaction
     '''
     http = httpx.Client()
     headers = {
