@@ -1,7 +1,7 @@
 from typing import Optional
-from urllib.parse import urlencode, urlparse
+from urllib.parse import urlencode, urlparse, urlunparse
 
-def encode_url(link: str, label: Optional[str], message: Optional[str]) -> str:
+def encode_url(link: str, label: Optional[str]="", message: Optional[str]="") -> str:
     """
     Field parameters for creating a transaction request URL
 
@@ -16,12 +16,14 @@ def encode_url(link: str, label: Optional[str], message: Optional[str]) -> str:
     pathname = (
         urlencode(parsed_url.path) if parsed_url.query else parsed_url.path.rstrip("/")
     )
-
-    url = urlparse(f"solana:{pathname}")
+    params = {}
     if label:
-        url = url._replace(query=f'label={label}&{url.query}')
+        params['label'] = label
 
     if message:
-        url = url._replace(query=f'message={message}&{url.query}')
+        params['message'] = message
 
-    return url.geturl()
+    encoded_params = urlencode(params)
+    url = urlunparse((parsed_url.scheme, parsed_url.netloc, pathname, parsed_url.params, f"{parsed_url.query}&{encoded_params}", parsed_url.fragment))
+    
+    return f"solana:{url}"

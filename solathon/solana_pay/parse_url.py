@@ -24,7 +24,7 @@ def parse_url(url: str) -> TransactionRequestURL:
     if not parsed_url.path:
         raise ValueError('Invalid URL, path missing')
 
-    transaction_url = unquote(parsed_url.path)
+    transaction_url = f"{parsed_url.path}?{parsed_url.query}"
     parsed_transaction_url = urlparse(transaction_url)
     if parsed_transaction_url.scheme != 'https':
         raise ValueError('Invalid Protocol, must be `https`')
