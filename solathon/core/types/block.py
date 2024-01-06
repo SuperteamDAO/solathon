@@ -1,4 +1,5 @@
-from typing import Any, List, TypedDict
+from solathon.core.message import Message as CoreMessage, MessageHeader
+from typing import Any, List, TypedDict, Union
 
 class HeaderType(TypedDict):
     '''
@@ -47,7 +48,12 @@ class Message:
     '''
     def __init__(self, response: MessageType) -> None:
         self.account_keys = response['accountKeys']
-        self.header = Header(response['header'])
+        header = Header(response['header'])
+        self.header = MessageHeader(
+            num_required_signatures=header.num_required_signatures,
+            num_readonly_signed_accounts=header.num_readonly_signed_accounts,
+            num_readonly_unsigned_accounts=header.num_readonly_unsigned_accounts
+        )
         self.instructions = [Instruction(instruction) for instruction in response['instructions']]
         self.recent_blockhash = response['recentBlockhash']
 
@@ -64,14 +70,20 @@ class Transaction:
     Convert Transaction JSON to Class
     '''
     def __init__(self, response: TransactionType) -> None:
-        self.message = Message(response['message'])
+        message = Message(response['message'])
+        self.message = CoreMessage(
+            header=message.header,
+            account_keys=message.account_keys,
+            instructions=message.instructions,
+            recent_blockhash=message.recent_blockhash
+        )
         self.signatures = response['signatures']
 
 class MetaType(TypedDict):
     '''
     JSON Response type of Meta Information received by RPC
     '''
-    err: Any | None
+    err: Union[Any, None]
     fee: int
     innerInstructions: List[Any]
     logMessages: List[Any]
@@ -79,7 +91,7 @@ class MetaType(TypedDict):
     postTokenBalances: List[Any]
     preBalances: List[int]
     preTokenBalances: List[Any]
-    rewards: Any | None
+    rewards: Union[Any, None]
 
 class Meta:
     '''
