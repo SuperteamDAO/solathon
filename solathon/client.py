@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, List, Literal, Optional, Text
+from typing import Any, List, Literal, Optional, Text, Union
 
-from solathon.utils import RPCRequestError, validate_commitment
+from .utils import RPCRequestError, validate_commitment
 from .publickey import PublicKey
 from .core.http import HTTPClient
 from .transaction import Transaction
@@ -63,6 +63,8 @@ class Client:
         commitment = validate_commitment(commitment) if commitment else None
         response = self.build_and_send_request("getAccountInfo", [public_key, commitment])
         if self.clean_response:
+            if response['value'] == None:
+                raise RPCRequestError(f"Account details not found: {public_key}")
             return AccountInfo(response['value'])
         return response
 
@@ -352,7 +354,7 @@ class Client:
             return [LargestAccounts(account) for account in response['value']]
         return response
 
-    def get_leader_schedule(self) -> RPCResponse[dict[str, List[int] | Any]] | dict[str, List[int] | Any]:
+    def get_leader_schedule(self) -> RPCResponse[dict[str, Union[List[int], Any]]] | dict[str, Union[List[int],Any]]:
         """
         Returns the leader schedule.
 

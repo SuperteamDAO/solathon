@@ -8,7 +8,7 @@ class AccountInfoType(TypedDict):
     owner: str
     executable: bool
     rentEpoch: int
-    size: int
+    size: Union[int, None]
     data: Union[str, dict[str, Any]]
 
 class AccountInfo():
@@ -20,7 +20,7 @@ class AccountInfo():
         self.owner = result['owner']
         self.executable = result['executable']
         self.rent_epoch = result['rentEpoch']
-        self.size = result['size']
+        self.size = result.get('size', None)
         self.data = result['data']
 
 class ProgramAccountType(TypedDict):

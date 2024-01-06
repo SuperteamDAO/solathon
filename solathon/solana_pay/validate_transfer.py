@@ -21,6 +21,10 @@ def validate_transfer(client: Client, signature: str, transfer_fields: CreateTra
     Raises
         ValueError - If `recipient` or `amount` is missing from `transfer_fields`.
 
+    :type client: solathon.client.Client
+    :type transfer_fields: solathon.solana_pay.types.CreateTransferFields
+    :type commitment: solathon.core.types.Commitment
+    :rtype: solathon.core.types.block.TransactionElement
     '''
     response: TransactionElement = None
     if client.clean_response == False:

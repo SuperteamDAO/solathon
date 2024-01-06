@@ -3,7 +3,7 @@ from .block import Block, BlockType, BlockProduction, BlockProductionType, Block
 from .cluster_node import ClusterNode, ClusterNodeType
 from .epoch import Epoch, EpochType, EpochSchedule, EpochScheduleType
 from .inflation import InflationGovernor, InflationGovernorType, InflationRate, InflationRateType, InflationReward, InflationRewardType
-from typing import Generic, List, Optional, TypeVar, TypedDict, Literal, Any, Union
+from typing import List, Optional, TypeVar, TypedDict, Literal, Any, Union
 
 T = TypeVar('T')
 
@@ -28,11 +28,11 @@ class Context(TypedDict):
     slot: int
     apiVersion: int
 
-class Result(Generic[T], TypedDict):
+class Result(TypedDict):
     context: Context
     value: Union[T, None]
 
-class RPCResponse(Generic[T], TypedDict):
+class RPCResponse(TypedDict):
     jsonrpc: Literal["2.0"]
     id: int
     result: Union[Result[T], T]

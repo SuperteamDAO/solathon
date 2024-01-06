@@ -49,7 +49,7 @@ class Keypair:
     def from_private_key(cls, private_key: str | bytes) -> Keypair:
         try:
             private_key = base58.b58decode(private_key)
-        except base58.DecodeError as e:
+        except Exception as e:
             raise ValueError(f"Error decoding private key: {str(e)}")
         
         seed = private_key[:32]
