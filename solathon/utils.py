@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
-from solathon import PublicKey
+from .publickey import PublicKey
 from nacl.signing import VerifyKey
 from solathon.core.types import Commitment, RPCErrorType, RPCResponse
 

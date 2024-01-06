@@ -2,8 +2,8 @@ from typing import Union
 from urllib.parse import parse_qs, urlparse
 import re
 
-from solathon.publickey import PublicKey
-from solathon.solana_pay.types import TransactionRequestURL, TransferRequestURL
+from ..publickey import PublicKey
+from ..solana_pay.types import TransactionRequestURL, TransferRequestURL
 
 
 def parse_url(url: str) -> Union[TransactionRequestURL, TransferRequestURL]:

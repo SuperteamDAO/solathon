@@ -27,3 +27,8 @@ class TransactionRequestURL():
     link: str
     label: Optional[str]
     message: Optional[str]
+
+
+@dataclass
+class TransferRequestURL():
+    ...
