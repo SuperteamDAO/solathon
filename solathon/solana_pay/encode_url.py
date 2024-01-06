@@ -6,7 +6,6 @@ class TransactionRequestURLParams(TypedDict):
     label: Optional[str]
     message: Optional[str]
 
-
 class TransferRequestURLParams(TypedDict):
     recipient: str
     amount: Optional[float]
@@ -38,10 +37,9 @@ def encode_url(data: Union[TransactionRequestURLParams, TransferRequestURLParams
 
     if data.get("link", None) != None:
         return encode_transaction_request_url(data["link"], data.get("label", None), data.get("message", None))
-    else:
-        if data.get("recipient", None) == None:
-            raise ValueError("Recipient is missing from data")
-        return encode_transfer_request_url(data["recipient"], data.get("amount", None), data.get("label", None), data.get("message", None), data.get("memo", None), data.get("reference", None))
+    if data.get("recipient", None) == None:
+        raise ValueError("Recipient is missing from data")
+    return encode_transfer_request_url(data["recipient"], data.get("amount", None), data.get("label", None), data.get("message", None), data.get("memo", None), data.get("reference", None))
 
 def encode_transaction_request_url(link: str, label: Optional[str], message: Optional[str]) -> str:
     parsed_url = urlparse(link)
