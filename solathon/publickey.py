@@ -34,6 +34,11 @@ class PublicKey:
 
     def __str__(self) -> str:
         return self.base58_encode().decode("utf-8")
+    
+    def __eq__(self, __value: object) -> bool:
+        if isinstance(__value, PublicKey):
+            return self.byte_value == __value.byte_value
+        return False
 
     def base58_encode(self) -> bytes:
         return base58.b58encode(bytes(self))

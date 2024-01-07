@@ -1,4 +1,5 @@
 from solathon import Client
+from solathon.keypair import Keypair
 from solathon.solana_pay import create_transfer, parse_url
 
 CUSTOMER_WALLET = Keypair.from_private_key([
