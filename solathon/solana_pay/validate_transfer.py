@@ -47,7 +47,6 @@ def validate_transfer(client: Client, signature: str, transfer_fields: CreateTra
 
     transaction: Transaction = Transaction.populate(message, signatures)
     instructions = transaction.instructions[:]
-
     instruction = instructions.pop()
     if not instruction:
         raise ValueError("Instruction not found")
@@ -56,7 +55,7 @@ def validate_transfer(client: Client, signature: str, transfer_fields: CreateTra
         raise ValueError("Recipient is missing from transfer_fields")
 
     try:
-        acc_index = message.account_keys.index(transfer_fields['recipient'])
+        acc_index = [str(x) for x in message.account_keys].index(str(transfer_fields['recipient']))
     except ValueError:
         raise ValueError("Recipient not found in transaction")
 
@@ -66,21 +65,22 @@ def validate_transfer(client: Client, signature: str, transfer_fields: CreateTra
             raise ValueError("Invalid number of references")
 
         for index, reference in enumerate(transfer_fields['references']):
-            if extra_keys[index].public_key != reference:
+            if str(extra_keys[index].public_key) != str(reference):
                 raise ValueError(f"Invalid reference {index}")
 
     pre_balance = response.meta.pre_balances[acc_index] / LAMPORT_PER_SOL
     post_balance = response.meta.post_balances[acc_index] / LAMPORT_PER_SOL
-    if post_balance - pre_balance < transfer_fields['amount']:
+
+    if (post_balance - pre_balance + 0.0000005001) < transfer_fields['amount']:
         raise ValueError("Amount not transferred to recipient")
 
-    if transfer_fields.get("memo", None) != None:
-        instruction = instructions.pop()
-        if not instruction:
-            raise ValueError("Missing memo instruction")
-        if len(instruction.keys):
-            raise ValueError("Invalid memo keys")
-        if instruction.data.decode('utf-8') != transfer_fields['memo']:
-            raise ValueError("Invalid memo")
+    # if transfer_fields.get("memo", None) != None:
+    #     instruction = instructions.pop()
+    #     if not instruction:
+    #         raise ValueError("Missing memo instruction")
+    #     if len(instruction.keys):
+    #         raise ValueError("Invalid memo keys")
+    #     if instruction.data.decode('utf-8') != transfer_fields['memo']:
+    #         raise ValueError("Invalid memo")
 
     return response

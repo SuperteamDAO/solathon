@@ -2,7 +2,7 @@ from typing import List
 from ..core.types import TransactionSignature
 from ..client import Client
 from ..publickey import PublicKey
-
+import time
 
 def find_reference(client: Client, reference: PublicKey) -> TransactionSignature:
     '''
@@ -20,6 +20,7 @@ def find_reference(client: Client, reference: PublicKey) -> TransactionSignature
     :rtype: solathon.core.types.TransactionSignature
     '''
 
+    time.sleep(15)
     signatures: List[TransactionSignature] = []
     if client.clean_response == False:
         raw_signatures = client.get_signatures_for_address(str(reference))

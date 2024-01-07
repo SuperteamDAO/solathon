@@ -2,7 +2,7 @@ import qrcode
 from io import BytesIO
 from PIL import Image
 from qrcode.image.styles.moduledrawers.pil import RoundedModuleDrawer
-
+import os
 
 def create_qr(link: str, size: int = 10, background: str = 'white', color: str = 'black', border: int = 2) -> BytesIO:
     """
@@ -26,7 +26,11 @@ def create_qr(link: str, size: int = 10, background: str = 'white', color: str =
     img = qr.make_image(fill_color=color, back_color=background,
                         module_drawer=RoundedModuleDrawer()).convert('RGB')
 
-    logo = Image.open("logo.png")
+
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    os.chdir(script_dir)
+    logo_path = os.path.join(script_dir, "qr-logo.png")
+    logo = Image.open(logo_path)
     logo_size_percent = 20
     logo_width = int(img.width * (logo_size_percent / 100))
 

@@ -89,6 +89,7 @@ def create_transfer(client: Client,  sender: Keypair, transfer_fields: CreateTra
     if transfer_fields.get("reference", None) != None:
         if isinstance(transfer_fields['reference'], list):
             for ref in transfer_fields['reference']:
+
                 acc_ref = AccountMeta(
                     public_key=ref,
                     is_signer=False,
