@@ -1,5 +1,4 @@
 from solathon.publickey import PublicKey
-
 from dataclasses import dataclass
 from typing import List, TypedDict, Optional, Union
 
@@ -11,15 +10,15 @@ class CreateTransferFields(TypedDict):
     Args
         sender (str) - Account that will send the transfer.
         recipient (PublicKey) - Account that will receive the transfer.
-        amount (int) - Amount to be transferred in Sol.
+        amount (float) - Amount to be transferred in Sol.
         references (List[PublicKey], optional) - List of accounts to be referenced in the transfer.
         memo (str, optional) - Memo to be included in the transfer.
     """
 
     sender: str
     recipient: PublicKey
-    amount: int
-    references: Optional[Union[List[PublicKey], PublicKey]]
+    amount: float
+    reference: Optional[Union[List[PublicKey], PublicKey]]
     memo: Optional[str]
 
 
