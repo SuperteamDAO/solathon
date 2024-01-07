@@ -54,7 +54,7 @@ class Keypair:
             private_key = private_key.encode('utf-8')
             try:
                 private_key = base58.b58decode(private_key)
-            except base58.DecodeError as e:
+            except Exception as e:
                 raise ValueError(f"Error decoding private key: {str(e)}")
         
         seed = private_key[:32]
