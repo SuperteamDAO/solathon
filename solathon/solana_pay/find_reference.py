@@ -1,7 +1,7 @@
 from typing import List
-from core.types import TransactionSignature
-from client import Client
-from publickey import PublicKey
+from ..core.types import TransactionSignature
+from ..client import Client
+from ..publickey import PublicKey
 
 
 def find_reference(client: Client, reference: PublicKey) -> TransactionSignature:
