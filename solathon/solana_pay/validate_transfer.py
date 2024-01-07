@@ -55,7 +55,7 @@ def validate_transfer(client: Client, signature: str, transfer_fields: CreateTra
         raise ValueError("Recipient is missing from transfer_fields")
 
     try:
-        acc_index = [str(x) for x in message.account_keys].index(str(transfer_fields['recipient']))
+        acc_index = message.account_keys.index(transfer_fields['recipient'])
     except ValueError:
         raise ValueError("Recipient not found in transaction")
 
