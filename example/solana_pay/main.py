@@ -1,9 +1,7 @@
 from typing import Any, List, Literal
-from keypair import Keypair
-from solana_pay import encode_url, create_qr, find_reference, validate_transfer
-from client import Client
-from constants import MERCHENT_WALLET
-from example.simulate_wallet_interaction import simulate_wallet_interaction
+from solathon.solana_pay import encode_url, create_qr, find_reference, validate_transfer
+from solathon import Client, Keypair, PublicKey
+from example.client_interaction import simulate_wallet_interaction
 
 MERCHENT_WALLET = PublicKey("mvines9iiHiQTysrwkJjGf2gb9Ex9jXJX8ns3qwf2kN")
 
