@@ -1,4 +1,4 @@
-from publickey import PublicKey
+from solathon.publickey import PublicKey
 
 from dataclasses import dataclass
 from typing import List, TypedDict, Optional, Union
