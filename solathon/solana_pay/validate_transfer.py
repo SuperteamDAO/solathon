@@ -29,7 +29,7 @@ def validate_transfer(client: Client, signature: str, transfer_fields: CreateTra
     response: TransactionElement = None
     if client.clean_response == False:
         raw_response = client.get_transaction(signature, commitment)
-        response = TransactionElement(raw_response['result'])
+        response = TransactionElement(raw_response)
     else:
         response = client.get_transaction(signature, commitment)
 
@@ -56,8 +56,7 @@ def validate_transfer(client: Client, signature: str, transfer_fields: CreateTra
         raise ValueError("Recipient is missing from transfer_fields")
 
     try:
-        acc_index = message.account_keys.index(
-            transfer_fields['recipient'].decode('utf-8'))
+        acc_index = message.account_keys.index(transfer_fields['recipient'])
     except ValueError:
         raise ValueError("Recipient not found in transaction")
 
