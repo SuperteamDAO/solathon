@@ -1,6 +1,8 @@
 from solathon import Client
 from solathon.keypair import Keypair
 from solathon.solana_pay import create_transfer, parse_url
+from solathon.solana_pay.types import TransferRequestURL
+from solathon.transaction import Transaction
 
 CUSTOMER_WALLET = Keypair.from_private_key([
     169, 48, 146, 127, 191, 185, 98, 158, 130, 159, 205, 137, 2, 146, 85, 1, 93, 107, 98, 90, 245, 69, 40, 39, 220,
@@ -10,10 +12,10 @@ CUSTOMER_WALLET = Keypair.from_private_key([
 
 def simulate_wallet_interaction(client: Client, url: str) -> None:
     print("🔗 Decode the url and get transfer parameters")
-    decoded = parse_url(url)
+    decoded: TransferRequestURL = parse_url(url)
 
     print("🔑 Create a transfer and simulate sending it")
-    new_transfer = create_transfer(client, CUSTOMER_WALLET, {
-        "recipient": decoded.recipient, "amount": decoded.amount, "memo": decoded.memo, "references": decoded.reference})
+    new_transfer: Transaction = create_transfer(client, CUSTOMER_WALLET, {
+        "recipient": decoded.recipient, "amount": decoded.amount, "reference": decoded.reference})
 
     client.send_transaction(new_transfer)

@@ -1,5 +1,7 @@
 import time
+from io import BytesIO
 from typing import Any, List, Literal
+from solathon.core.types import TransactionSignature
 from solathon.solana_pay import encode_url, create_qr, find_reference, validate_transfer
 from solathon import Client, Keypair, PublicKey
 from client_interaction import simulate_wallet_interaction
@@ -46,11 +48,11 @@ def main():
     * Several parameters are encoded within the link representing an intent to collect payment from a customer.
     '''
     print("🔗 Generate a link for the transfer")
-    url = encode_url({"recipient": MERCHENT_WALLET, "label": label, "message": message,
+    url: str = encode_url({"recipient": MERCHENT_WALLET, "label": label, "message": message,
                     "amount": amount, "reference": reference})
 
     print("🤖 Generate a cutomized solana pay QR code for link")
-    qr_image_stream = create_qr(url)
+    qr_image_stream: BytesIO = create_qr(url)
 
     '''
     * Simulate wallet interaction
@@ -65,7 +67,7 @@ def main():
 
     print("⏳ Waiting for payment to be confirmed")
     time.sleep(15)
-    
+
     '''
     * Wait for payment to be confirmed
     *
@@ -74,7 +76,7 @@ def main():
     * Important to note that we can only find the transaction when it's **confirmed**
     '''
     print("🔍 Find the transaction signature from reference public key")
-    sign = find_reference(client, reference)
+    sign: TransactionSignature = find_reference(client, reference)
 
     payment_status = "confirmed"
 

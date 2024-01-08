@@ -33,5 +33,5 @@ class TransferRequestURL():
     amount: Optional[float]
     label: Optional[str]
     message: Optional[str]
-    memo: Optional[str]
+    # memo: Optional[str]
     reference: Optional[Union[List[str], str]]
