@@ -65,4 +65,4 @@ def parse_transfer_request_url(path: str, query: str) -> TransferRequestURL:
     message = parsed_qs['message'][0] if 'message' in parsed_qs else None
     reference = parsed_qs['reference'][0] if 'reference' in parsed_qs else None
 
-    return TransferRequestURL(recipient=recipient, amount=amount, label=label, message=message, memo=memo, reference=reference)    
+    return TransferRequestURL(recipient=recipient, amount=amount, label=label, message=message, reference=reference)    
