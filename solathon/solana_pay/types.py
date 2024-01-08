@@ -11,15 +11,14 @@ class CreateTransferFields(TypedDict):
         sender (str) - Account that will send the transfer.
         recipient (PublicKey) - Account that will receive the transfer.
         amount (float) - Amount to be transferred in Sol.
-        references (List[PublicKey], optional) - List of accounts to be referenced in the transfer.
-        memo (str, optional) - Memo to be included in the transfer.
+        reference (List[PublicKey], optional) - List of accounts to be referenced in the transfer.
     """
 
     sender: str
     recipient: PublicKey
     amount: float
     reference: Optional[Union[List[PublicKey], PublicKey]]
-    memo: Optional[str]
+    # memo: Optional[str]
 
 
 @dataclass

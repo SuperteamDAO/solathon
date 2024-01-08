@@ -1,7 +1,8 @@
+import time
 from typing import Any, List, Literal
 from solathon.solana_pay import encode_url, create_qr, find_reference, validate_transfer
 from solathon import Client, Keypair, PublicKey
-from example.client_interaction import simulate_wallet_interaction
+from client_interaction import simulate_wallet_interaction
 
 MERCHENT_WALLET = PublicKey("mvines9iiHiQTysrwkJjGf2gb9Ex9jXJX8ns3qwf2kN")
 
@@ -15,11 +16,10 @@ CUSTOMER_WALLET = Keypair.from_private_key([
 def checkout_params() -> List[Any]:
     label = "Jungle Cats store"
     message = "Jungle Cats store - your order - #001234"
-    memo = "JC#4098"
     amount = 0.01
     reference = Keypair().public_key
 
-    return [label, message, amount, memo, reference]
+    return [label, message, amount, reference]
 
 def main():
     # Tracking payment status through out the process
@@ -37,7 +37,7 @@ def main():
     * and will be used to find and validate the payment in the future.
     '''
     print("⭐ Simulate a checkout and get transaction parameters")
-    [label, message, amount, memo, reference] = checkout_params()
+    [label, message, amount, reference] = checkout_params()
 
     '''
     * Create a payment request link
@@ -47,7 +47,7 @@ def main():
     '''
     print("🔗 Generate a link for the transfer")
     url = encode_url({"recipient": MERCHENT_WALLET, "label": label, "message": message,
-                    "memo": memo, "amount": amount, "reference": reference})
+                    "amount": amount, "reference": reference})
 
     print("🤖 Generate a cutomized solana pay QR code for link")
     qr_image_stream = create_qr(url)
@@ -63,6 +63,9 @@ def main():
     
     payment_status = "pending"
 
+    print("⏳ Waiting for payment to be confirmed")
+    time.sleep(15)
+    
     '''
     * Wait for payment to be confirmed
     *
@@ -85,7 +88,7 @@ def main():
     * found matches the transaction that you expected.
     '''
     print("🔑 Validate the transaction")
-    validate_transfer(client, sign.signature, { "recipient": MERCHENT_WALLET, "amount": amount, "memo": memo, "references": [reference] })
+    validate_transfer(client, sign.signature, { "recipient": MERCHENT_WALLET, "amount": amount, "reference": [reference] })
 
     payment_status = "validated"
     print("🎉 Payment is validated")
