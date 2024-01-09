@@ -8,13 +8,11 @@ class CreateTransferFields(TypedDict):
     Parameters for creating a transfer
 
     Args
-        sender (str) - Account that will send the transfer.
         recipient (PublicKey) - Account that will receive the transfer.
         amount (float) - Amount to be transferred in Sol.
         reference (List[PublicKey], optional) - List of accounts to be referenced in the transfer.
     """
 
-    sender: str
     recipient: PublicKey
     amount: float
     reference: Optional[Union[List[PublicKey], PublicKey]]
@@ -26,6 +24,7 @@ class TransactionRequestURL():
     link: str
     label: Optional[str]
     message: Optional[str]
+
 
 @dataclass
 class TransferRequestURL():
