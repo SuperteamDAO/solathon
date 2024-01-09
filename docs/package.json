@@ -8,9 +8,9 @@
   "author": "Gitbolt",
   "license": "MIT",
   "scripts": {
-    "dev": "next",
-    "start": "next start",
-    "build": "next build"
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider next",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider next start",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider next build"
   },
   "dependencies": {
     "next": "^11.0.1",
