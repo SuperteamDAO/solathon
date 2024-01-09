@@ -10,7 +10,15 @@ import Callout from 'nextra-theme-docs/callout'
   ```
 </Code>
 
-> The complete example code can be found [here](https://github.com/SuperteamDAO/solathon/tree/master/example/solana_pay).
+**Parameters**
+#### client: [Client](/clients/client)
+A connection client to the cluster.
+#### sender: [Keypair](/models/keypair)
+Account that will send the transfer.
+#### transfer_fields: [CreateTransferFields](/solana-pay/types/create_transfer_fields)
+Fields of a Solana Pay transfer request URL.
+#### commitment (Commitment, optional)
+Commitment option for `get_recent_blockhash`.
 
 ### Returns valid [Transaction](/models/transaction/transaction) request with given parameters
 
@@ -23,8 +31,12 @@ client = Client("https://api.devnet.solana.com")
 customer = Keypair()
 recipient = PublicKey("mvines9iiHiQTysrwkJjGf2gb9Ex9jXJX8ns3qwf2kN")
 reference = Keypair().public_key
+# Alternatively can pass list of `public_key` as reference, like so
+# reference = [Keypair().public_key, Keypair().public_key]
 amount = 0.01
 
 transfer: Transaction = create_transfer(client, customer, {
         "recipient": recipient, "amount": amount, "reference": reference})
 ```
+
+> The complete example code can be found [here](https://github.com/SuperteamDAO/solathon/tree/master/example/solana_pay).
