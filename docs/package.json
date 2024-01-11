@@ -8,7 +8,7 @@
   "author": "Gitbolt",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_OPTIONS=--openssl-legacy-provider next",
+    "dev": "set NODE_OPTIONS=--openssl-legacy-provider & next",
     "start": "NODE_OPTIONS=--openssl-legacy-provider next start",
     "build": "NODE_OPTIONS=--openssl-legacy-provider next build"
   },
