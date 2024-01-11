@@ -392,16 +392,17 @@ def get_token_accounts_by_owner(public_key: PublicKey | str, **kwargs)
 Example:
 
 <Code>
+
 ```python 
 from solathon import Client, PublicKey
-ㅤ
+
 client = Client("https://api.mainnet-beta.solana.com")
-ㅤ
+
 public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
 program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" # Token program ID
-ㅤ
+
 tokens = client.get_token_accounts_by_owner(public_key, program_id=program_id)
-ㅤ
+
 print(tokens)
 ```
 </Code>
@@ -431,23 +432,24 @@ def send_transaction(transaction: Transaction)
 Example:
 
 <Code>
+
 ```python 
 import time
 from solathon.core.instructions import transfer
 from solathon import Client, Transaction, PublicKey, Keypair
-ㅤ
+
 client = Client("https://api.devnet.solana.com")
-ㅤ
+
 sender = Keypair()
 receiver = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44a")
 amount = 10000  # This is the amount in lamports
-ㅤ
+
 # Requesting airdrop to get some devnet tokens for the transaction to succeed
 res = client.request_airdrop(sender.public_key, amount + amount)
 print("Airdrop response: ", res)
 # 20 second delay to make sure we get enough time to receive airdrop tokens
 time.sleep(20)
-ㅤ
+
 # Creating transfer instruction
 instruction = transfer(
     from_public_key=sender.public_key,
@@ -456,7 +458,7 @@ instruction = transfer(
 )
 transaction = Transaction(instructions=[instruction], signers=[sender])
 result = client.send_transaction(transaction)
-ㅤ
+
 print("Transaction response:", result)
 ```
 </Code>
