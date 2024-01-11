@@ -8,9 +8,9 @@
   "author": "Gitbolt",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_OPTIONS=--openssl-legacy-provider next",
-    "start": "NODE_OPTIONS=--openssl-legacy-provider next start",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider next build"
+    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider next",
+    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider next start",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider next build"
   },
   "dependencies": {
     "next": "^11.0.1",
@@ -22,6 +22,7 @@
     "tailwindcss": "^3.0.18"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "prettier": "^2.0.5"
   },
   "prettier": {
