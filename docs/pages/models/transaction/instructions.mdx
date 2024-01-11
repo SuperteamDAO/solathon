@@ -95,21 +95,22 @@ def allocate(
 Example:
 
 <Code>
+
 ```python
 from solathon.core.instructions import allocate
 from solathon import Client, Transaction, PublicKey, Keypair
-ㅤ
+
 client = Client("https://api.devnet.solana.com")
-ㅤ
+
 # Requires you to have some SOLs to pay for transaction fees
 account = Keypair.from_private_key("your_private_key")
-ㅤ
+
 instruction = allocate(
     account_public_key=account.public_key,
     space=100
 )
 transaction = Transaction(instructions=[instruction], signers=[account])
-ㅤ
+
 result = client.send_transaction(transaction)
 print("Transaction response: ", result)
 ```
@@ -145,22 +146,23 @@ def assign(
 Example:
 
 <Code>
+
 ```python
 from solathon.core.instructions import assign
 from solathon import Client, Transaction, PublicKey, Keypair
-ㅤ
+
 client = Client("https://api.devnet.solana.com")
-ㅤ
+
 # Requires you to have some SOLs to pay for transaction fees
 account = Keypair.from_private_key("your_private_key")
 program_id = PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA") # Token program
-ㅤ
+
 instruction = assign(
     account_public_key=account.public_key,
     program_id=program_id
 )
 transaction = Transaction(instructions=[instruction], signers=[account])
-ㅤ
+
 result = client.send_transaction(transaction)
 print("Transaction response: ", result)
 ```
@@ -183,24 +185,25 @@ def transfer(
 Example:
 
 <Code>
+
 ```python
 from solathon.core.instructions import transfer
 from solathon import Client, Transaction, PublicKey, Keypair
-ㅤ
+
 client = Client("https://api.devnet.solana.com")
-ㅤ
+
 # Requires you to have some SOLs to pay for transaction fees
 sender = Keypair.from_private_key("your_private_key")
 receiver = PublicKey("receiver_public_key")
-ㅤ
+
 instruction = transfer(
     from_public_key=sender.public_key,
     to_public_key=receiver, 
     lamports=100
 )
-ㅤ
+
 transaction = Transaction(instructions=[instruction], signers=[sender])
-ㅤ
+
 result = client.send_transaction(transaction)
 print("Transaction response: ", result)
 ```
