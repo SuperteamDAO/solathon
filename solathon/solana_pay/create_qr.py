@@ -4,7 +4,7 @@ from PIL import Image
 from qrcode.image.styles.moduledrawers.pil import RoundedModuleDrawer
 import os
 
-def create_qr(link: str, size: int = 10, background: str = 'white', color: str = 'black', border: int = 2, logo_path: str = "qr-logo.png") -> BytesIO:
+def create_qr(link: str, size: int = 10, background: str = 'white', color: str = 'black', border: int = 2) -> BytesIO:
     """
     Creates a QR code with the given link and returns it as a BytesIO object.
 
@@ -14,8 +14,6 @@ def create_qr(link: str, size: int = 10, background: str = 'white', color: str =
         background (str): The background color of the QR code.
         color (str): The color of the QR code.
         border (int): The border of the QR code.
-        logo_path (str): The path to the fixed logo image.
-
     """
     qr = qrcode.QRCode(
         box_size=size,
