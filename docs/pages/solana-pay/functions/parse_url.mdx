@@ -17,6 +17,9 @@ URL to parse.
 ### Returns [TransactionRequestURL](/solana-pay/types/transaction_request_url_params) | [TransferRequestURL](/solana-pay/types/transfer_request_url_params)
 
 Example
+
+<Code>
+
 ```python
 from solathon.solana_pay.types import TransferRequestURLParams, TransactionRequestURLParams
 from solathon.solana_pay import parse_url
@@ -29,5 +32,6 @@ transfer_fields: TransferRequestURLParams = parse_url(url)
 url = "solana:https://example.com?&label=Jungle+Cats+store&message=Jungle+Cats+store+-+your+order+-+%23001234"
 transaction_fields: TransactionRequestURLParams = parse_url(url)
 ```
+</Code>
 
 > The complete example code can be found [here](https://github.com/SuperteamDAO/solathon/tree/master/example/solana_pay).
