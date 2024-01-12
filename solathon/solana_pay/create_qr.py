@@ -14,7 +14,7 @@ def create_qr(link: str, size: int = 10, background: str = 'white', color: str =
         background (str): The background color of the QR code.
         color (str): The color of the QR code.
         border (int): The border of the QR code.
-        logo_path (str): The path to the logo image.
+        logo_path (str): The path to the fixed logo image.
 
     """
     qr = qrcode.QRCode(
@@ -26,10 +26,14 @@ def create_qr(link: str, size: int = 10, background: str = 'white', color: str =
 
     img = qr.make_image(fill_color=color, back_color=background, module_drawer=RoundedModuleDrawer()).convert('RGB')
 
+    # os.path.join better cross-platform compatibility
     script_dir = os.path.dirname(os.path.realpath(__file__))
     os.chdir(script_dir)
 
-    logo = Image.open(logo_path)
+    # fixed logo
+    fixed_logo_path = os.path.join(script_dir, "qr-logo.png")
+
+    logo = Image.open(fixed_logo_path)
     logo_size_percent = 20
     logo_width = int(img.width * (logo_size_percent / 100))
     logo = logo.resize((logo_width, int(logo.size[1] * (logo_width / logo.size[0]))))
