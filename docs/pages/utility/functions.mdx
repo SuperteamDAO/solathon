@@ -42,15 +42,16 @@ def verify_signature(
 </Code>
 Basic authentication example:
 <Code>
+
 ```python 
 from typing import Any
 from solathon.utils import verify_signature
 from nacl.exceptions import BadSignatureError
-ㅤ
+
 # Getting the public key and the signature array
 public_key: str = request.headers.get("public_key")
 signature_array: list[int] = request.headers.get("signature")
-ㅤ
+
 try:
     verify_signature(public_key, signature_array)
 except BadSignatureError:
@@ -68,13 +69,14 @@ def clean_response(response: RPCResponse)
 Example:
 
 <Code>
+
 ```python 
 from solathon import Client, PublicKey
 from solathon.utils import clean_response
-ㅤ
+
 client = Client("https://api.devnet.solana.com")
 public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
-ㅤ
+
 balance = client.get_balance(public_key)
 print(clean_response(balance))
 ```

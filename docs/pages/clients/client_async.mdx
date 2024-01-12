@@ -373,20 +373,21 @@ async def get_token_accounts_by_owner(public_key: PublicKey | str,  **kwargs)
 Example:
 
 <Code>
+
 ```python 
 import asyncio
 from solathon import AsyncClient, PublicKey
-ㅤ
+
 def main():
     client = AsyncClient("https://api.mainnet-beta.solana.com")
-ㅤ
+
     public_key = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44ai")
     program_id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" # Token program ID
-ㅤ
+
     tokens = await client.get_token_accounts_by_owner(public_key, program_id=program_id)
-ㅤ
+
     print(tokens)
-ㅤ 
+
 asyncio.run(main())
 ```
 </Code>
@@ -416,25 +417,26 @@ async def send_transaction(transaction: Transaction)
 Example:
 
 <Code>
+
 ```python 
 import time
 import asyncio
 from solathon.core.instructions import transfer
 from solathon import AsyncClient, Transaction, PublicKey, Keypair
-ㅤ
+
 def main():
     client = AsyncClient("https://api.devnet.solana.com")
-ㅤ
+
     sender = Keypair()
     receiver = PublicKey("B3BhJ1nvPvEhx3hq3nfK8hx4WYcKZdbhavSobZEA44a")
     amount = 10000  # This is the amount in lamports
-ㅤ
+
     # Requesting airdrop to get some devnet tokens for the transaction to succeed
     res = await client.request_airdrop(sender.public_key, amount + amount)
     print("Airdrop response: ", res)
     # 20 second delay to make sure we get enough time to receive airdrop tokens
     time.sleep(20)
-ㅤ
+
     # Creating transfer instruction
     instruction = transfer(
         from_public_key=sender.public_key,
@@ -443,9 +445,9 @@ def main():
     )
     transaction = Transaction(instructions=[instruction], signers=[sender])
     result = await client.send_transaction(transaction)
-ㅤ
+
     print("Transaction response: ", result)
-ㅤ
+
 asyncio.run(main())
 ```
 </Code>
