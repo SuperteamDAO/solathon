@@ -23,6 +23,9 @@ Commitment option for `get_recent_blockhash`.
 ### Returns valid [Transaction](/models/transaction/transaction) request with given parameters
 
 Example
+
+<Code>
+
 ```python
 from solathon.solana_pay import create_transfer
 from solathon import Client, Keypair, PublicKey
@@ -38,5 +41,6 @@ amount = 0.01
 transfer: Transaction = create_transfer(client, customer, {
         "recipient": recipient, "amount": amount, "reference": reference})
 ```
+</Code>
 
 > The complete example code can be found [here](https://github.com/SuperteamDAO/solathon/tree/master/example/solana_pay).
