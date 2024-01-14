@@ -38,6 +38,6 @@ sign: TransactionSignature = find_reference(client, reference)
 validate_transfer(client, sign.signature, { "recipient": MERCHENT_WALLET, "amount": amount, "reference": [reference] })
 print("Transfer Validated")
 ```
-<Code>
+</Code>
 
 > The complete example code can be found [here](https://github.com/SuperteamDAO/solathon/tree/master/example/solana_pay).
