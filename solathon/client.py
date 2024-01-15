@@ -584,7 +584,7 @@ class Client:
         res: RPCResponse = self.http.send(data)
         if self.clean_response:
             if "error" in res:
-                raise RPCRequestError(f"Failed to fetch data from RPC endpoint. Error {res['error']['status_code']}: {res['error']['message']}")
+                raise RPCRequestError(f"Failed to fetch data from RPC endpoint. Error {res['error']['code']}: {res['error']['message']}")
             
             if isinstance(res['result'], dict) or isinstance(res['result'], list) or isinstance(res['result'], str) or res['result'] == None:
                 return res['result']
