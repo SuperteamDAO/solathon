@@ -30,6 +30,9 @@ Border width around the QR code
 ### Returns image stream in the form of BytesIO
 
 Example
+
+<Code>
+
 ```python
 from solathon.solana_pay import create_qr
 
@@ -46,7 +49,7 @@ with open("qr.png", "wb") as f:
 def render_image():
     qr_image.seek(0)
     return send_file(img_bytes_io, mimetype='image/png')
-
 ```
+</Code>
 
 > The complete example code can be found [here](https://github.com/SuperteamDAO/solathon/tree/master/example/solana_pay).

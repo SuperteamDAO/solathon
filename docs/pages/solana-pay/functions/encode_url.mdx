@@ -17,6 +17,9 @@ Data to encode into a transaction request URL or transfer request URL
 ### Returns encoded url string with data
 
 Example
+
+<Code>
+
 ```python
 from solathon.solana_pay import encode_url
 from solathon import Client, Keypair, PublicKey
@@ -37,5 +40,6 @@ url: str = encode_url({"recipient": recipient, "label": label, "message": messag
 link = "https://www.example.com"
 url: str = encode_url({"link": link, "label": label, "message": message })
 ```
+</Code>
 
 > The complete example code can be found [here](https://github.com/SuperteamDAO/solathon/tree/master/example/solana_pay).

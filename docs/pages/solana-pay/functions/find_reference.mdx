@@ -19,6 +19,9 @@ The signature of the transaction to validate.
 ### Returns [TransactionSignature](/solana-pay/types/transaction_signature)
 
 Example
+
+<Code>
+
 ```python
 from solathon import Client
 from solathon.solana_pay import find_reference
@@ -29,5 +32,6 @@ reference = "XYZ"
 
 sign: TransactionSignature = find_reference(client, reference)
 ```
+</Code>
 
 > The complete example code can be found [here](https://github.com/SuperteamDAO/solathon/tree/master/example/solana_pay).

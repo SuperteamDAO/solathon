@@ -23,6 +23,9 @@ Commitment option for `get_recent_blockhash`.
 ### Returns [TransactionElement](/solana-pay/types/transaction_element)
 
 Example
+
+<Code>
+
 ```python
 from solathon.solana_pay import validate_transfer, find_reference
 
@@ -35,5 +38,6 @@ sign: TransactionSignature = find_reference(client, reference)
 validate_transfer(client, sign.signature, { "recipient": MERCHENT_WALLET, "amount": amount, "reference": [reference] })
 print("Transfer Validated")
 ```
+</Code>
 
 > The complete example code can be found [here](https://github.com/SuperteamDAO/solathon/tree/master/example/solana_pay).
