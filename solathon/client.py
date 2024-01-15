@@ -623,7 +623,7 @@ class Client:
 
         if recent_blockhash is None:
             blockhash_resp = self.get_recent_blockhash()
-            recent_blockhash = blockhash_resp["result"]["value"]["blockhash"]
+            recent_blockhash = blockhash_resp.blockhash
 
         transaction.recent_blockhash = recent_blockhash
         transaction.sign()

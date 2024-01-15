@@ -482,7 +482,7 @@ class AsyncClient:
         if not transaction.recent_blockhash:
             transaction.recent_blockhash = (await self.get_recent_blockhash())[
                 "result"
-            ]["value"]["blockhash"]
+            ].blockhash
 
         transaction.sign()
 
