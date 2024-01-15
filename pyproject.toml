@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "solathon"
-version = "0.1.6"
+version = "0.1.7"
 description = "High performance, easy to use and feature-rich Solana SDK for Python."
 license = "MIT"
 authors = ["GitBolt"]
