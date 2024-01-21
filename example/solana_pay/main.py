@@ -24,7 +24,7 @@ def checkout_params() -> List[Any]:
     return [label, message, amount, reference]
 
 def main():
-    # Tracking payment status through out the process
+    # Tracking payment status throughout the process
     payment_status: Literal["pending", "confirmed", "validated"] = None
 
     print("⚡ Connect to cluster")
