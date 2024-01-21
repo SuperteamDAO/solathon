@@ -16,6 +16,7 @@ from .core.message import (
     decode_length
 )
 
+
 PACKET_DATA_SIZE = 1232
 DEFAULT_SIGNATURE = bytes([0] * 64)
 
