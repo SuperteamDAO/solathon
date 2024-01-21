@@ -19,12 +19,10 @@ from .core.message import (
 PACKET_DATA_SIZE = 1232
 DEFAULT_SIGNATURE = bytes([0] * 64)
 
-
 @dataclass
 class PKSigPair:
     public_key: PublicKey
     signature: bytes | None = None
-
 
 class Transaction:
     def __init__(self, **config):
@@ -67,6 +65,11 @@ class Transaction:
 
         if not self.fee_payer:
             self.fee_payer = self.signatures[0].public_key
+
+        if "instructions" in config:
+            for instr in config["instructions"]:
+                if not isinstance(instr, Instruction):
+                    raise TypeError("All instructions must be instances of the Instruction class.")
 
     def extract_account_metas_and_program_ids(self) -> Tuple[List[AccountMeta], List[str]]:
         account_metas: List[AccountMeta] = []
