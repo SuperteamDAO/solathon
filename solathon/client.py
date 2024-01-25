@@ -543,8 +543,10 @@ class Client:
             [
                 str(public_key),
                 {"mint": mint_id} if mint_id else {"programId": program_id},
-                {"encoding": encoding},
-                commitment
+                {
+                    "encoding": encoding,
+                    "commitment": commitment
+                },
             ],
         )
         if self.clean_response:

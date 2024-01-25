@@ -11,6 +11,9 @@ class AccountInfoType(TypedDict):
     size: Union[int, None]
     data: Union[str, dict[str, Any]]
 
+    def __repr__(self) -> str:
+        return f"AccountInfoType(owner={self.owner!r})"
+
 class AccountInfo():
     '''
     Convert Account Information JSON to Class
@@ -22,6 +25,9 @@ class AccountInfo():
         self.rent_epoch = result['rentEpoch']
         self.size = result.get('size', None)
         self.data = result['data']
+
+    def __repr__(self) -> str:
+        return f"AccountInfo(owner={self.owner!r})"
 
 class ProgramAccountType(TypedDict):
     '''
@@ -37,3 +43,6 @@ class ProgramAccount:
     def __init__(self, result: ProgramAccountType) -> None:
         self.pubkey = result['pubkey']
         self.account = AccountInfo(result['account'])
+
+    def __repr__(self) -> str:
+        return f"ProgramAccount(pubkey={self.pubkey!r})"
