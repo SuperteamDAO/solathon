@@ -130,3 +130,26 @@ def unpack_system_instruction(data: bytes) -> SystemInstructions:
     args_data = data[8: 8 + args_length]
     args = args_unpacker(args_data)
     return SystemInstructions(type=type_value, args=args)
+
+# SYSTEM_INSTRUCTIONS_LAYOUT
+SYSTEM_INSTRUCTIONS_LAYOUT = Struct(
+    "type" / Int32ul,
+    "args"
+    / Switch(
+        lambda this: this.type,
+        {
+            InstructionType.CREATE_ACCOUNT: CREATE_ACCOUNT_LAYOUT,
+            InstructionType.ASSIGN: ASSIGN_LAYOUT,
+            InstructionType.TRANSFER: TRANFER_LAYOUT,
+            InstructionType.CREATE_ACCOUNT_WITH_SEED: CREATE_ACCOUNT_WTIH_SEED_LAYOUT,
+            InstructionType.ADVANCE_NONCE_ACCOUNT: Pass,  # No args
+            InstructionType.WITHDRAW_NONCE_ACCOUNT: WITHDRAW_NONCE_ACCOUNT_LAYOUT,
+            InstructionType.INITIALIZE_NONCE_ACCOUNT: INITIALIZE_NONCE_ACCOUNT_LAYOUT,
+            InstructionType.AUTHORIZE_NONCE_ACCOUNT: AUTHORIZE_NONCE_ACCOUNT_LAYOUT,
+            InstructionType.ALLOCATE: ALLOCATE_LAYOUT,
+            InstructionType.ALLOCATE_WITH_SEED: ALLOCATE_WITH_SEED_LAYOUT,
+            InstructionType.ASSIGN_WITH_SEED: ASSIGN_WITH_SEED_LAYOUT,
+            InstructionType.TRANSFER_WITH_SEED: TRANSFER_WITH_SEED_LAYOUT,
+        },
+    ),
+)
