@@ -1,42 +1,42 @@
 import { Code } from '/components/Code';
-import Callout from 'nextra-theme-docs/callout'
+import Callout from 'nextra-theme-docs/callout';
 
-# Create a QR Code
-**Create a QR code from a Solana Pay URL.**
+// Create a QR Code
+**Generate a QR code from a Solana Pay URL.**
 
 <Code>
-  ```python 
-  def create_qr(link: str, size: int = 10, background: str = 'white', color: str = 'black', border: int = 2)
-  ```
+  {`
+  def create_qr(link: str, size: int = 10, background: str = 'white', color: str = 'black', border: int = 2):
+      # Function implementation
+  `}
 </Code>
 
-**Parameters**
-#### link: str
-link to encode.
+**Parameters:**
+#### `link: str`
+The URL to be encoded.
 
-#### size: int = 10
-Width and height of the QR
+#### `size: int = 10`
+Width and height of the QR code.
 
-#### background: str = 'white'
+#### `background: str = 'white'`
 Background color, which should be light for device compatibility.
 
-#### color: str = 'black'
+#### `color: str = 'black'`
 Foreground color, which should be dark for device compatibility.
 
-#### border: int = 2
-Border width around the QR code
+#### `border: int = 2`
+Border width around the QR code.
 
+### Returns:
+An image stream in the form of BytesIO.
 
-### Returns image stream in the form of BytesIO
-
-Example
+**Example:**
 
 <Code>
-
-```python
+{`
 from solathon.solana_pay import create_qr
 
-# using encoded transfer request fields
+# Using encoded transfer request fields
 url = "solana:mvines9iiHiQTysrwkJjGf2gb9Ex9jXJX8ns3qwf2kN?amount=1e-09&label=Jungle+Cats+store&message=Jungle+Cats+store+-+your+order+-+%23001234&memo=JC%234098&reference=6DgHPm8gQp2mvQs5wuYTbJCH5KkkdJ7i4P76M31aegCQ"
 qr_image = create_qr(url)
 
@@ -44,12 +44,12 @@ qr_image = create_qr(url)
 with open("qr.png", "wb") as f:
     f.write(qr_image.getvalue())
 
-# Rendering on a webserver or sending through API using Flask | Django | FastAPI
+# Rendering on a web server or sending through an API using Flask, Django, or FastAPI
 @app.route('/render_image')
 def render_image():
     qr_image.seek(0)
-    return send_file(img_bytes_io, mimetype='image/png')
-```
+    return send_file(qr_image, mimetype='image/png')
+`}
 </Code>
 
 > The complete example code can be found [here](https://github.com/SuperteamDAO/solathon/tree/master/example/solana_pay).
