@@ -1,7 +1,7 @@
 import { Code } from '/components/Code';
 import Callout from 'nextra-theme-docs/callout';
 
-// Create a QR Code
+# Create a QR Code
 **Generate a QR code from a Solana Pay URL.**
 
 <Code>
@@ -48,7 +48,7 @@ with open("qr.png", "wb") as f:
 @app.route('/render_image')
 def render_image():
     qr_image.seek(0)
-    return send_file(qr_image, mimetype='image/png')
+    return send_file(img_bytes_io, mimetype='image/png')
 `}
 </Code>
 
