@@ -1,3 +1,5 @@
+# Developer reference: https://github.com/solana-labs/solana/blob/master/sdk/program/src/system_instruction.rs
+
 from dataclasses import dataclass, asdict
 from typing import Optional, Union, Type
 import struct
