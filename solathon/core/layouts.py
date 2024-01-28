@@ -1,105 +1,130 @@
-# Thanks to https://github.com/michaelhly/solana-py/blob/master/src/solana/system_program.py
-from __future__ import annotations
+from dataclasses import dataclass, asdict
+from typing import Optional, Union, Type
+import struct
 
-from enum import IntEnum
-from construct import (
-    Bytes,
-    Int32ul,
-    Int64ul,
-    PaddedString,
-    Padding,
-    Pass,
-    Switch,
-    Struct,
-)
-from ..publickey import PublicKey
+@dataclass
+class PublicKey:
+    value: str
+
+@dataclass
+class RustString:
+    length: int
+    chars: str
+
+@dataclass
+class CreateAccount:
+    lamports: int
+    space: int
+    program_id: PublicKey
+
+@dataclass
+class Assign:
+    program_id: PublicKey
+
+@dataclass
+class Transfer:
+    lamports: int
+
+@dataclass
+class CreateAccountWithSeed:
+    base: PublicKey
+    seed: RustString
+    lamports: int
+    space: int
+    program_id: PublicKey
+
+@dataclass
+class WithdrawNonceAccount:
+    lamports: int
+
+@dataclass
+class InitializeNonceAccount:
+    authorized: PublicKey
+
+@dataclass
+class AuthorizeNonceAccount:
+    authorized: PublicKey
+
+@dataclass
+class Allocate:
+    space: int
+
+@dataclass
+class AllocateWithSeed:
+    base: PublicKey
+    seed: RustString
+    space: int
+    program_id: PublicKey
+
+@dataclass
+class AssignWithSeed:
+    base: PublicKey
+    seed: RustString
+    program_id: PublicKey
+
+@dataclass
+class TransferWithSeed:
+    lamports: int
+    from_seed: RustString
+    from_owner: PublicKey
+
+@dataclass
+class SystemInstructions:
+    type: int
+    args: Optional[Union[CreateAccount, Assign, Transfer, CreateAccountWithSeed,
+                        WithdrawNonceAccount, InitializeNonceAccount, AuthorizeNonceAccount,
+                        Allocate, AllocateWithSeed, AssignWithSeed, TransferWithSeed]] = None
 
 
-class InstructionType(IntEnum):
-    CREATE_ACCOUNT = 0
-    ASSIGN = 1
-    TRANSFER = 2
-    CREATE_ACCOUNT_WITH_SEED = 3
-    ADVANCE_NONCE_ACCOUNT = 4
-    WITHDRAW_NONCE_ACCOUNT = 5
-    INITIALIZE_NONCE_ACCOUNT = 6
-    AUTHORIZE_NONCE_ACCOUNT = 7
-    ALLOCATE = 8
-    ALLOCATE_WITH_SEED = 9
-    ASSIGN_WITH_SEED = 10
-    TRANSFER_WITH_SEED = 11
+def pack_public_key(public_key: PublicKey) -> bytes:
+    return public_key.value.encode("utf-8")
 
+def unpack_public_key(data: bytes) -> PublicKey:
+    return PublicKey(value=data.decode("utf-8"))
 
-SYSTEM_PROGRAM_ID: PublicKey = PublicKey("11111111111111111111111111111111")
+def pack_rust_string(rust_string: RustString) -> bytes:
+    return struct.pack("<I", rust_string.length) + rust_string.chars.encode("utf-8")
 
-PUBLIC_KEY_LAYOUT: Bytes = Bytes(32)
+def unpack_rust_string(data: bytes) -> RustString:
+    length = struct.unpack("<I", data[:4])[0]
+    chars = data[4:].decode("utf-8")
+    return RustString(length=length, chars=chars)
 
-RUST_STRING_LAYOUT: Struct = Struct(
-    "length" / Int32ul,
-    Padding(4),
-    "chars" / PaddedString(lambda this: this.length, "utf-8"),
-)
+def pack_system_instruction(instruction: SystemInstructions) -> bytes:
+    packed_data = struct.pack("<I", instruction.type)
+    if instruction.args is not None:
+        args_packer = {
+            CreateAccount: pack_create_account,
+            Assign: pack_assign,
+            Transfer: pack_transfer,
+            CreateAccountWithSeed: pack_create_account_with_seed,
+            WithdrawNonceAccount: pack_withdraw_nonce_account,
+            InitializeNonceAccount: pack_initialize_nonce_account,
+            AuthorizeNonceAccount: pack_authorize_nonce_account,
+            Allocate: pack_allocate,
+            AllocateWithSeed: pack_allocate_with_seed,
+            AssignWithSeed: pack_assign_with_seed,
+            TransferWithSeed: pack_transfer_with_seed,
+        }[type(instruction.args)]
+        packed_data += args_packer(instruction.args)
+    return packed_data
 
-CREATE_ACCOUNT_LAYOUT = Struct(
-    "lamports" / Int64ul,
-    "space" / Int64ul,
-    "program_id" / PUBLIC_KEY_LAYOUT,
-)
-
-ASSIGN_LAYOUT = Struct("program_id" / PUBLIC_KEY_LAYOUT)
-
-TRANFER_LAYOUT = Struct("lamports" / Int64ul)
-
-CREATE_ACCOUNT_WTIH_SEED_LAYOUT = Struct(
-    "base" / PUBLIC_KEY_LAYOUT,
-    "seed" / RUST_STRING_LAYOUT,
-    "lamports" / Int64ul,
-    "space" / Int64ul,
-    "program_id" / PUBLIC_KEY_LAYOUT,
-)
-
-WITHDRAW_NONCE_ACCOUNT_LAYOUT = Struct("lamports" / Int64ul)
-
-INITIALIZE_NONCE_ACCOUNT_LAYOUT = Struct("authorized" / PUBLIC_KEY_LAYOUT)
-
-AUTHORIZE_NONCE_ACCOUNT_LAYOUT = Struct("authorized" / PUBLIC_KEY_LAYOUT)
-
-ALLOCATE_LAYOUT = Struct("space" / Int64ul)
-
-ALLOCATE_WITH_SEED_LAYOUT = Struct(
-    "base" / PUBLIC_KEY_LAYOUT, "seed" / RUST_STRING_LAYOUT, "space" /
-    Int64ul, "program_id" / PUBLIC_KEY_LAYOUT
-)
-
-ASSIGN_WITH_SEED_LAYOUT = Struct(
-    "base" / PUBLIC_KEY_LAYOUT, "seed" /
-    RUST_STRING_LAYOUT, "program_id" / PUBLIC_KEY_LAYOUT
-)
-
-TRANSFER_WITH_SEED_LAYOUT = Struct(
-    "lamports" / Int64ul,
-    "from_seed" / RUST_STRING_LAYOUT,
-    "from_ower" / PUBLIC_KEY_LAYOUT,
-)
-
-SYSTEM_INSTRUCTIONS_LAYOUT = Struct(
-    "type" / Int32ul,
-    "args"
-    / Switch(
-        lambda this: this.type,
-        {
-            InstructionType.CREATE_ACCOUNT: CREATE_ACCOUNT_LAYOUT,
-            InstructionType.ASSIGN: ASSIGN_LAYOUT,
-            InstructionType.TRANSFER: TRANFER_LAYOUT,
-            InstructionType.CREATE_ACCOUNT_WITH_SEED: CREATE_ACCOUNT_WTIH_SEED_LAYOUT,
-            InstructionType.ADVANCE_NONCE_ACCOUNT: Pass,  # No args
-            InstructionType.WITHDRAW_NONCE_ACCOUNT: WITHDRAW_NONCE_ACCOUNT_LAYOUT,
-            InstructionType.INITIALIZE_NONCE_ACCOUNT: INITIALIZE_NONCE_ACCOUNT_LAYOUT,
-            InstructionType.AUTHORIZE_NONCE_ACCOUNT: AUTHORIZE_NONCE_ACCOUNT_LAYOUT,
-            InstructionType.ALLOCATE: ALLOCATE_LAYOUT,
-            InstructionType.ALLOCATE_WITH_SEED: ALLOCATE_WITH_SEED_LAYOUT,
-            InstructionType.ASSIGN_WITH_SEED: ASSIGN_WITH_SEED_LAYOUT,
-            InstructionType.TRANSFER_WITH_SEED: TRANSFER_WITH_SEED_LAYOUT,
-        },
-    ),
-)
+def unpack_system_instruction(data: bytes) -> SystemInstructions:
+    type_value = struct.unpack("<I", data[:4])[0]
+    args_unpacker = {
+        InstructionType.CREATE_ACCOUNT: unpack_create_account,
+        InstructionType.ASSIGN: unpack_assign,
+        InstructionType.TRANSFER: unpack_transfer,
+        InstructionType.CREATE_ACCOUNT_WITH_SEED: unpack_create_account_with_seed,
+        InstructionType.WITHDRAW_NONCE_ACCOUNT: unpack_withdraw_nonce_account,
+        InstructionType.INITIALIZE_NONCE_ACCOUNT: unpack_initialize_nonce_account,
+        InstructionType.AUTHORIZE_NONCE_ACCOUNT: unpack_authorize_nonce_account,
+        InstructionType.ALLOCATE: unpack_allocate,
+        InstructionType.ALLOCATE_WITH_SEED: unpack_allocate_with_seed,
+        InstructionType.ASSIGN_WITH_SEED: unpack_assign_with_seed,
+        InstructionType.TRANSFER_WITH_SEED: unpack_transfer_with_seed,
+    }[type_value]
+    args_length = struct.unpack("<I", data[4:8])[0]
+    args_data = data[8: 8 + args_length]
+    args = args_unpacker(args_data)
+    return SystemInstructions(type=type_value, args=args)
