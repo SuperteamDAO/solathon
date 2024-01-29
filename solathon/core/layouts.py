@@ -146,7 +146,7 @@ SYSTEM_INSTRUCTIONS_LAYOUT = Struct(
             1: ASSIGN_LAYOUT,
             2: TRANFER_LAYOUT,
             3: CREATE_ACCOUNT_WTIH_SEED_LAYOUT,
-            4: Pass,  # No args for ADVANCE_NONCE_ACCOUNT
+            4: Pass,  # Placeholder or Pass if no args for ADVANCE_NONCE_ACCOUNT
             5: WITHDRAW_NONCE_ACCOUNT_LAYOUT,
             6: INITIALIZE_NONCE_ACCOUNT_LAYOUT,
             7: AUTHORIZE_NONCE_ACCOUNT_LAYOUT,
