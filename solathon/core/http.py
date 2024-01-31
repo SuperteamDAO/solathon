@@ -1,15 +1,15 @@
-from __future__ import annotations
-
-import sys
-import asyncio
+from typing import Any, Union
 import base64
 import httpx
-from typing import Any
-
+import asyncio
 
 from .. import __version__
 from ..publickey import PublicKey
 from .types import RPCResponse
+
+# Add this import for Commitment type
+from solana.commitment import Commitment
+from solana.utils import validate_commitment
 
 class HTTPClient:
     """HTTP Client to interact with Solana JSON RPC"""
@@ -27,19 +27,27 @@ class HTTPClient:
         self.request_id = 0
         self.client = httpx.Client()
 
-    def send(self, data: dict[str, Any]) -> RPCResponse:
-        res = self.client.post(
-                url=self.endpoint, headers=self.headers, json=data)
+    def send(self, data: dict[str, Any], commitment: Union[None, Commitment] = None) -> RPCResponse:
+        if commitment:
+            data["params"].append({"commitment": validate_commitment(commitment)})
+
+        res = self.client.post(url=self.endpoint, headers=self.headers, json=data)
         return res.json()
 
-    def build_data(self, method: str, params: list[Any]) -> dict[str, Any]:
+    def build_data(
+        self, method: str, params: list[Any], commitment: Union[None, Commitment] = None
+    ) -> dict[str, Any]:
         self.request_id += 1
         params: list[Any] = [
             str(i) if isinstance(i, PublicKey) else i for i in params
-            ]
+        ]
 
         if isinstance(params[0], bytes):
             params[0] = base64.b64encode(params[0]).decode("utf-8")
+
+        # Include commitment in the params
+        if commitment:
+            params.append({"commitment": validate_commitment(commitment)})
 
         return {
             "jsonrpc": "2.0",
@@ -70,21 +78,28 @@ class AsyncHTTPClient:
         }
         self.request_id = 0
         self.client = httpx.AsyncClient()
-        
 
-    async def send(self, data: dict[str, Any]) -> RPCResponse:
-        res = await self.client.post(
-                url=self.endpoint, headers=self.headers, json=data)
+    async def send(self, data: dict[str, Any], commitment: Union[None, Commitment] = None) -> RPCResponse:
+        if commitment:
+            data["params"].append({"commitment": validate_commitment(commitment)})
+
+        res = await self.client.post(url=self.endpoint, headers=self.headers, json=data)
         return res.json()
 
-    def build_data(self, method: str, params: list[Any]) -> dict[str, Any]:
+    def build_data(
+        self, method: str, params: list[Any], commitment: Union[None, Commitment] = None
+    ) -> dict[str, Any]:
         self.request_id += 1
         params: list[Any] = [
             str(i) if isinstance(i, PublicKey) else i for i in params
-            ]
+        ]
 
         if isinstance(params[0], bytes):
             params[0] = base64.b64encode(params[0]).decode("utf-8")
+
+        # Include commitment in the params
+        if commitment:
+            params.append({"commitment": validate_commitment(commitment)})
 
         return {
             "jsonrpc": "2.0",
@@ -92,7 +107,6 @@ class AsyncHTTPClient:
             "method": method,
             "params": None if params[0] is None else params,
         }
-
 
     async def refresh(self) -> None:
         await self.client.aclose()
