@@ -433,6 +433,15 @@ print(tokens)
 ```
 </Code>
 
+#### .get_transaction
+Sends a request to the Solana RPC endpoint to retrieve a transaction by its signature.
+
+<Code>
+```python 
+def get_transaction(self, signature: Text, commitment: Optional[Commitment]=None) -> RPCResponse[TransactionElementType] | TransactionElement
+```
+</Code>
+
 #### .request_airdrop
 Requests the amount of lamport specified to be airdropped to the public key.
 
