@@ -439,6 +439,32 @@ class AsyncClient:
             ],
         )
 
+    async def get_token_account_balance(
+        self, token_account: Text | PublicKey, commitment: Optional[Commitment]=None,
+    ) -> RPCResponse:
+        """
+        Returns the token account balance for the specified owner.
+
+        Args:
+            token_account (str | PublicKey): The token account pubkey.
+            commitment (Commitment, optional): The level of commitment desired when querying state.
+
+        Returns:
+            RPCResponse: The response from the RPC endpoint.
+        """
+
+        commitment = validate_commitment(commitment) if commitment else None
+        response = self.build_and_send_request(
+            "getTokenAccountBalance",
+            [
+                str(token_account),
+            ],
+        )
+        if self.clean_response:
+            return response['value']
+        return response
+
+
     async def get_transaction(self, signature: Text) -> RPCResponse:
         """
         Sends a request to the Solana RPC endpoint to retrieve a transaction by its signature.

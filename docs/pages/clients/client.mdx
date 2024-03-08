@@ -48,6 +48,7 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_signature_statuses](#get_signature_statuses)
 - [get_supply](#get_supply)
 - [get_token_accounts_by_owner](#get_token_accounts_by_owner)
+- [get_token_account_balance](#get_token_account_balance)
 - [get_transaction](#get_transaction)
 - [request_airdrop](#request_airdrop)
 - [send_transaction](#send_transaction)
@@ -407,9 +408,30 @@ print(tokens)
 ```
 </Code>
 
-<Callout emoji="⚠️" type="warning">
-    <p style={{fontSize:"1rem"}}>This method returns token on mainnet only.</p>
-</Callout>
+#### .get_token_account_balance
+Returns balance of tokens held in the specified token account
+<Code>
+```python 
+def get_token_account_balance(public_key: PublicKey | str, **kwargs)
+```
+</Code>
+
+Example:
+
+<Code>
+
+```python 
+from solathon import Client, PublicKey
+
+client = Client("https://api.mainnet-beta.solana.com")
+
+token_account = "FhmH5YDUX9gPKUFtNR95sFKsdprz49Ffv1VXjxzPWQti" # Token account public key
+
+tokens = client.get_token_account_balance(token_account)
+
+print(tokens)
+```
+</Code>
 
 #### .request_airdrop
 Requests the amount of lamport specified to be airdropped to the public key.
