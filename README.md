@@ -19,9 +19,6 @@
 
 Solathon is a high performance, easy to use and feature-rich Solana SDK for Python. Easy for beginners, powerful for real world applications.
 
-|🧪| The project is in beta phase|
-|---|-----------------------------|
-
 # ✨ Getting started
 ## Installation
 ```

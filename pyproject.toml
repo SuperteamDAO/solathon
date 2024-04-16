@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "solathon"
-version = "0.1.9"
+version = "1.0.0"
 description = "High performance, easy to use and feature-rich Solana SDK for Python."
 license = "MIT"
 authors = ["GitBolt"]
 readme = "README.md"
 repository = "https://github.com/GitBolt/solathon"
-keywords = ["solana", "web3", "sdk", "blockchain"]
+keywords = ["solana", "web3", "sdk", "blockchain", "crypto"]
 classifiers = [
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
