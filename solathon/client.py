@@ -460,7 +460,7 @@ class Client:
             return [RecentPerformanceSamples(sample) for sample in response]
         return response
 
-    def get_signatures_for_address(self, acct_address: Text) -> RPCResponse[List[TransactionSignatureType]] | List[TransactionSignature]:
+    def get_signatures_for_address(self, acct_address: Text, limit: Optional[Text], before: Optional[Text], until: Optional[Text]) -> RPCResponse[List[TransactionSignatureType]] | List[TransactionSignature]:
         """
         Returns the signatures for the specified account address.
 
@@ -470,7 +470,20 @@ class Client:
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
-        response = self.build_and_send_request("getSignaturesForAddress", [acct_address])
+        params = [acct_address]
+        options = {}
+        
+        if limit is not None:
+            options["limit"] = limit
+        if before is not None:
+            options["before"] = before
+        if until is not None:
+            options["until"] = until
+        
+        if options:
+            params.append(options)
+
+        response = self.build_and_send_request("getSignaturesForAddress", params)
         if self.clean_response:
             return [TransactionSignature(signature) for signature in response]
         return response
