@@ -6,12 +6,48 @@ from .utils import RPCRequestError, validate_commitment
 from .publickey import PublicKey
 from .core.http import HTTPClient
 from .transaction import Transaction
-from .core.types import (BlockHash, BlockHashType, Commitment, LargestAccounts, LargestAccountsType, PubKeyIdentity, PubKeyIdentityType, RPCResponse, 
-                         AccountInfo, AccountInfoType, Block, BlockType, BlockProductionType, BlockProduction, BlockCommitmentType, BlockCommitment, 
-                         ClusterNode, ClusterNodeType, Epoch, EpochType, EpochSchedule, EpochScheduleType, InflationGovernor, InflationGovernorType, 
-                         InflationRate, InflationRateType, InflationReward, InflationRewardType, ProgramAccount, ProgramAccountType, RecentPerformanceSamples, 
-                         RecentPerformanceSamplesType, SignatureStatus, SignatureStatusType, Supply, SupplyType, TransactionSignature, TransactionSignatureType, 
-                         TransactionElement, TransactionElementType)
+from .core.types import (
+    BlockHash,
+    BlockHashType,
+    Commitment,
+    LargestAccounts,
+    LargestAccountsType,
+    PubKeyIdentity,
+    PubKeyIdentityType,
+    RPCResponse,
+    AccountInfo,
+    AccountInfoType,
+    Block,
+    BlockType,
+    BlockProductionType,
+    BlockProduction,
+    BlockCommitmentType,
+    BlockCommitment,
+    ClusterNode,
+    ClusterNodeType,
+    Epoch,
+    EpochType,
+    EpochSchedule,
+    EpochScheduleType,
+    InflationGovernor,
+    InflationGovernorType,
+    InflationRate,
+    InflationRateType,
+    InflationReward,
+    InflationRewardType,
+    ProgramAccount,
+    ProgramAccountType,
+    RecentPerformanceSamples,
+    RecentPerformanceSamplesType,
+    SignatureStatus,
+    SignatureStatusType,
+    Supply,
+    SupplyType,
+    TransactionSignature,
+    TransactionSignatureType,
+    TransactionElement,
+    TransactionElementType,
+)
 
 
 ENDPOINTS = (
@@ -20,8 +56,11 @@ ENDPOINTS = (
     "https://api.testnet.solana.com",
 )
 
+
 class Client:
-    def __init__(self, endpoint: Text, local: bool = False, clean_response: bool=True):
+    def __init__(
+        self, endpoint: Text, local: bool = False, clean_response: bool = True
+    ):
         """
         Initializes a new instance of the Client class.
 
@@ -49,7 +88,9 @@ class Client:
         """
         self.http.refresh()
 
-    def get_account_info(self, public_key: PublicKey | Text, commitment: Optional[Commitment]=None) -> RPCResponse[AccountInfoType] | AccountInfo:
+    def get_account_info(
+        self, public_key: PublicKey | Text, commitment: Optional[Commitment] = None
+    ) -> RPCResponse[AccountInfoType] | AccountInfo:
         """
         Returns all the account info for the specified public key.
 
@@ -65,12 +106,14 @@ class Client:
             "encoding": "base64"
         }])
         if self.clean_response:
-            if response['value'] == None:
+            if response["value"] == None:
                 raise RPCRequestError(f"Account details not found: {public_key}")
-            return AccountInfo(response['value'])
+            return AccountInfo(response["value"])
         return response
 
-    def get_balance(self, public_key: PublicKey | Text, commitment: Optional[Commitment]=None) -> RPCResponse[int] | int:
+    def get_balance(
+        self, public_key: PublicKey | Text, commitment: Optional[Commitment] = None
+    ) -> RPCResponse[int] | int:
         """
         Returns the balance of the specified public key.
 
@@ -84,7 +127,7 @@ class Client:
         commitment = validate_commitment(commitment) if commitment else None
         response = self.build_and_send_request("getBalance", [public_key, commitment])
         if self.clean_response:
-            return response['value']
+            return response["value"]
 
         return response
 
@@ -103,7 +146,9 @@ class Client:
             return Block(response)
         return response
 
-    def get_block_height(self, commitment: Optional[Commitment]=None) -> RPCResponse[int] | int:
+    def get_block_height(
+        self, commitment: Optional[Commitment] = None
+    ) -> RPCResponse[int] | int:
         """
         Returns the current block height.
 
@@ -116,7 +161,9 @@ class Client:
         commitment = validate_commitment(commitment) if commitment else None
         return self.build_and_send_request("getBlockHeight", [commitment])
 
-    def get_block_production(self, commitment: Optional[Commitment]=None) -> RPCResponse[BlockProductionType] | BlockProduction:
+    def get_block_production(
+        self, commitment: Optional[Commitment] = None
+    ) -> RPCResponse[BlockProductionType] | BlockProduction:
         """
         Returns the block production information.
 
@@ -129,10 +176,12 @@ class Client:
         commitment = validate_commitment(commitment) if commitment else None
         response = self.build_and_send_request("getBlockProduction", [commitment])
         if self.clean_response:
-            return BlockProduction(response['value'])
+            return BlockProduction(response["value"])
         return response
 
-    def get_block_commitment(self, block: int) -> RPCResponse[BlockCommitmentType] | BlockCommitment:
+    def get_block_commitment(
+        self, block: int
+    ) -> RPCResponse[BlockCommitmentType] | BlockCommitment:
         """
         Returns the block commitment information for the specified block.
 
@@ -147,7 +196,12 @@ class Client:
             return BlockCommitment(response)
         return response
 
-    def get_blocks(self, start_slot: int, end_slot: int | None = None, commitment: Optional[Commitment]=None) -> RPCResponse[List[int]] | List[int]:
+    def get_blocks(
+        self,
+        start_slot: int,
+        end_slot: int | None = None,
+        commitment: Optional[Commitment] = None,
+    ) -> RPCResponse[List[int]] | List[int]:
         """
         Returns the blocks in the specified range.
 
@@ -167,7 +221,9 @@ class Client:
 
         return self.build_and_send_request("getBlocks", params)
 
-    def get_blocks_with_limit(self, start_slot: int, limit: int) -> RPCResponse[List[int]] | List[int]:
+    def get_blocks_with_limit(
+        self, start_slot: int, limit: int
+    ) -> RPCResponse[List[int]] | List[int]:
         """
         Returns the blocks in the specified range with a limit.
 
@@ -192,7 +248,9 @@ class Client:
         """
         return self.build_and_send_request("getBlockTime", [block])
 
-    def get_cluster_nodes(self) -> RPCResponse[List[ClusterNodeType]] | List[ClusterNode]:
+    def get_cluster_nodes(
+        self,
+    ) -> RPCResponse[List[ClusterNodeType]] | List[ClusterNode]:
         """
         Returns the cluster nodes.
 
@@ -204,7 +262,9 @@ class Client:
             return [ClusterNode(node) for node in response]
         return response
 
-    def get_epoch_info(self, commitment: Optional[Commitment]=None) -> RPCResponse[EpochType] | Epoch:
+    def get_epoch_info(
+        self, commitment: Optional[Commitment] = None
+    ) -> RPCResponse[EpochType] | Epoch:
         """
         Returns the epoch information.
 
@@ -232,7 +292,9 @@ class Client:
             return EpochSchedule(response)
         return response
 
-    def get_fee_for_message(self, message: Text, commitment: Optional[Commitment]=None) -> RPCResponse[int] | int:
+    def get_fee_for_message(
+        self, message: Text, commitment: Optional[Commitment] = None
+    ) -> RPCResponse[int] | int:
         """
         Returns the fee for the specified message.
 
@@ -244,9 +306,11 @@ class Client:
             RPCResponse: The response from the RPC endpoint.
         """
         commitment = validate_commitment(commitment) if commitment else None
-        response = self.build_and_send_request("getFeeForMessage", [message, commitment])
+        response = self.build_and_send_request(
+            "getFeeForMessage", [message, commitment]
+        )
         if self.clean_response:
-            return response['value']
+            return response["value"]
         return response
 
     # Going to be deprecated
@@ -298,7 +362,9 @@ class Client:
             return PubKeyIdentity(response)
         return response
 
-    def get_inflation_governor(self, commitment: Optional[Commitment]=None) -> RPCResponse[InflationGovernorType] | InflationGovernor:
+    def get_inflation_governor(
+        self, commitment: Optional[Commitment] = None
+    ) -> RPCResponse[InflationGovernorType] | InflationGovernor:
         """
         Returns the inflation governor.
 
@@ -326,7 +392,9 @@ class Client:
             return InflationRate(response)
         return response
 
-    def get_inflation_reward(self, addresses: List[Text], commitment: Optional[Commitment]=None) -> RPCResponse[List[InflationRewardType]] | List[InflationReward]:
+    def get_inflation_reward(
+        self, addresses: List[Text], commitment: Optional[Commitment] = None
+    ) -> RPCResponse[List[InflationRewardType]] | List[InflationReward]:
         """
         Returns the inflation reward for the specified addresses.
 
@@ -344,7 +412,9 @@ class Client:
             return [InflationReward(reward) for reward in response]
         return response
 
-    def get_largest_accounts(self) -> RPCResponse[List[LargestAccountsType]] | List[LargestAccounts]:
+    def get_largest_accounts(
+        self,
+    ) -> RPCResponse[List[LargestAccountsType]] | List[LargestAccounts]:
         """
         Returns the largest accounts.
 
@@ -353,10 +423,14 @@ class Client:
         """
         response = self.build_and_send_request("getLargestAccounts", [None])
         if self.clean_response:
-            return [LargestAccounts(account) for account in response['value']]
+            return [LargestAccounts(account) for account in response["value"]]
         return response
 
-    def get_leader_schedule(self) -> RPCResponse[dict[str, Union[List[int], Any]]] | dict[str, Union[List[int],Any]]:
+    def get_leader_schedule(
+        self,
+    ) -> (
+        RPCResponse[dict[str, Union[List[int], Any]]] | dict[str, Union[List[int], Any]]
+    ):
         """
         Returns the leader schedule.
 
@@ -383,7 +457,9 @@ class Client:
         """
         return self.build_and_send_request("getMaxShredInsertSlot", [None])
 
-    def get_minimum_balance_for_rent_exemption(self, acct_length: int, commitment: Optional[Commitment]=None) -> RPCResponse[int] | int:
+    def get_minimum_balance_for_rent_exemption(
+        self, acct_length: int, commitment: Optional[Commitment] = None
+    ) -> RPCResponse[int] | int:
         """
         Returns the minimum balance for rent exemption.
 
@@ -399,7 +475,9 @@ class Client:
             "getMinimumBalanceForRentExemption", [acct_length, commitment]
         )
 
-    def get_multiple_accounts(self, pubkeys: List[str]) -> RPCResponse[List[AccountInfoType]] | List[AccountInfo]:
+    def get_multiple_accounts(
+        self, pubkeys: List[str]
+    ) -> RPCResponse[List[AccountInfoType]] | List[AccountInfo]:
         """
         Returns the multiple accounts.
 
@@ -411,10 +489,12 @@ class Client:
         """
         response = self.build_and_send_request("getMultipleAccounts", pubkeys)
         if self.clean_response:
-            return [AccountInfo(account) for account in response['value']]
+            return [AccountInfo(account) for account in response["value"]]
         return response
 
-    def get_program_accounts(self, public_key: PublicKey) -> RPCResponse[List[ProgramAccountType]] | List[ProgramAccount]:
+    def get_program_accounts(
+        self, public_key: PublicKey
+    ) -> RPCResponse[List[ProgramAccountType]] | List[ProgramAccount]:
         """
         Returns the program accounts.
 
@@ -430,7 +510,9 @@ class Client:
         return response
 
     # Will switch to getFeeForMessage (latest)
-    def get_recent_blockhash(self, commitment: Optional[Commitment]=None) -> RPCResponse[BlockHashType] | BlockHash:
+    def get_recent_blockhash(
+        self, commitment: Optional[Commitment] = None
+    ) -> RPCResponse[BlockHashType] | BlockHash:
         """
         Returns the recent blockhash.
 
@@ -443,10 +525,14 @@ class Client:
         commitment = validate_commitment(commitment) if commitment else None
         response = self.build_and_send_request("getRecentBlockhash", [commitment])
         if self.clean_response:
-            return BlockHash(response['value'])
+            return BlockHash(response["value"])
         return response
 
-    def get_recent_performance_samples(self, commitment: Optional[Commitment]=None) -> RPCResponse[List[RecentPerformanceSamplesType]] | List[RecentPerformanceSamples]:
+    def get_recent_performance_samples(
+        self, commitment: Optional[Commitment] = None
+    ) -> (
+        RPCResponse[List[RecentPerformanceSamplesType]] | List[RecentPerformanceSamples]
+    ):
         """
         Returns the recent performance samples.
 
@@ -457,12 +543,20 @@ class Client:
             RPCResponse: The response from the RPC endpoint.
         """
         commitment = validate_commitment(commitment) if commitment else None
-        response = self.build_and_send_request("getRecentPerformanceSamples", [commitment])
+        response = self.build_and_send_request(
+            "getRecentPerformanceSamples", [commitment]
+        )
         if self.clean_response:
             return [RecentPerformanceSamples(sample) for sample in response]
         return response
 
-    def get_signatures_for_address(self, acct_address: Text) -> RPCResponse[List[TransactionSignatureType]] | List[TransactionSignature]:
+    def get_signatures_for_address(
+        self,
+        acct_address: Text,
+        limit: Optional[Text],
+        before: Optional[Text],
+        until: Optional[Text],
+    ) -> RPCResponse[List[TransactionSignatureType]] | List[TransactionSignature]:
         """
         Returns the signatures for the specified account address.
 
@@ -472,12 +566,27 @@ class Client:
         Returns:
             RPCResponse: The response from the RPC endpoint.
         """
-        response = self.build_and_send_request("getSignaturesForAddress", [acct_address])
+        params = [acct_address]
+        options = {}
+
+        if limit is not None:
+            options["limit"] = limit
+        if before is not None:
+            options["before"] = before
+        if until is not None:
+            options["until"] = until
+
+        if options:
+            params.append(options)
+
+        response = self.build_and_send_request("getSignaturesForAddress", params)
         if self.clean_response:
             return [TransactionSignature(signature) for signature in response]
         return response
 
-    def get_signature_statuses(self, transaction_sigs: List[Text]) -> RPCResponse[List[SignatureStatusType]] | List[SignatureStatus]:
+    def get_signature_statuses(
+        self, transaction_sigs: List[Text]
+    ) -> RPCResponse[List[SignatureStatusType]] | List[SignatureStatus]:
         """
         Returns the signature statuses for the specified transaction signatures.
 
@@ -489,7 +598,7 @@ class Client:
         """
         response = self.build_and_send_request("getSignatureStatuses", transaction_sigs)
         if self.clean_response:
-            return [SignatureStatus(status) for status in response['value']]
+            return [SignatureStatus(status) for status in response["value"]]
         return response
 
     def get_slot(self) -> RPCResponse[int] | int:
@@ -510,11 +619,14 @@ class Client:
         """
         response = self.build_and_send_request("getSupply", [None])
         if self.clean_response:
-            return Supply(response['value'])
+            return Supply(response["value"])
         return response
 
     def get_token_accounts_by_owner(
-        self, public_key: Text | PublicKey, commitment: Optional[Commitment]=None, **kwargs
+        self,
+        public_key: Text | PublicKey,
+        commitment: Optional[Commitment] = None,
+        **kwargs,
     ) -> RPCResponse[List[ProgramAccountType]] | List[ProgramAccount]:
         """
         Returns the token accounts for the specified owner.
@@ -545,18 +657,17 @@ class Client:
             [
                 str(public_key),
                 {"mint": mint_id} if mint_id else {"programId": program_id},
-                {
-                    "encoding": encoding,
-                    "commitment": commitment
-                },
+                {"encoding": encoding, "commitment": commitment},
             ],
         )
         if self.clean_response:
-            return [ProgramAccount(account) for account in response['value']]
+            return [ProgramAccount(account) for account in response["value"]]
         return response
 
     def get_token_account_balance(
-        self, token_account: Text | PublicKey, commitment: Optional[Commitment]=None,
+        self,
+        token_account: Text | PublicKey,
+        commitment: Optional[Commitment] = None,
     ) -> RPCResponse:
         """
         Returns the token account balance for the specified owner.
@@ -577,11 +688,12 @@ class Client:
             ],
         )
         if self.clean_response:
-            return response['value']
+            return response["value"]
         return response
 
-
-    def get_transaction(self, signature: Text, commitment: Optional[Commitment]=None) -> RPCResponse[TransactionElementType] | TransactionElement:
+    def get_transaction(
+        self, signature: Text, commitment: Optional[Commitment] = None
+    ) -> RPCResponse[TransactionElementType] | TransactionElement:
         """
         Sends a request to the Solana RPC endpoint to retrieve a transaction by its signature.
 
@@ -592,14 +704,18 @@ class Client:
         Returns:
             RPCResponse: The response from the Solana RPC endpoint.
         """
-        response = self.build_and_send_request("getTransaction", [signature, commitment])
+        response = self.build_and_send_request(
+            "getTransaction", [signature, commitment]
+        )
         if self.clean_response:
             if response == None:
                 raise ValueError("Transaction not found")
             return TransactionElement(response)
         return response
 
-    def build_and_send_request(self, method, params: List[Any]) -> RPCResponse | dict[str, Any] | List[dict[str, Any]]:
+    def build_and_send_request(
+        self, method, params: List[Any]
+    ) -> RPCResponse | dict[str, Any] | List[dict[str, Any]]:
         """
         Builds and sends an RPC request to the server.
 
@@ -614,13 +730,22 @@ class Client:
         res: RPCResponse = self.http.send(data)
         if self.clean_response:
             if "error" in res:
-                raise RPCRequestError(f"Failed to fetch data from RPC endpoint. Error {res['error']['code']}: {res['error']['message']}")
-            
-            if isinstance(res['result'], dict) or isinstance(res['result'], list) or isinstance(res['result'], str) or res['result'] == None:
-                return res['result']
+                raise RPCRequestError(
+                    f"Failed to fetch data from RPC endpoint. Error {res['error']['code']}: {res['error']['message']}"
+                )
+
+            if (
+                isinstance(res["result"], dict)
+                or isinstance(res["result"], list)
+                or isinstance(res["result"], str)
+                or res["result"] == None
+            ):
+                return res["result"]
             else:
-                raise RPCRequestError(f"Invalid response from RPC endpoint. Expected types dict | list | str, got {type(res['result']).__name__}")
-            
+                raise RPCRequestError(
+                    f"Invalid response from RPC endpoint. Expected types dict | list | str, got {type(res['result']).__name__}"
+                )
+
         return res
 
     # Non "get" methods

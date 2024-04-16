@@ -6,12 +6,12 @@ import base58
 class PublicKey:
     LENGTH = 32
 
-    def __init__(self, value: bytearray | bytes | int | str | list[int]):
+    def __init__(self, value: bytes | int | str | list[int] | bytearray):
         if isinstance(value, str):
             try:
                 self.byte_value = base58.b58decode(value)
             except ValueError:
-                raise ValueError("Invalid public key.")
+                raise ValueError("Invalid public key")
 
         elif isinstance(value, int):
             self.byte_value = bytes([value])
@@ -20,7 +20,7 @@ class PublicKey:
             self.byte_value = bytes(value)
 
         if len(self.byte_value) != self.LENGTH:
-            raise ValueError("Invalid public key, the length is wrong.")
+            raise ValueError("Invalid public key, the length must be 32 bytes")
 
     def __bytes__(self) -> bytes:
         return (
@@ -42,6 +42,3 @@ class PublicKey:
 
     def base58_encode(self) -> bytes:
         return base58.b58encode(bytes(self))
-
-    def base58_decode(self) -> bytes:
-        return base58.b58decode(self.byte_value)
