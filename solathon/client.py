@@ -102,9 +102,9 @@ class Client:
             RPCResponse: The response from the RPC endpoint.
         """
         commitment = validate_commitment(commitment) if commitment else None
-        response = self.build_and_send_request(
-            "getAccountInfo", [public_key, commitment]
-        )
+        response = self.build_and_send_request("getAccountInfo", [public_key, {
+            "encoding": "base64"
+        }])
         if self.clean_response:
             if response["value"] == None:
                 raise RPCRequestError(f"Account details not found: {public_key}")
