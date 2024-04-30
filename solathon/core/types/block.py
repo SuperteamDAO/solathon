@@ -123,6 +123,10 @@ class TransactionElement:
         self.meta = Meta(response['meta'])
         self.transaction = Transaction(response['transaction'])
 
+    def __repr__(self) -> str:
+        return f"TransactionElement(signatures={self.transaction.signatures!r})"
+
+    
 class BlockType(TypedDict):
     '''
     JSON Response type of Block Information received by RPC
