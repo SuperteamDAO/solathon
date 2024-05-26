@@ -1,6 +1,7 @@
 from solathon.core.message import Message as CoreMessage, MessageHeader
 from typing import Any, List, TypedDict, Union
 
+
 class HeaderType(TypedDict):
     '''
     JSON Response type of Header Information received by RPC
@@ -9,12 +10,17 @@ class HeaderType(TypedDict):
     numReadonlyUnsignedAccounts: int
     numRequiredSignatures: int
 
+
 class Header:
 
     def __init__(self, response: HeaderType) -> None:
         self.num_readonly_signed_accounts = response['numReadonlySignedAccounts']
         self.num_readonly_unsigned_accounts = response['numReadonlyUnsignedAccounts']
         self.num_required_signatures = response['numRequiredSignatures']
+
+    def __repr__(self) -> str:
+        return f"Header(num_required_signatures={self.num_required_signatures!r}, num_readonly_signed_accounts={self.num_readonly_signed_accounts!r}, num_readonly_unsigned_accounts={self.num_readonly_unsigned_accounts!r})"
+
 
 class InstructionType(TypedDict):
     '''
@@ -24,14 +30,20 @@ class InstructionType(TypedDict):
     data: str
     programIdIndex: int
 
+
 class Instruction:
     '''
     Convert Instruction JSON to Class
     '''
+
     def __init__(self, response: InstructionType) -> None:
         self.accounts = response['accounts']
         self.data = response['data']
         self.program_id_index = response['programIdIndex']
+
+    def __repr__(self) -> str:
+        return f"Instruction(accounts={self.accounts!r}, data={self.data!r}, program_id_index={self.program_id_index!r})"
+
 
 class MessageType(TypedDict):
     '''
@@ -42,10 +54,12 @@ class MessageType(TypedDict):
     instructions: List[InstructionType]
     recentBlockhash: str
 
+
 class Message:
     '''
     Convert Message JSON to Class
     '''
+
     def __init__(self, response: MessageType) -> None:
         self.account_keys = response['accountKeys']
         header = Header(response['header'])
@@ -54,8 +68,12 @@ class Message:
             num_readonly_signed_accounts=header.num_readonly_signed_accounts,
             num_readonly_unsigned_accounts=header.num_readonly_unsigned_accounts
         )
-        self.instructions = [Instruction(instruction) for instruction in response['instructions']]
+        self.instructions = [Instruction(instruction)
+                             for instruction in response['instructions']]
         self.recent_blockhash = response['recentBlockhash']
+
+    def __repr__(self) -> str:
+        return f"Message(header={self.header!r}, account_keys={self.account_keys!r}, instructions={self.instructions!r}, recent_blockhash={self.recent_blockhash!r})"
 
 
 class TransactionType(TypedDict):
@@ -65,10 +83,12 @@ class TransactionType(TypedDict):
     message: MessageType
     signatures: List[str]
 
+
 class Transaction:
     '''
     Convert Transaction JSON to Class
     '''
+
     def __init__(self, response: TransactionType) -> None:
         message = Message(response['message'])
         self.message = CoreMessage(
@@ -78,6 +98,10 @@ class Transaction:
             recent_blockhash=message.recent_blockhash
         )
         self.signatures = response['signatures']
+
+    def __repr__(self) -> str:
+        return f"Transaction(message={self.message!r}, signatures={self.signatures!r})"
+
 
 class MetaType(TypedDict):
     '''
@@ -93,10 +117,12 @@ class MetaType(TypedDict):
     preTokenBalances: List[Any]
     rewards: Union[Any, None]
 
+
 class Meta:
     '''
     Convert Meta JSON to Class
     '''
+
     def __init__(self, response: MetaType) -> None:
         self.err = response['err']
         self.fee = response['fee']
@@ -108,6 +134,10 @@ class Meta:
         self.pre_token_balances = response['preTokenBalances']
         self.rewards = response['rewards']
 
+    def __repr__(self) -> str:
+        return f"Meta(err={self.err!r}, fee={self.fee!r}, inner_instructions={self.inner_instructions!r}, log_messages={self.log_messages!r}, post_balances={self.post_balances!r}, post_token_balances={self.post_token_balances!r}, pre_balances={self.pre_balances!r}, pre_token_balances={self.pre_token_balances!r}, rewards={self.rewards!r})"
+
+
 class TransactionElementType(TypedDict):
     '''
     JSON Response type of Transaction Information received by RPC
@@ -115,10 +145,12 @@ class TransactionElementType(TypedDict):
     meta: MetaType
     transaction: TransactionType
 
+
 class TransactionElement:
     '''
     Convert Transaction JSON to Class
     '''
+
     def __init__(self, response: TransactionElementType) -> None:
         self.meta = Meta(response['meta'])
         self.transaction = Transaction(response['transaction'])
@@ -126,7 +158,7 @@ class TransactionElement:
     def __repr__(self) -> str:
         return f"TransactionElement(signatures={self.transaction.signatures!r})"
 
-    
+
 class BlockType(TypedDict):
     '''
     JSON Response type of Block Information received by RPC
@@ -137,6 +169,7 @@ class BlockType(TypedDict):
     parentSlot: int
     previousBlockhash: str
     transactions: List[TransactionElementType]
+
 
 class Block:
     '''
@@ -149,7 +182,12 @@ class Block:
         self.blockhash = response['blockhash']
         self.parent_slot = response['parent_slot']
         self.previous_blockhash = response['previous_blockhash']
-        self.transactions = [TransactionElement(transaction) for transaction in response['transactions']]
+        self.transactions = [TransactionElement(
+            transaction) for transaction in response['transactions']]
+
+    def __repr__(self) -> str:
+        return f"Block(block_height={self.block_height!r}, block_time={self.block_time!r}, blockhash={self.blockhash!r}, parent_slot={self.parent_slot!r}, previous_blockhash={self.previous_blockhash!r}, transactions={self.transactions!r})"
+
 
 class RangeType(TypedDict):
     '''
@@ -158,13 +196,19 @@ class RangeType(TypedDict):
     firstSlot: int
     lastSlot: int
 
+
 class Range:
     '''
     Convert Range JSON to Class
     '''
+
     def __init__(self, response: RangeType) -> None:
         self.first_slot = response['firstSlot']
         self.last_slot = response['lastSlot']
+
+    def __repr__(self) -> str:
+        return f"Range(first_slot={self.first_slot!r}, last_slot={self.last_slot!r})"
+
 
 class BlockProductionType(TypedDict):
     '''
@@ -173,13 +217,19 @@ class BlockProductionType(TypedDict):
     byIdentity: dict[str, Any]
     range: RangeType
 
+
 class BlockProduction:
     '''
     Convert Block Production JSON to Class
     '''
+
     def __init__(self, response: BlockProductionType) -> None:
         self.by_identity = response['byIdentity']
         self.range = Range(response['range'])
+
+    def __repr__(self) -> str:
+        return f"BlockProduction(by_identity={self.by_identity!r}, range={self.range!r})"
+
 
 class BlockCommitmentType(TypedDict):
     '''
@@ -188,14 +238,19 @@ class BlockCommitmentType(TypedDict):
     commitment: List[int]
     totalStake: int
 
+
 class BlockCommitment:
     '''
     Convert Block Commitment JSON to Class
     '''
-    
+
     def __init__(self, response: BlockCommitmentType) -> None:
         self.commitment = response['commitment']
         self.total_stake = response['totalStake']
+
+    def __repr__(self) -> str:
+        return f"BlockCommitment(commitment={self.commitment!r}, total_stake={self.total_stake!r})"
+
 
 class FeeCalculatorType(TypedDict):
     '''
@@ -203,12 +258,6 @@ class FeeCalculatorType(TypedDict):
     '''
     lamportsPerSignature: int
 
-class BlockHashType(TypedDict):
-    '''
-    JSON Response type of Block Hash Information received by RPC
-    '''
-    blockhash: str
-    feeCalculator: FeeCalculatorType
 
 class FeeCalculator:
     '''
@@ -218,10 +267,26 @@ class FeeCalculator:
     def __init__(self, response: FeeCalculatorType) -> None:
         self.lamports_per_signature = response['lamportsPerSignature']
 
+    def __repr__(self) -> str:
+        return f"FeeCalculator(lamports_per_signature={self.lamports_per_signature!r})"
+
+
+class BlockHashType(TypedDict):
+    '''
+    JSON Response type of Block Hash Information received by RPC
+    '''
+    blockhash: str
+    feeCalculator: FeeCalculatorType
+
+
 class BlockHash:
     '''
     Convert Block Hash JSON to Class
     '''
+
     def __init__(self, response: BlockHashType) -> None:
         self.blockhash = response['blockhash']
         self.fee_calculator = FeeCalculator(response['feeCalculator'])
+
+    def __repr__(self) -> str:
+        return f"BlockHash(blockhash={self.blockhash!r}, fee_calculator={self.fee_calculator!r})"
