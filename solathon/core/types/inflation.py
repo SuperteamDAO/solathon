@@ -11,16 +11,22 @@ class InflationGovernorType(TypedDict):
     taper: float
     terminal: float
 
+
 class InflationGovernor:
     '''
     Convert Inflation Governer Information JSON to Class
     '''
+
     def __init__(self, response: InflationGovernorType) -> None:
         self.foundation = response['foundation']
         self.foundation_term = response['foundationTerm']
         self.initial = response['initial']
         self.taper = response['taper']
         self.terminal = response['terminal']
+
+    def __repr__(self) -> str:
+        return f"InflationGovernor(foundation={self.foundation!r}, foundation_term={self.foundation_term!r}, initial={self.initial!r}, taper={self.taper!r}, terminal={self.terminal!r})"
+
 
 class InflationRateType(TypedDict):
     '''
@@ -31,6 +37,7 @@ class InflationRateType(TypedDict):
     validator: float
     total: float
 
+
 class InflationRate:
 
     def __init__(self, response: InflationRateType) -> None:
@@ -38,6 +45,10 @@ class InflationRate:
         self.foundation = response['foundation']
         self.validator = response['validator']
         self.total = response['total']
+
+    def __repr__(self) -> str:
+        return f"InflationRate(epoch={self.epoch!r}, foundation={self.foundation!r}, validator={self.validator!r}, total={self.total!r})"
+
 
 class InflationRewardType(TypedDict):
     '''
@@ -49,13 +60,21 @@ class InflationRewardType(TypedDict):
     postBalance: int
     commission: Optional[int]
 
+    def __repr__(self) -> str:
+        return f"InflationReward(epoch={self.epoch!r}, effectiveSlot={self.effectiveSlot!r}, amount={self.amount!r}, postBalance={self.postBalance!r}, commission={self.commission!r})"
+
+
 class InflationReward:
     '''
     Convert Inflation Reward Information JSON to Class
     '''
+
     def __init__(self, response: InflationRewardType) -> None:
         self.epoch = response['epoch']
         self.effective_slot = response['effectiveSlot']
         self.amount = response['amount']
         self.post_balance = response['postBalance']
         self.commission = response['commission']
+
+    def __repr__(self) -> str:
+        return f"InflationReward(epoch={self.epoch!r}, effective_slot={self.effective_slot!r}, amount={self.amount!r}, post_balance={self.post_balance!r}, commission={self.commission!r})"
