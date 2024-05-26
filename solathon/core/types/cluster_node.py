@@ -29,4 +29,4 @@ class ClusterNode:
         self.shred_version = response['shredVersion']
 
     def __repr__(self) -> str:
-        return f"ClusterNode(pubkey={self.pubkey!r}, gossip={self.gossip!r}, tpu={self.tpu!r}, rpc={self.rpc!r}, version={self.version!r}, feature_set={self.feature_set!r}, shred_version={self.shred_version!r})"
+        return f"ClusterNode(pubkey={self.pubkey!r}, tpu={self.tpu!r}, rpc={self.rpc!r}, version={self.version!r},, shred_version={self.shred_version!r})"

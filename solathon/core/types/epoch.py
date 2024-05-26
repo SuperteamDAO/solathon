@@ -27,7 +27,7 @@ class Epoch:
         self.transaction_count = response['transactionCount']
 
     def __repr__(self) -> str:
-        return f"Epoch(epoch={self.epoch!r}, absolute_slot={self.absolute_slot!r}, block_height={self.block_height!r}, slot_index={self.slot_index!r}, slots_in_epoch={self.slots_in_epoch!r}, transaction_count={self.transaction_count!r}"
+        return f"Epoch(epoch={self.epoch!r}, absolute_slot={self.absolute_slot!r}, block_height={self.block_height!r}, slot_index={self.slot_index!r}"
 
 
 class EpochScheduleType(TypedDict):
@@ -54,4 +54,4 @@ class EpochSchedule:
         self.first_normal_slot = response['firstNormalSlot']
 
     def __repr__(self) -> str:
-        return f"EpochSchedule(slots_per_epoch={self.slots_per_epoch!r}, leader_schedule_slot_offset={self.leader_schedule_slot_offset!r}, warmup={self.warmup!r}, first_normal_epoch={self.first_normal_epoch!r}, first_normal_slot={self.first_normal_slot!r}"
+        return f"EpochSchedule(slots_per_epoch={self.slots_per_epoch!r}, leader_schedule_slot_offset={self.leader_schedule_slot_offset!r}, warmup={self.warmup!r}"

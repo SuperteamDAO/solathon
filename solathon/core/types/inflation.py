@@ -61,7 +61,7 @@ class InflationRewardType(TypedDict):
     commission: Optional[int]
 
     def __repr__(self) -> str:
-        return f"InflationReward(epoch={self.epoch!r}, effectiveSlot={self.effectiveSlot!r}, amount={self.amount!r}, postBalance={self.postBalance!r}, commission={self.commission!r})"
+        return f"InflationReward(epoch={self.epoch!r}, effectiveSlot={self.effectiveSlot!r}, amount={self.amount!r})"
 
 
 class InflationReward:
@@ -77,4 +77,4 @@ class InflationReward:
         self.commission = response['commission']
 
     def __repr__(self) -> str:
-        return f"InflationReward(epoch={self.epoch!r}, effective_slot={self.effective_slot!r}, amount={self.amount!r}, post_balance={self.post_balance!r}, commission={self.commission!r})"
+        return f"InflationReward(epoch={self.epoch!r}, effective_slot={self.effective_slot!r}, amount={self.amount!r})"

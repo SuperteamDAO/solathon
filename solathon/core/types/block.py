@@ -42,7 +42,7 @@ class Instruction:
         self.program_id_index = response['programIdIndex']
 
     def __repr__(self) -> str:
-        return f"Instruction(accounts={self.accounts!r}, data={self.data!r}, program_id_index={self.program_id_index!r})"
+        return f"Instruction(num_accounts={len(self.accounts)!r}, program_id_index={self.program_id_index!r})"
 
 
 class MessageType(TypedDict):
@@ -73,7 +73,7 @@ class Message:
         self.recent_blockhash = response['recentBlockhash']
 
     def __repr__(self) -> str:
-        return f"Message(header={self.header!r}, account_keys={self.account_keys!r}, instructions={self.instructions!r}, recent_blockhash={self.recent_blockhash!r})"
+        return f"Message(header={self.header!r}, num_instructions={len(self.instructions)!r}, recent_blockhash={self.recent_blockhash!r})"
 
 
 class TransactionType(TypedDict):
@@ -135,7 +135,7 @@ class Meta:
         self.rewards = response['rewards']
 
     def __repr__(self) -> str:
-        return f"Meta(err={self.err!r}, fee={self.fee!r}, inner_instructions={self.inner_instructions!r}, log_messages={self.log_messages!r}, post_balances={self.post_balances!r}, post_token_balances={self.post_token_balances!r}, pre_balances={self.pre_balances!r}, pre_token_balances={self.pre_token_balances!r}, rewards={self.rewards!r})"
+        return f"Meta(err={self.err!r}, fee={self.fee!r}, num_inner_instructions={len(self.inner_instructions)!r})"
 
 
 class TransactionElementType(TypedDict):
@@ -186,7 +186,7 @@ class Block:
             transaction) for transaction in response['transactions']]
 
     def __repr__(self) -> str:
-        return f"Block(block_height={self.block_height!r}, block_time={self.block_time!r}, blockhash={self.blockhash!r}, parent_slot={self.parent_slot!r}, previous_blockhash={self.previous_blockhash!r}, transactions={self.transactions!r})"
+        return f"Block(block_height={self.block_height!r}, block_time={self.block_time!r}, blockhash={self.blockhash!r},num_transactions={len(self.transactions)!r})"
 
 
 class RangeType(TypedDict):
