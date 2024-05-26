@@ -553,9 +553,9 @@ class Client:
     def get_signatures_for_address(
         self,
         acct_address: Text,
-        limit: Optional[Text],
-        before: Optional[Text],
-        until: Optional[Text],
+        limit: Optional[Text] = None,
+        before: Optional[Text] = None,
+        until: Optional[Text] = None,
     ) -> RPCResponse[List[TransactionSignatureType]] | List[TransactionSignature]:
         """
         Returns the signatures for the specified account address.
