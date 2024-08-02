@@ -2,7 +2,7 @@
   <a href="#">
     <img
       alt="Solathon logo"
-      src="https://media.discordapp.net/attachments/807140294764003350/929017682836193410/logo.png"
+      src="https://solathon.vercel.app/solathon.svg"
       width="140"
     />
   </a>
