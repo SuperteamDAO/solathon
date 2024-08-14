@@ -553,9 +553,9 @@ class Client:
     def get_signatures_for_address(
         self,
         acct_address: Text,
-        limit: Optional[Text],
-        before: Optional[Text],
-        until: Optional[Text],
+        limit: Optional[Text] = None,
+        before: Optional[Text] = None,
+        until: Optional[Text] = None,
     ) -> RPCResponse[List[TransactionSignatureType]] | List[TransactionSignature]:
         """
         Returns the signatures for the specified account address.
@@ -692,7 +692,10 @@ class Client:
         return response
 
     def get_transaction(
-        self, signature: Text, commitment: Optional[Commitment] = None
+        self,
+        signature: Text,
+        max_supported_transaction_version: Optional[int] = 0,
+        commitment: Optional[Commitment] = None,
     ) -> RPCResponse[TransactionElementType] | TransactionElement:
         """
         Sends a request to the Solana RPC endpoint to retrieve a transaction by its signature.
@@ -700,12 +703,20 @@ class Client:
         Args:
             signature (str): The signature of the transaction to retrieve.
             commitment (Commitment, optional): The level of commitment desired when querying state.
+            max_supported_transaction_version (int, optional): Set the max transaction version to return in responses
 
         Returns:
             RPCResponse: The response from the Solana RPC endpoint.
         """
         response = self.build_and_send_request(
-            "getTransaction", [signature, commitment]
+            "getTransaction",
+            [
+                signature,
+                {
+                    "commitment": commitment,
+                    "maxSupportedTransactionVersion": max_supported_transaction_version,
+                },
+            ],
         )
         if self.clean_response:
             if response == None:
@@ -738,6 +749,7 @@ class Client:
                 isinstance(res["result"], dict)
                 or isinstance(res["result"], list)
                 or isinstance(res["result"], str)
+                or isinstance(res["result"], int)
                 or res["result"] == None
             ):
                 return res["result"]
