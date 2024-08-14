@@ -31,7 +31,7 @@ class Transaction:
         self.fee_payer: PublicKey = config.get("fee_payer")
         self.nonce_info = config.get("nonce_info")
         self.recent_blockhash = config.get("recent_blockhash")
-        self.signers: list[Keypair] = config.get("signers")
+        self.signers: list[PublicKey] | list[Keypair] = config.get("signers")
         self.instructions: list[Instruction] = []
         self.signatures: list[PKSigPair] = []
         if "instructions" in config:
@@ -46,6 +46,21 @@ class Transaction:
                                 "instructions keyword argument"
                                 "must be a list of Instruction objects"
                                 ))
+            
+        def to_public_key(signer: PublicKey | Keypair) -> PublicKey:
+            if isinstance(signer, Keypair):
+                return signer.public_key
+            elif isinstance(signer, PublicKey):
+                return signer
+            else:
+                raise TypeError(("The argument must be either "
+                                "PublicKey or Keypair object."))
+
+        pk_sig_pairs: list[PKSigPair] = [PKSigPair(
+            public_key=to_public_key(signer)
+        ) for signer in self.signers]
+
+        self.signatures = pk_sig_pairs
 
     def compile_transaction(self) -> bytes:
         if self.nonce_info:
@@ -159,31 +174,29 @@ class Transaction:
         serialized_message: bytes = message.serialize()
         return serialized_message
 
-    def sign(self) -> None:
-
-        def to_public_key(signer: PublicKey | Keypair) -> PublicKey:
-            if isinstance(signer, Keypair):
-                return signer.public_key
-            elif isinstance(signer, PublicKey):
-                return signer
-            else:
-                raise TypeError(("The argument must be either "
-                                "PublicKey or Keypair object."))
-
-        pk_sig_pairs: list[PKSigPair] = [PKSigPair(
-            public_key=to_public_key(signer)
-        ) for signer in self.signers]
-
-        self.signatures = pk_sig_pairs
+    def sign(self, signatures: list[bytes] = None) -> None:
         sign_data: bytes = self.compile_transaction()
-        for idx, signer in enumerate(self.signers):
-            signature = signer.sign(sign_data).signature
-            if len(signature) != 64:
-                raise RuntimeError(
-                    "Signature has invalid length: ",
-                    signature
+        if signatures:
+            if len(signatures) != len(self.signers):
+                raise ValueError(
+                    "Number of signatures does not match number of signers."
                 )
-            self.signatures[idx].signature = signature
+            for idx, signature in enumerate(signatures):
+                if len(signature) != 64:
+                    raise RuntimeError(
+                        "Signature has invalid length: ",
+                        signature
+                    )
+                self.signatures[idx].signature = signature
+        else:
+            for idx, signer in enumerate(self.signers):
+                signature = signer.sign(sign_data).signature
+                if len(signature) != 64:
+                    raise RuntimeError(
+                        "Signature has invalid length: ",
+                        signature
+                    )
+                self.signatures[idx].signature = signature
 
     def verify_signatures(self, signed_data: bytes | None = None) -> bool:
         if signed_data is None:
