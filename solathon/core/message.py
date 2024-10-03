@@ -138,7 +138,7 @@ class Message:
         return bytes(message_buffer)
 
     @classmethod
-    def from_buffer(buffer: bytes) -> Message:
+    def from_buffer(cls, buffer: bytes) -> Message:
         # Reference: https://github.com/solana-labs/solana-web3.js/blob/a1fafee/packages/library-legacy/src/message/legacy.ts#L267
 
         buffer_array = list(buffer)
@@ -176,4 +176,4 @@ class Message:
 
         header = MessageHeader(
             num_required_signatures, num_readonly_signed_accounts, num_readonly_unsigned_accounts)
-        return Message(header, account_keys, instructions, b58encode(recent_blockhash).decode("utf-8"))
+        return Message(header, account_keys, instructions, b58encode(bytes(recent_blockhash)).decode("utf-8"))
