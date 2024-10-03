@@ -255,7 +255,7 @@ class Transaction:
             self.instructions.append(instr)
 
     @classmethod
-    def populate(self, message: Message, signatures: List[bytes]) -> Transaction:
+    def populate(self, message: Message, signatures: List[bytes], signers: list[Keypair]) -> Transaction:
         decoded_signatures = list(map(lambda x: PKSigPair(
             public_key=message.account_keys[x[0]],
             signature=None if x[1] == b58encode(
@@ -286,11 +286,12 @@ class Transaction:
             fee_payer=fee_payer,
             recent_blockhash=message.recent_blockhash,
             signatures=decoded_signatures,
-            instructions=instructions
+            instructions=instructions,
+            signers = signers
         )
 
     @classmethod
-    def from_buffer(self, buffer: bytes) -> Transaction:
+    def from_buffer(self, buffer: bytes, signers: list[Keypair]) -> Transaction:
         # Reference: https://github.com/solana-labs/solana-web3.js/blob/a1fafee/packages/library-legacy/src/transaction/legacy.ts#L878
         if not isinstance(buffer, bytes):
             raise TypeError("Buffer must be a bytes object.")
@@ -305,4 +306,4 @@ class Transaction:
             signatures.append(b58encode(signature))
 
         message: Message = Message.from_buffer(bytes(buffer_array))
-        return Transaction.populate(message, signatures)
+        return Transaction.populate(message, signatures, signers)
