@@ -49,7 +49,6 @@ from .core.types import (
     TransactionElementType,
 )
 
-
 ENDPOINTS = (
     "https://api.mainnet-beta.solana.com",
     "https://api.devnet.solana.com",
@@ -313,15 +312,6 @@ class Client:
             return response["value"]
         return response
 
-    # Going to be deprecated
-    def get_fees(self) -> RPCResponse:
-        """
-        Returns the fees.
-
-        Returns:
-            RPCResponse: The response from the RPC endpoint.
-        """
-        return self.build_and_send_request("getFees", [None])
 
     def get_first_available_block(self) -> RPCResponse[int] | int:
         """
@@ -509,8 +499,7 @@ class Client:
             return [ProgramAccount(account) for account in response]
         return response
 
-    # Will switch to getFeeForMessage (latest)
-    def get_recent_blockhash(
+    def get_latest_blockhash(
         self, commitment: Optional[Commitment] = None
     ) -> RPCResponse[BlockHashType] | BlockHash:
         """
@@ -523,7 +512,7 @@ class Client:
             RPCResponse: The response from the RPC endpoint.
         """
         commitment = validate_commitment(commitment) if commitment else None
-        response = self.build_and_send_request("getRecentBlockhash", [commitment])
+        response = self.build_and_send_request("getLatestBlockhash", [commitment])
         if self.clean_response:
             return BlockHash(response["value"])
         return response

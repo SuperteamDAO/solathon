@@ -27,7 +27,6 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_epoch_info](#get_epoch_info)
 - [get_epoch_schedule](#get_epoch_schedule)
 - [get_fee_for_message](#get_fee_for_message)
-- [get_fees](#get_fees)
 - [get_first_available_block](#get_first_available_block)
 - [get_genesis_hash](#get_genesis_hash)
 - [get_health](#get_health)
@@ -42,7 +41,7 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_minimum_balance_for_rent_exmeption](#get_minimum_balance_for_rent_exmeption)
 - [get_multiple_accounts](#get_multiple_accounts)
 - [get_program_accounts](#get_program_accounts)
-- [get_recent_blockhash](#get_recent_blockhash)
+- [get_latest_blockhash](#get_latest_blockhash)
 - [get_recent_performance_samples](#get_recent_performance_samples)
 - [get_signatures_for_address](#get_signatures_for_address)
 - [get_signature_statuses](#get_signature_statuses)
@@ -189,15 +188,6 @@ def get_fee_for_message(message: str)
     <p style={{fontSize:"1rem"}}>This method is only available in solana-core v1.9 or newer</p>
 </Callout>
 
-#### .get_fees
-Returns a recent block hash from the ledger, a fee schedule that can be used to compute the cost of submitting a transaction using it, and the last slot in which the blockhash will be valid.
-
-<Code>
-```python 
-def get_fees()
-```
-</Code>
-
 #### .get_first_available_block
 Returns the slot of the lowest confirmed block that has not been purged from the ledger.
 
@@ -327,12 +317,12 @@ def get_program_accounts()
 ```
 </Code>
 
-#### .get_recent_blockhash
+#### .get_latest_blockhash
 Returns a recent block hash from the ledger, and a fee schedule that can be used to compute the cost of submitting a transaction using it.
 
 <Code>
 ```python 
-def get_recent_blockhash()
+def get_latest_blockhash()
 ```
 </Code>
 

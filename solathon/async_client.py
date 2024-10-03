@@ -191,16 +191,6 @@ class AsyncClient:
         """
         return await self.build_and_send_request_async("getFeeForMessage", [message])
 
-    # Going to be deprecated
-    async def get_fees(self) -> RPCResponse:
-        """
-        Returns the fees information.
-
-        Returns:
-        - RPCResponse: The response from the Solana RPC server.
-        """
-        return await self.build_and_send_request_async("getFees", [None])
-
     async def get_first_available_block(self) -> RPCResponse:
         """
         Returns the first available block.
@@ -342,14 +332,13 @@ class AsyncClient:
         """
         return await self.build_and_send_request_async("getProgramAccounts", [public_key])
 
-    # Will switch to getFeeForMessage (latest)
-    async def get_recent_blockhash(self) -> RPCResponse:
+    async def get_latest_blockhash(self) -> RPCResponse:
         """
         Returns a recent blockhash from the ledger.
 
         :return: RPCResponse object containing the recent blockhash.
         """
-        return await self.build_and_send_request_async("getRecentBlockhash", [None])
+        return await self.build_and_send_request_async("getLatestBlockhash", [None])
 
     async def get_recent_performance_samples(self) -> RPCResponse:
         """

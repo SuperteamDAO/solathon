@@ -286,7 +286,10 @@ class BlockHash:
 
     def __init__(self, response: BlockHashType) -> None:
         self.blockhash = response['blockhash']
-        self.fee_calculator = FeeCalculator(response['feeCalculator'])
+        if "feeCalculator" in response:
+            self.fee_calculator = FeeCalculator(response['feeCalculator'])
+        else:
+            self.fee_calculator = None
 
     def __repr__(self) -> str:
         return f"BlockHash(blockhash={self.blockhash!r}, fee_calculator={self.fee_calculator!r})"
