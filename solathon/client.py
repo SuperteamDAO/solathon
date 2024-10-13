@@ -778,7 +778,7 @@ class Client:
         recent_blockhash = transaction.recent_blockhash
 
         if recent_blockhash is None:
-            blockhash_resp = self.get_recent_blockhash()
+            blockhash_resp = self.get_latest_blockhash()
             recent_blockhash = blockhash_resp.blockhash
 
         transaction.recent_blockhash = recent_blockhash
