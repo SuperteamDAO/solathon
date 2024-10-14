@@ -70,10 +70,10 @@ def fetch_transaction(client: Client, account: PublicKey, link: str, commitment:
     if len(transaction.signatures) == 1 and transaction.signatures[0].public_key == account:
         if not transaction.recent_blockhash:
             # Fetch recent blockhash if missing
-            raw_blockhash: RPCResponse[BlockHashType] = client.get_recent_blockhash(commitment=commitment)
+            raw_blockhash: RPCResponse[BlockHashType] = client.get_latest_blockhas(commitment=commitment)
             transaction.recent_blockhash = BlockHash(raw_blockhash['result']['value']).blockhash
-    if not signatures:
+    if not transaction.signatures:
         fee_payer = account
-    elif fee_payer not in signatures:
+    elif fee_payer not in transaction.signatures:
          raise ValueError("Invalid Fee payer or Missing Signature")
     return transaction

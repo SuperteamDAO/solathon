@@ -495,7 +495,7 @@ class AsyncClient:
             RPCResponse: The response from the Solana network.
         """
         if not transaction.recent_blockhash:
-            transaction.recent_blockhash = (await self.get_recent_blockhash())[
+            transaction.recent_blockhash = (await self.get_latest_blockhas())[
                 "result"
             ].blockhash
 
