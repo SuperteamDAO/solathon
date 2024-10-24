@@ -33,7 +33,7 @@ class Transaction:
         self.recent_blockhash = config.get("recent_blockhash")
         self.signers: list[PublicKey] | list[Keypair] = config.get("signers")
         self.instructions: list[Instruction] = []
-        self.signatures: list[PKSigPair] = []
+        self.signatures: list[PKSigPair] = config.get("signatures", [])
         if "instructions" in config:
             instructions: Instruction = config.get("instructions")
             if (
@@ -60,9 +60,31 @@ class Transaction:
             public_key=to_public_key(signer)
         ) for signer in self.signers]
 
-        self.signatures = pk_sig_pairs
+        if not self.signatures:
+            self.signatures = pk_sig_pairs
 
+        self._message: Message = None
+        self.json = None
+
+    def _to_json(self):
+        return {
+            "recentBlockhash": self.recent_blockhash if hasattr(self, 'recent_blockhash') else None,
+            "feePayer": self.fee_payer.base58_encode() if hasattr(self, 'fee_payer') else None,
+            "nonceInfo": {
+                "nonce": self.nonce_info.nonce,
+                "nonceInstruction": self.nonce_info.nonce_instruction._to_json()
+            } if self.nonce_info else None,
+            "instructions": [instruction._to_json() for instruction in self.instructions],
+            "signers": [signature.public_key.base58_encode() for signature in self.signatures]
+        }
+    
     def compile_transaction(self) -> bytes:
+        # Reference: https://github.com/solana-labs/solana-web3.js/blob/a1fafee/packages/library-legacy/src/transaction/legacy.ts#L367
+        if self._message and self._to_json() == self.json:
+            if self.recent_blockhash:
+                self._message.recent_blockhash = self.recent_blockhash
+            return self._message.serialize()
+
         if self.nonce_info:
             self.recent_blockhash = self.nonce_info.nonce
 
@@ -282,13 +304,16 @@ class Transaction:
             ))
 
         fee_payer = message.account_keys[0] if message.header.num_required_signatures > 0 else None
-        return Transaction(
+        transaction =  Transaction(
             fee_payer=fee_payer,
             recent_blockhash=message.recent_blockhash,
             signatures=decoded_signatures,
             instructions=instructions,
             signers = signers
         )
+        transaction._message = message
+        transaction.json = transaction._to_json()
+        return transaction
 
     @classmethod
     def from_buffer(self, buffer: bytes, signers: list[Keypair]) -> Transaction:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List, Literal, Optional, Text, Union
+from typing import Any, Dict, List, Literal, Optional, Text, Union
 
 from .utils import RPCRequestError, validate_commitment
 from .publickey import PublicKey
@@ -765,12 +765,13 @@ class Client:
         """
         return self.build_and_send_request("requestAirdrop", [public_key, lamports])
 
-    def send_transaction(self, transaction: Transaction) -> RPCResponse[str] | str:
+    def send_transaction(self, transaction: Transaction, options: Optional[Dict] = None) -> RPCResponse[str] | str:
         """
         Sends a transaction to the Solana network.
 
         Args:
             transaction (Transaction): The transaction to send.
+            options (Dict): Options for sending transactions
 
         Returns:
             RPCResponse: The response from the Solana network.
@@ -780,10 +781,15 @@ class Client:
         if recent_blockhash is None:
             blockhash_resp = self.get_latest_blockhash()
             recent_blockhash = blockhash_resp.blockhash
+        
+        if options:
+            options = options
+        else:
+            options = {"encoding": "base64"}
 
         transaction.recent_blockhash = recent_blockhash
         transaction.sign()
 
         return self.build_and_send_request(
-            "sendTransaction", [transaction.serialize(), {"encoding": "base64"}]
+            "sendTransaction", [transaction.serialize(), options]
         )
