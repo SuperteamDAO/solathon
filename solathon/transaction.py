@@ -81,8 +81,6 @@ class Transaction:
     def compile_transaction(self) -> bytes:
         # Reference: https://github.com/solana-labs/solana-web3.js/blob/a1fafee/packages/library-legacy/src/transaction/legacy.ts#L367
         if self._message and self._to_json() == self.json:
-            if self.recent_blockhash:
-                self._message.recent_blockhash = self.recent_blockhash
             return self._message.serialize()
 
         if self.nonce_info:
