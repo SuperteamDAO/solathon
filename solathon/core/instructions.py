@@ -23,6 +23,19 @@ class Instruction(NamedTuple):
     program_id: PublicKey
     data: bytes = bytes(0)
 
+    def _to_json(self):
+        return {
+            "keys": [
+                {
+                    "pubkey": key.public_key.base58_encode(),
+                    "isSigner": key.is_signer,
+                    "isWritable": key.is_writable
+                }
+                for key in self.keys
+            ],
+            "programId": self.program_id.base58_encode(),
+            "data": list(self.data)
+        }
 
 def create_account(
         from_public_key: PublicKey,
