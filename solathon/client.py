@@ -389,7 +389,7 @@ class Client:
         Returns the inflation reward for the specified addresses.
 
         Args:
-            addresses (list[str]): The addresses.
+            addresses (List[str]): The addresses.
             commitment (Commitment, optional): The level of commitment desired when querying state.
 
         Returns:
@@ -419,7 +419,7 @@ class Client:
     def get_leader_schedule(
         self,
     ) -> (
-        RPCResponse[dict[str, Union[List[int], Any]]] | dict[str, Union[List[int], Any]]
+        RPCResponse[Dict[str, Union[List[int], Any]]] | Dict[str, Union[List[int], Any]]
     ):
         """
         Returns the leader schedule.
@@ -580,7 +580,7 @@ class Client:
         Returns the signature statuses for the specified transaction signatures.
 
         Args:
-            transaction_sigs (list[str]): The transaction signatures.
+            transaction_sigs (List[str]): The transaction signatures.
 
         Returns:
             RPCResponse: The response from the RPC endpoint.
@@ -715,7 +715,7 @@ class Client:
 
     def build_and_send_request(
         self, method, params: List[Any]
-    ) -> RPCResponse | dict[str, Any] | List[dict[str, Any]]:
+    ) -> RPCResponse | Dict[str, Any] | List[Dict[str, Any]]:
         """
         Builds and sends an RPC request to the server.
 
@@ -726,7 +726,7 @@ class Client:
         Returns:
             RPCResponse: The response from the server.
         """
-        data: dict[str, Any] = self.http.build_data(method=method, params=params)
+        data: Dict[str, Any] = self.http.build_data(method=method, params=params)
         res: RPCResponse = self.http.send(data)
         if self.clean_response:
             if "error" in res:

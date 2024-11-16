@@ -37,7 +37,7 @@ def to_uint8_bytes(val: int) -> bytes:
 
 
 class CompiledInstruction(NamedTuple):
-    accounts: bytes | list[int]
+    accounts: bytes | List[int]
     program_id_index: int
     data: bytes
 
@@ -52,8 +52,8 @@ class Message:
     def __init__(
         self,
         header: MessageHeader,
-        account_keys: list[str],
-        instructions: list[CompiledInstruction],
+        account_keys: List[str],
+        instructions: List[CompiledInstruction],
         recent_blockhash: str
     ):
         self.header = header

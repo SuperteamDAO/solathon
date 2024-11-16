@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "solathon"
-version = "1.0.4"
+version = "1.0.5"
 description = "High performance, easy to use and feature-rich Solana SDK for Python."
 license = "MIT"
 authors = ["GitBolt"]
@@ -22,13 +22,13 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-httpx = "^0.22.0"
 PyNaCl = "^1.5.0"
 base58 = "^2.1.1"
 construct = "^2.10.67"
 typing-extensions = { version = "^4.1.1", python = "3.10" }
 qrcode = "^7.4.2"
 pillow = "^10.2.0"
+httpx = "^0.27.2"
 
 [tool.poetry.dev-dependencies]
 jedi = "^0.18.1"

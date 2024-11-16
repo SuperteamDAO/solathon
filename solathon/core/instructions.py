@@ -1,7 +1,7 @@
 # Developer reference: https://github.com/solana-labs/solana/blob/master/sdk/program/src/system_instruction.rs
 from __future__ import annotations
 
-from typing import NamedTuple
+from typing import NamedTuple, List
 from dataclasses import dataclass
 from ..publickey import PublicKey
 from ..core.layouts import (
@@ -19,7 +19,7 @@ class AccountMeta:
 
 
 class Instruction(NamedTuple):
-    keys: list[AccountMeta]
+    keys: List[AccountMeta]
     program_id: PublicKey
     data: bytes = bytes(0)
 
@@ -31,7 +31,7 @@ def create_account(
         space: int,
         program_id: PublicKey
 ) -> Instruction:
-    account_metas: list[AccountMeta] = [
+    account_metas: List[AccountMeta] = [
         AccountMeta(
             public_key=from_public_key,
             is_signer=True,
@@ -68,7 +68,7 @@ def create_account_with_seed(
         space: int,
         program_id: PublicKey
 ) -> Instruction:
-    account_metas: list[AccountMeta] = [
+    account_metas: List[AccountMeta] = [
         AccountMeta(
             public_key=from_public_key,
             is_signer=True,
@@ -136,7 +136,7 @@ def transfer(
         to_public_key: PublicKey | str,
         lamports: int
 ) -> Instruction:
-    account_metas: list[AccountMeta] = [
+    account_metas: List[AccountMeta] = [
         AccountMeta(
             public_key=from_public_key,
             is_signer=True,

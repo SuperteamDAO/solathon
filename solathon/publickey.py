@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import base58
-
+from typing import List
 
 class PublicKey:
     LENGTH = 32
 
-    def __init__(self, value: bytes | int | str | list[int] | bytearray):
+    def __init__(self, value: bytes | int | str | List[int] | bytearray):
         if isinstance(value, str):
             try:
                 self.byte_value = base58.b58decode(value)

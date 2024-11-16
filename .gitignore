@@ -9,7 +9,7 @@ env/
 venv/
 env3/
 .ipynb_checkpoints
-
+package_test/
 .history/*
 
 

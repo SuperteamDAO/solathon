@@ -230,7 +230,7 @@ This is a named tuple representing an instruction object. Here keys are `Account
 <Code>
 ```python
 class Instruction(NamedTuple):
-    keys: list[AccountMeta]
+    keys: List[AccountMeta]
     program_id: PublicKey
     data: bytes = bytes(0)
 ```
