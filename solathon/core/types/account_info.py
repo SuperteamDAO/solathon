@@ -1,4 +1,4 @@
-from typing import Any, TypedDict, Union
+from typing import Any, TypedDict, Union, Dict
 
 class AccountInfoType(TypedDict):
     '''
@@ -9,7 +9,7 @@ class AccountInfoType(TypedDict):
     executable: bool
     rentEpoch: int
     size: Union[int, None]
-    data: Union[str, dict[str, Any]]
+    data: Union[str, Dict[str, Any]]
 
     def __repr__(self) -> str:
         return f"AccountInfoType(owner={self.owner!r})"

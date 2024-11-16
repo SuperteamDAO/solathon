@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Dict
 from .publickey import PublicKey
 from nacl.signing import VerifyKey
 from solathon.core.types import Commitment, RPCErrorType, RPCResponse
@@ -63,7 +63,7 @@ def verify_signature(
     vk.verify(message, bytes(signature))
 
 
-def clean_response(response: RPCResponse) -> dict[str, Any] | RPCErrorType:
+def clean_response(response: RPCResponse) -> Dict[str, Any] | RPCErrorType:
     if "error" in response:
         return response["error"]
 

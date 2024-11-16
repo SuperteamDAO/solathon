@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from base58 import b58decode, b58encode
 from .keypair import Keypair
 from .publickey import PublicKey
@@ -56,7 +56,7 @@ class Transaction:
                 raise TypeError(("The argument must be either "
                                 "PublicKey or Keypair object."))
 
-        pk_sig_pairs: list[PKSigPair] = [PKSigPair(
+        pk_sig_pairs: List[PKSigPair] = [PKSigPair(
             public_key=to_public_key(signer)
         ) for signer in self.signers]
 
@@ -98,8 +98,8 @@ class Transaction:
         if not self.fee_payer:
             self.fee_payer = self.signatures[0].public_key
 
-        account_metas: list[AccountMeta] = []
-        program_ids: list[str] = []
+        account_metas: List[AccountMeta] = []
+        program_ids: List[str] = []
 
         for instruction in self.instructions:
             if not instruction.program_id:
@@ -122,8 +122,8 @@ class Transaction:
             not account.is_signer, not account.is_writable))
 
         fee_payer_idx = 0
-        seen: dict[str, int] = {}
-        uniq_metas: list[AccountMeta] = []
+        seen: Dict[str, int] = {}
+        uniq_metas: List[AccountMeta] = []
 
         for sig in self.signatures:
             public_key = str(sig.public_key)
@@ -154,8 +154,8 @@ class Transaction:
                 uniq_metas[fee_payer_idx + 1:]
             )
 
-        signed_keys: list[str] = []
-        unsigned_keys: list[str] = []
+        signed_keys: List[str] = []
+        unsigned_keys: List[str] = []
         num_required_signatures = num_readonly_signed_accounts = num_readonly_unsigned_accounts = 0
         for a_m in uniq_metas:
             if a_m.is_signer:
@@ -169,10 +169,10 @@ class Transaction:
             self.signatures = [PKSigPair(public_key=PublicKey(
                 key), signature=None) for key in signed_keys]
 
-        account_keys: list[str] = signed_keys + unsigned_keys
-        account_indices: dict[str, int] = {
+        account_keys: List[str] = signed_keys + unsigned_keys
+        account_indices: Dict[str, int] = {
             str(key): i for i, key in enumerate(account_keys)}
-        compiled_instructions: list[CompiledInstruction] = [
+        compiled_instructions: List[CompiledInstruction] = [
             CompiledInstruction(
                 accounts=[account_indices[str(a_m.public_key)]
                           for a_m in instr.keys],
@@ -194,7 +194,7 @@ class Transaction:
         serialized_message: bytes = message.serialize()
         return serialized_message
 
-    def sign(self, signatures: list[bytes] = None) -> None:
+    def sign(self, signatures: List[bytes] = None) -> None:
         sign_data: bytes = self.compile_transaction()
         if signatures:
             if len(signatures) != len(self.signers):
@@ -275,7 +275,7 @@ class Transaction:
             self.instructions.append(instr)
 
     @classmethod
-    def populate(self, message: Message, signatures: List[bytes], signers: list[Keypair]) -> Transaction:
+    def populate(self, message: Message, signatures: List[bytes], signers: List[Keypair]) -> Transaction:
         decoded_signatures = list(map(lambda x: PKSigPair(
             public_key=message.account_keys[x[0]],
             signature=None if x[1] == b58encode(
@@ -314,7 +314,7 @@ class Transaction:
         return transaction
 
     @classmethod
-    def from_buffer(self, buffer: bytes, signers: list[Keypair]) -> Transaction:
+    def from_buffer(self, buffer: bytes, signers: List[Keypair]) -> Transaction:
         # Reference: https://github.com/solana-labs/solana-web3.js/blob/a1fafee/packages/library-legacy/src/transaction/legacy.ts#L878
         if not isinstance(buffer, bytes):
             raise TypeError("Buffer must be a bytes object.")

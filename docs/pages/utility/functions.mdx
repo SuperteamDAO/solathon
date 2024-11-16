@@ -35,7 +35,7 @@ The message argument is optional, when not provided the public key itself is use
 ```python 
 def verify_signature(
                     public_key: PublicKey | str, 
-                    signature: list[int], 
+                    signature: List[int], 
                     message: str | bytes | None = None
                     )
 ```
@@ -50,7 +50,7 @@ from nacl.exceptions import BadSignatureError
 
 # Getting the public key and the signature array
 public_key: str = request.headers.get("public_key")
-signature_array: list[int] = request.headers.get("signature")
+signature_array: List[int] = request.headers.get("signature")
 
 try:
     verify_signature(public_key, signature_array)

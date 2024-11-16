@@ -250,7 +250,7 @@ class AsyncClient:
         Get the inflation reward for a list of addresses.
 
         Args:
-            addresses (list[Text]): A list of addresses to get the inflation reward for.
+            addresses (List[Text]): A list of addresses to get the inflation reward for.
 
         Returns:
             RPCResponse: The response from the RPC server.
@@ -362,12 +362,12 @@ class AsyncClient:
             "getSignaturesForAddress", [acct_address]
         )
 
-    async def get_signature_statuses(self, transaction_sigs: list[Text]) -> RPCResponse:
+    async def get_signature_statuses(self, transaction_sigs: List[Text]) -> RPCResponse:
         """
         Returns the current status of a list of signatures.
 
         Args:
-            transaction_sigs (list[str]): List of transaction signatures to check status for.
+            transaction_sigs (List[str]): List of transaction signatures to check status for.
 
         Returns:
             RPCResponse: Response object containing the status of the signatures.
@@ -518,6 +518,6 @@ class AsyncClient:
         Returns:
             RPCResponse: The response from the server.
         """
-        data: dict[Text, Any] = self.http.build_data(method=method, params=params)
+        data: Dict[Text, Any] = self.http.build_data(method=method, params=params)
         res: RPCResponse = await self.http.send(data)
         return res

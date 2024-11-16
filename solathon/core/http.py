@@ -4,7 +4,7 @@ import sys
 import asyncio
 import base64
 import httpx
-from typing import Any
+from typing import Any, List, Dict
 
 
 from .. import __version__
@@ -27,14 +27,14 @@ class HTTPClient:
         self.request_id = 0
         self.client = httpx.Client()
 
-    def send(self, data: dict[str, Any]) -> RPCResponse:
+    def send(self, data: Dict[str, Any]) -> RPCResponse:
         res = self.client.post(
                 url=self.endpoint, headers=self.headers, json=data)
         return res.json()
 
-    def build_data(self, method: str, params: list[Any]) -> dict[str, Any]:
+    def build_data(self, method: str, params: List[Any]) -> Dict[str, Any]:
         self.request_id += 1
-        params: list[Any] = [
+        params: List[Any] = [
             str(i) if isinstance(i, PublicKey) else i for i in params
             ]
 
@@ -72,14 +72,14 @@ class AsyncHTTPClient:
         self.client = httpx.AsyncClient()
         
 
-    async def send(self, data: dict[str, Any]) -> RPCResponse:
+    async def send(self, data: Dict[str, Any]) -> RPCResponse:
         res = await self.client.post(
                 url=self.endpoint, headers=self.headers, json=data)
         return res.json()
 
-    def build_data(self, method: str, params: list[Any]) -> dict[str, Any]:
+    def build_data(self, method: str, params: List[Any]) -> Dict[str, Any]:
         self.request_id += 1
-        params: list[Any] = [
+        params: List[Any] = [
             str(i) if isinstance(i, PublicKey) else i for i in params
             ]
 

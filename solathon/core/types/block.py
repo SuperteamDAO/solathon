@@ -1,5 +1,5 @@
 from solathon.core.message import Message as CoreMessage, MessageHeader
-from typing import Any, List, TypedDict, Union
+from typing import Any, List, TypedDict, Union, Dict
 
 
 class HeaderType(TypedDict):
@@ -214,7 +214,7 @@ class BlockProductionType(TypedDict):
     '''
     JSON Response type of Block Production Information received by RPC
     '''
-    byIdentity: dict[str, Any]
+    byIdentity: Dict[str, Any]
     range: RangeType
 
 

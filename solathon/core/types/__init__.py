@@ -35,7 +35,7 @@ class Result(TypedDict):
 class RPCResponse(TypedDict):
     jsonrpc: Literal["2.0"]
     id: int
-    result: Union[Result[T], T]
+    result: Any
     error: RPCErrorType
 
 Commitment = Literal["processed", "confirmed", "finalized", "recent", "single", "singleGossip", "root", "max"]
