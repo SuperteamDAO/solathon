@@ -21,7 +21,7 @@ from solathon.core.instructions import *
 
 ## Instructions
 #### create_account
-Creates a program account. When sending the transaction, both existing account and new account keypairs need to be passed in the signers argument of the `Transaction` object.
+Creates a new program account. Both the funding account and new account must sign the transaction.
 
 <Code>
 ```python 
@@ -31,7 +31,7 @@ def create_account(
     lamports: int,
     space: int,
     program_id: PublicKey
-)
+) -> Instruction
 ```
 </Code>
 
@@ -64,7 +64,7 @@ print("Transaction response: ", result)
 </Code>
 
 #### create_account_with_seed
-Creates a program account using seed
+Creates a new program account at an address derived from a base public key and seed string.
 
 <Code>
 ```python 
@@ -76,12 +76,14 @@ def create_account_with_seed(
     lamports: int,
     space: int,
     program_id: PublicKey
-)
+) -> Instruction
 ```
 </Code>
 
+> Note: If base_public_key is different from from_public_key, the base public key must also sign the transaction.
+
 #### allocate
-Allocates bytes for an account, this can only be used once for an account without any space already.
+Allocates space in an account without transferring lamports.
 
 <Code>
 ```python 
@@ -117,7 +119,7 @@ print("Transaction response: ", result)
 </Code>
 
 #### allocate_with_seed
-Allocates bytes for an account with seed.
+Allocates space in an account at an address derived from a base public key and seed string.
 
 <Code>
 ```python 
@@ -127,19 +129,19 @@ def allocate_with_seed(
     seed: str,
     space: int,
     program_id: PublicKey
-)
+) -> Instruction
 ```
 </Code>
 
 #### assign
-Assigns an existing account to a program.
+Assigns an account to a program.
 
 <Code>
 ```python 
 def assign(
     account_public_key: PublicKey,
     program_id: PublicKey
-)
+) -> Instruction
 ```
 </Code>
 
@@ -170,7 +172,7 @@ print("Transaction response: ", result)
 
 
 #### transfer
-Transfers lamports between accounts
+Transfers lamports between accounts. The sender must sign the transaction.
 
 <Code>
 ```python 
@@ -178,7 +180,7 @@ def transfer(
     from_public_key: PublicKey | str,
     to_public_key: PublicKey | str,
     lamports: int
-)
+) -> Instruction
 ```
 </Code>
 

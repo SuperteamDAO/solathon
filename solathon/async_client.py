@@ -1,10 +1,18 @@
 from __future__ import annotations
 
-from typing import Any, List, Text, Union
+from .utils import validate_commitment
+from typing import Any, List, Text, Union, Optional, Dict
 from .publickey import PublicKey
 from .core.http import AsyncHTTPClient
 from .core.types import RPCResponse
 from .transaction import Transaction
+from .utils import validate_commitment
+from .publickey import PublicKey
+from .transaction import Transaction
+from .core.types import (
+    Commitment,
+    RPCResponse,
+)
 
 ENDPOINTS = (
     "https://api.mainnet-beta.solana.com",
@@ -443,7 +451,7 @@ class AsyncClient:
         """
 
         commitment = validate_commitment(commitment) if commitment else None
-        response = self.build_and_send_request(
+        response = self.build_and_send_request_async(
             "getTokenAccountBalance",
             [
                 str(token_account),

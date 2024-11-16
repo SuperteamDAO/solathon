@@ -1,54 +1,70 @@
 import { Code } from '/components/Code';
 
 # Keypair
-**Keypair is the combination of a public key and private key, any authorized action requires this.**
+**Keypair is the combination of a public key and private key. It handles key generation, signing, and key management.**
 
 <Code>
-  ```python 
-  class Keypair(value: NaclPrivateKey | None = None)
-  ```
+```python 
+class Keypair(value: NaclPrivateKey | None = None)
+```
 </Code>
 
-> The value is required to initialise the object with an existing [nacl.Public.PrivateKey](https://pynacl.readthedocs.io/en/latest/public/#nacl.public.PrivateKey) object. To initialize with a private key as a string or bytes, use [from_private_key](#from_private_key) class method. Without the value a new keypair is generated.
+> The value is optional. Without a value, a new keypair is generated. If provided, it must be a [nacl.public.PrivateKey](https://pynacl.readthedocs.io/en/latest/public/#nacl.public.PrivateKey) object. To initialize with a private key as a string or bytes, use [from_private_key](#from_private_key) class method.
 
 #### Methods
 - [sign](#sign)
 - [from_private_key](#from_private_key)
+- [from_file](#from_file)
 
 #### Attributes
 - [public_key](#public_key)
 - [private_key](#private_key)
 - [key_pair](#key_pair)
 
-
 ## Methods
 
 #### .sign
-Signs a message which can be either a string or bytes.
+Signs a message using the keypair's private key.
 
 <Code>
 ```python 
-def sign(message: str | bytes)
+def sign(message: str | bytes) -> SignedMessage
 ```
 </Code>
+
+> Returns a SignedMessage object from PyNaCl. The message can be either a UTF-8 string or bytes.
 
 #### .from_private_key
-Initializes the keypair object using a private key, which can be either a string or bytes.
+Class method that creates a Keypair from an existing private key.
 
 <Code>
 ```python 
-def from_private_key(private_key: str | bytes)
+@classmethod
+def from_private_key(cls, private_key: str | List[int]) -> Keypair
 ```
 </Code>
 
+> Accepts either a base58-encoded string or a list of integers representing the private key. Returns a new Keypair instance.
+
+#### .from_file
+Class method that loads a Keypair from a JSON file containing the private key.
+
+<Code>
+```python 
+@staticmethod
+def from_file(file_path: str) -> Keypair
+```
+</Code>
+
+> Reads a JSON file containing the private key data and returns a new Keypair instance.
 
 ## Attributes
 
 #### .public_key
-Returns the keypair object's public key.
+The keypair's public key as a PublicKey instance.
 
 #### .private_key
-Returns the keypair object's private key.
+The keypair's private key as a PrivateKey instance.
 
 #### .key_pair
-Returns the keypair value itself in bytes.
+The underlying NaclPrivateKey object used in bytes

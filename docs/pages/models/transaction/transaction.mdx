@@ -2,12 +2,12 @@ import { Code } from '/components/Code';
 import Callout from 'nextra-theme-docs/callout'
 
 # Transaction
-**Class representing a transaction model. This object is passed in [send_transaction](/models/client#send_transaction) method**
+**Class representing a Solana transaction. This object is used in [send_transaction](/models/client#send_transaction) method**
 
 <Code>
-  ```python 
-    class Transaction(self, **config)
-  ```
+```python 
+class Transaction(**config)
+```
 </Code>
 
 > A completely empty transaction can be initialized without any config, the table below shows the available config options

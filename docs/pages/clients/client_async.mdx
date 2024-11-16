@@ -49,6 +49,8 @@ import Callout from 'nextra-theme-docs/callout'
 - [get_transaction](#get_transaction)
 - [request_airdrop](#request_airdrop)
 - [send_transaction](#send_transaction)
+- [get_signature_statuses](#get_signature_statuses)
+- [get_slot](#get_slot)
 
 
 #### Attributes
@@ -394,9 +396,13 @@ Returns balance of tokens held in the specified token account.
 
 <Code>
 ```python 
-def get_token_account_balance(public_key: PublicKey | str, **kwargs)
+async def get_token_account_balance(token_account: PublicKey | str, commitment: Optional[Commitment]=None)
 ```
 </Code>
+
+Parameters:
+- `token_account`: The public key of the token account
+- `commitment` (optional): The level of commitment desired when querying state
 
 Example:
 
@@ -416,13 +422,16 @@ print(tokens)
 </Code>
 
 #### .get_transaction
-Sends a request to the Solana RPC endpoint to retrieve a transaction by its signature.
+Returns transaction details for a confirmed transaction signature.
 
 <Code>
 ```python 
-async def get_transaction(self, signature: Text, commitment: Optional[Commitment]=None) -> RPCResponse[TransactionElementType] | TransactionElement
+async def get_transaction(signature: Text) -> RPCResponse
 ```
 </Code>
+
+Parameters:
+- `signature`: Transaction signature as base-58 encoded string
 
 #### .request_airdrop
 Requests the amount of lamport specified to be airdropped to the public key.
@@ -479,6 +488,37 @@ def main():
 asyncio.run(main())
 ```
 </Code>
+
+#### .get_signature_statuses
+Returns signature statuses for confirmed transactions that include the given address in their accountKeys list. Returns signatures backwards in time from the provided signature or most recent confirmed block
+
+<Code>
+```python 
+async def get_signature_statuses()
+```
+</Code>
+
+#### .get_slot
+Returns the current slot of the node.
+
+<Code>
+```python 
+async def get_slot()
+```
+</Code>
+
+#### .build_and_send_request_async
+Internal method used to construct and send RPC requests to the Solana network.
+
+<Code>
+```python
+async def build_and_send_request_async(method: Text, params: List[Any]) -> RPCResponse
+```
+</Code>
+
+Parameters:
+- `method`: The RPC method name to call
+- `params`: List of parameters to pass to the RPC method
 
 
 ## Attributes

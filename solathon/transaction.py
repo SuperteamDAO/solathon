@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Tuple, Dict
+from typing import List, Dict
 from base58 import b58decode, b58encode
 from .keypair import Keypair
 from .publickey import PublicKey
